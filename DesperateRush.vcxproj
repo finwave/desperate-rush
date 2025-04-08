@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a0870d0a-1a97-4984-a3b7-03f00dc03161}</ProjectGuid>
+    <RootNamespace>DesperateRush</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)BulletCollision;$(SolutionDir)LinearMath;$(SolutionDir)coldet/include;$(SolutionDir)..\external library projects\libzip-win-build\lib;$(SolutionDir)..\external library projects\libzip-win-build\win32;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)coldet/lib;$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)BulletCollision;$(SolutionDir)LinearMath;$(SolutionDir)coldet/include;$(SolutionDir)..\external library projects\libzip-win-build\lib;$(SolutionDir)..\external library projects\libzip-win-build\win32;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)coldet/lib;$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)BulletCollision;$(SolutionDir)LinearMath;$(SolutionDir)coldet/include;$(SolutionDir)..\external library projects\libzip-win-build\lib;$(SolutionDir)..\external library projects\libzip-win-build\win32;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)coldet/lib;$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\x64\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)BulletCollision;$(SolutionDir)LinearMath;$(SolutionDir)coldet/include;$(SolutionDir)..\external library projects\libzip-win-build\lib;$(SolutionDir)..\external library projects\libzip-win-build\win32;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)coldet/lib;$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\x64\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>coldet.lib;dxguid.lib;d3d9.lib;d3dx9d.lib;dsound.lib;winmm.lib;strmiids.lib;dinput8.lib;coldet.lib;libzip.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)data_1" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)data_2" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)config.cfg" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)coldet\lib\coldet.dll" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Debug\libzip.dll" "$(SolutionDir)$(Configuration)\" /F /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>coldet.lib;dxguid.lib;d3d9.lib;d3dx9.lib;dsound.lib;winmm.lib;strmiids.lib;dinput8.lib;coldet.lib;libzip.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)data_1" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)data_2" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)config.cfg" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)coldet\lib\coldet.dll" "$(SolutionDir)$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Release\libzip.dll" "$(SolutionDir)$(Configuration)\" /F /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>coldet.lib;dxguid.lib;d3d9.lib;d3dx9d.lib;dsound.lib;winmm.lib;strmiids.lib;dinput8.lib;coldet.lib;libzip.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)data" "$(SolutionDir)$(Platform)\$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\x64\Debug\libzip.dll" "$(SolutionDir)x64\$(Configuration)\" /F /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>coldet.lib;dxguid.lib;d3d9.lib;d3dx9.lib;dsound.lib;winmm.lib;strmiids.lib;dinput8.lib;coldet.lib;libzip.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)data" "$(SolutionDir)$(Platform)\$(Configuration)\" /F /Y
+xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\x64\Release\libzip.dll" "$(SolutionDir)x64\$(Configuration)\" /F /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="C3DObject.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="HighscoreLetterWheel.cpp" />
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="DisplayObject.cpp" />
+    <ClCompile Include="EnemyBoss.cpp" />
+    <ClCompile Include="EnemyBoss1Cannon.cpp" />
+    <ClCompile Include="EnemyBoss1Core.cpp" />
+    <ClCompile Include="EnemyBoss1Frame.cpp" />
+    <ClCompile Include="EnemyBoss1Laser.cpp" />
+    <ClCompile Include="EnemyBoss1Scatter.cpp" />
+    <ClCompile Include="EnemyDrone.cpp" />
+    <ClCompile Include="EnemyGuard.cpp" />
+    <ClCompile Include="EnemyRoller.cpp" />
+    <ClCompile Include="EnemySniper.cpp" />
+    <ClCompile Include="Explosion.cpp" />
+    <ClCompile Include="Explosions.cpp" />
+    <ClCompile Include="Fading.cpp" />
+    <ClCompile Include="GameSettings.cpp" />
+    <ClCompile Include="HighScore.cpp" />
+    <ClCompile Include="HighScoreItem.cpp" />
+    <ClCompile Include="HighscorePlayerShip.cpp" />
+    <ClCompile Include="I3DObject.cpp" />
+    <ClCompile Include="I3DObjectController.cpp" />
+    <ClCompile Include="ID3DApplication.cpp" />
+    <ClCompile Include="IEnemy.cpp" />
+    <ClCompile Include="IInputDevice.cpp" />
+    <ClCompile Include="InputEngine.cpp" />
+    <ClCompile Include="InputJoystick.cpp" />
+    <ClCompile Include="InputKeyboard.cpp" />
+    <ClCompile Include="InputMouse.cpp" />
+    <ClCompile Include="IState.cpp" />
+    <ClCompile Include="KeyReference.cpp" />
+    <ClCompile Include="LerpUtils.cpp" />
+    <ClCompile Include="Letter.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="Lights.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="IApplication.cpp" />
+    <ClCompile Include="MenuObjectRoller.cpp" />
+    <ClCompile Include="MenuBoss1Scatter.cpp" />
+    <ClCompile Include="MenuObject.cpp" />
+    <ClCompile Include="Number.cpp" />
+    <ClCompile Include="ObjectController.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="ParticleEngine.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PlayerMinigun.cpp" />
+    <ClCompile Include="ResourceGame.cpp" />
+    <ClCompile Include="ResourceHighScore.cpp" />
+    <ClCompile Include="ResourceMenus.cpp" />
+    <ClCompile Include="Resources.cpp" />
+    <ClCompile Include="ShadowVolume.cpp" />
+    <ClCompile Include="SoundEngine.cpp" />
+    <ClCompile Include="SoundMP3Player.cpp" />
+    <ClCompile Include="SoundWave.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteScrolling.cpp" />
+    <ClCompile Include="StateGame.cpp" />
+    <ClCompile Include="StateHighScore.cpp" />
+    <ClCompile Include="StateIntro.cpp" />
+    <ClCompile Include="StateMenus.cpp" />
+    <ClCompile Include="TextUtils.cpp" />
+    <ClCompile Include="TheApp.cpp" />
+    <ClCompile Include="TheGame.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="WaveLoader.cpp" />
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WeaponBoss1Laser.cpp" />
+    <ClCompile Include="WeaponBoss1Scatter.cpp" />
+    <ClCompile Include="WeaponEnemyDrone.cpp" />
+    <ClCompile Include="WeaponEnemyRoller.cpp" />
+    <ClCompile Include="WeaponEnemySniper.cpp" />
+    <ClCompile Include="WeaponPlayerDiagonal.cpp" />
+    <ClCompile Include="WeaponPlayerFront.cpp" />
+    <ClCompile Include="WeaponPlayerHighscore.cpp" />
+    <ClCompile Include="XFileContainer.cpp" />
+    <ClCompile Include="ZipManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="btBulletCollisionCommon.h" />
+    <ClInclude Include="C3DObject.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="HighscoreLetterWheel.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="DisplayObject.h" />
+    <ClInclude Include="EnemyBoss.h" />
+    <ClInclude Include="EnemyBoss1Cannon.h" />
+    <ClInclude Include="EnemyBoss1Core.h" />
+    <ClInclude Include="EnemyBoss1Frame.h" />
+    <ClInclude Include="EnemyBoss1Laser.h" />
+    <ClInclude Include="EnemyBoss1Scatter.h" />
+    <ClInclude Include="EnemyDrone.h" />
+    <ClInclude Include="EnemyGuard.h" />
+    <ClInclude Include="EnemyRoller.h" />
+    <ClInclude Include="EnemySniper.h" />
+    <ClInclude Include="Explosion.h" />
+    <ClInclude Include="Explosions.h" />
+    <ClInclude Include="Fading.h" />
+    <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="HighScore.h" />
+    <ClInclude Include="HighScoreItem.h" />
+    <ClInclude Include="HighscorePlayerShip.h" />
+    <ClInclude Include="I3DObject.h" />
+    <ClInclude Include="I3DObjectController.h" />
+    <ClInclude Include="IApplication.h" />
+    <ClInclude Include="ID3DApplication.h" />
+    <ClInclude Include="IEnemy.h" />
+    <ClInclude Include="IInputDevice.h" />
+    <ClInclude Include="InputEngine.h" />
+    <ClInclude Include="InputJoystick.h" />
+    <ClInclude Include="InputKeyboard.h" />
+    <ClInclude Include="InputMouse.h" />
+    <ClInclude Include="IState.h" />
+    <ClInclude Include="KeyReference.h" />
+    <ClInclude Include="LerpUtils.h" />
+    <ClInclude Include="Letter.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="Lights.h" />
+    <ClInclude Include="MenuObjectRoller.h" />
+    <ClInclude Include="MenuBoss1Scatter.h" />
+    <ClInclude Include="MenuObject.h" />
+    <ClInclude Include="Number.h" />
+    <ClInclude Include="ObjectController.h" />
+    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="ParticleEngine.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PlayerMinigun.h" />
+    <ClInclude Include="Queue.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceGame.h" />
+    <ClInclude Include="ResourceHighScore.h" />
+    <ClInclude Include="ResourceMenus.h" />
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="ShadowVolume.h" />
+    <ClInclude Include="sounddefines.h" />
+    <ClInclude Include="SoundEngine.h" />
+    <ClInclude Include="SoundMP3Player.h" />
+    <ClInclude Include="SoundWave.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteScrolling.h" />
+    <ClInclude Include="StateGame.h" />
+    <ClInclude Include="StateHighScore.h" />
+    <ClInclude Include="StateIntro.h" />
+    <ClInclude Include="StateMenus.h" />
+    <ClInclude Include="TextUtils.h" />
+    <ClInclude Include="TheApp.h" />
+    <ClInclude Include="TheGame.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="vertices.h" />
+    <ClInclude Include="WaveLoader.h" />
+    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WeaponBoss1Laser.h" />
+    <ClInclude Include="WeaponBoss1Scatter.h" />
+    <ClInclude Include="WeaponEnemyDrone.h" />
+    <ClInclude Include="WeaponEnemyRoller.h" />
+    <ClInclude Include="WeaponEnemySniper.h" />
+    <ClInclude Include="WeaponPlayerDiagonal.h" />
+    <ClInclude Include="WeaponPlayerFront.h" />
+    <ClInclude Include="WeaponPlayerHighscore.h" />
+    <ClInclude Include="XFileContainer.h" />
+    <ClInclude Include="ZipManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DesperateRush.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="DesperateRush.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="highscores.dat" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
