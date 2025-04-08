@@ -1,2 +1,2 @@
-# desperate-rush
-C++ Windows Application (game)
+# Desperate Rush
+C++ Windows application (game)
