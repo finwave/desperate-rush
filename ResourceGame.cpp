@@ -19,7 +19,7 @@ CResourceGame::CResourceGame()
 	this->m_fDepthGameBoss1Cannon = 0.2f;
 	this->m_fDepthGameBullets = 0.7f;
 	this->m_fDepthGameExplosion = 0.2f;
-	this->m_fDepthGameInfo = 0.1f;
+	this->m_fDepthGameInfo = 0.01f;
 }
 
 void CResourceGame::Init(CTheApp* pApp, CZipManager* pZipManager)

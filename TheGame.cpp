@@ -3938,30 +3938,22 @@ HRESULT CTheGame::InitLevelObstacles()
 				for (int depth = 1; depth <= 5; depth++)
 				{
 					int mapKey = CResources::MODEL_GAME_ASTEROID_BIG_1;
-					float objectWidth = this->m_pGameSettings->m_fAsteroidBig1Width;
-					float objectHeight = this->m_pGameSettings->m_fAsteroidBig1Height;
+					float objectWidth = CGameSettings::BIG_ASTEROID_WIDTH;
+					float objectHeight = CGameSettings::BIG_ASTEROID_HEIGHT;
 
 					switch (depth)
 					{
 					case 2:
 						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_2;
-						objectWidth = this->m_pGameSettings->m_fAsteroidBig2Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidBig2Height;
 						break;
 					case 3:
 						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_3;
-						objectWidth = this->m_pGameSettings->m_fAsteroidBig3Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidBig3Height;
 						break;
 					case 4:
 						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_4;
-						objectWidth = this->m_pGameSettings->m_fAsteroidBig4Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidBig4Height;
 						break;
 					case 5:
 						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_5;
-						objectWidth = this->m_pGameSettings->m_fAsteroidBig5Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidBig5Height;
 						break;
 					}
 
@@ -3985,30 +3977,22 @@ HRESULT CTheGame::InitLevelObstacles()
 				for (int depth = 1; depth <= 5; depth++)
 				{
 					int mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_1;
-					float objectWidth = this->m_pGameSettings->m_fAsteroidMedium1Width;
-					float objectHeight = this->m_pGameSettings->m_fAsteroidMedium1Height;
+					float objectWidth = CGameSettings::MEDIUM_ASTEROID_WIDTH;
+					float objectHeight = CGameSettings::MEDIUM_ASTEROID_HEIGHT;
 
 					switch (depth)
 					{
 					case 2:
 						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_2;
-						objectWidth = this->m_pGameSettings->m_fAsteroidMedium2Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidMedium2Height;
 						break;
 					case 3:
 						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_3;
-						objectWidth = this->m_pGameSettings->m_fAsteroidMedium3Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidMedium3Height;
 						break;
 					case 4:
 						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_4;
-						objectWidth = this->m_pGameSettings->m_fAsteroidMedium4Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidMedium4Height;
 						break;
 					case 5:
 						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_5;
-						objectWidth = this->m_pGameSettings->m_fAsteroidMedium5Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidMedium5Height;
 						break;
 					}
 
@@ -4032,30 +4016,22 @@ HRESULT CTheGame::InitLevelObstacles()
 				for (int depth = 1; depth <= 5; depth++)
 				{
 					int mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_1;
-					float objectWidth = this->m_pGameSettings->m_fAsteroidSmall1Width;
-					float objectHeight = this->m_pGameSettings->m_fAsteroidSmall1Height;
+					float objectWidth = CGameSettings::SMALL_ASTEROID_WIDTH;
+					float objectHeight = CGameSettings::SMALL_ASTEROID_HEIGHT;
 
 					switch (depth)
 					{
 					case 2:
 						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_2;
-						objectWidth = this->m_pGameSettings->m_fAsteroidSmall2Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidSmall2Height;
 						break;
 					case 3:
 						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_3;
-						objectWidth = this->m_pGameSettings->m_fAsteroidSmall3Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidSmall3Height;
 						break;
 					case 4:
 						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_4;
-						objectWidth = this->m_pGameSettings->m_fAsteroidSmall4Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidSmall4Height;
 						break;
 					case 5:
 						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_5;
-						objectWidth = this->m_pGameSettings->m_fAsteroidSmall5Width;
-						objectHeight = this->m_pGameSettings->m_fAsteroidSmall5Height;
 						break;
 					}
 
@@ -6465,7 +6441,7 @@ void CTheGame::PrepareObstacles()
 		// background asteroids
 		if (currentDepth > 1)
 		{
-			// showing them during the level intro
+			// player will see background asteroids right away
 			if (this->m_pLevel->IsObstaclesFirst())
 			{
 				fPosY = -this->m_fScreenHeight;
@@ -6501,7 +6477,9 @@ void CTheGame::PrepareObstacles()
 
 					if (obstacle != NULL)
 					{
-						fPosY += 2.0f * obstacle->GetHeight();
+						fPosY += 0.5f * obstacle->GetHeight();
+						fPosY += 1.5f * obstacle->GetHeight();
+						
 						this->m_pObstaclesDepth1.Push(obstacle);
 
 						m_iObstaclesMax++;
@@ -6525,7 +6503,7 @@ void CTheGame::PrepareObstacles()
 					fPosY += 6.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth2.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->m_fObstacleSpeed2 / this->m_pGameSettings->m_fObstacleSpeed1;
+					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(2) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6544,7 +6522,7 @@ void CTheGame::PrepareObstacles()
 					fPosY += 5.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth3.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->m_fObstacleSpeed2 / this->m_pGameSettings->m_fObstacleSpeed1;
+					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(3) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6563,7 +6541,7 @@ void CTheGame::PrepareObstacles()
 					fPosY += 4.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth4.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->m_fObstacleSpeed2 / this->m_pGameSettings->m_fObstacleSpeed1;
+					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(4) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6582,7 +6560,7 @@ void CTheGame::PrepareObstacles()
 					fPosY += 3.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth5.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->m_fObstacleSpeed2 / this->m_pGameSettings->m_fObstacleSpeed1;
+					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(5) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6611,25 +6589,25 @@ CObstacle* CTheGame::GenerateObstacle(float fPosY, int iDepth)
 		if (obstacle)
 		{
 			CObstacle::eOBSTACLE_DEPTH eDepth = CObstacle::eOBSTACLE_DEPTH_1;
-			float fSpeed = this->m_pGameSettings->m_fObstacleSpeed1;
+			float fSpeed = this->m_pGameSettings->GetObstacleSpeed(1);
 
 			switch (iDepth)
 			{
 			case 2:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_2;
-				fSpeed = this->m_pGameSettings->m_fObstacleSpeed2;
+				fSpeed = this->m_pGameSettings->GetObstacleSpeed(2);
 				break;
 			case 3:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_3;
-				fSpeed = this->m_pGameSettings->m_fObstacleSpeed3;
+				fSpeed = this->m_pGameSettings->GetObstacleSpeed(3);
 				break;
 			case 4:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_4;
-				fSpeed = this->m_pGameSettings->m_fObstacleSpeed4;
+				fSpeed = this->m_pGameSettings->GetObstacleSpeed(4);
 				break;
 			case 5:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_5;
-				fSpeed = this->m_pGameSettings->m_fObstacleSpeed5;
+				fSpeed = this->m_pGameSettings->GetObstacleSpeed(5);
 				break;
 			}
 
@@ -6698,9 +6676,23 @@ CObstacle* CTheGame::GenerateObstacleType(int iDepth)
 	int sizeType = this->m_pTheApp->RandInt(1, 3);
 	int asteroidType = this->m_pTheApp->RandInt(0, 4);
 
+	// background asteroids
+	// do not generate big sized background asteroids (less cluttered visuals)
+	if (iDepth > 1)
+	{
+		if (iDepth > 3)
+		{
+			sizeType = 3;
+		}
+		else
+		{
+			sizeType = this->m_pTheApp->RandInt(2, 3);
+		}
+	}
+
 	switch (sizeType)
 	{
-		// big asteroid
+	// big asteroid
 	case 1:
 	{
 		mesh = this->m_vTemplateAsteroidBig[asteroidType]->GetMesh();
@@ -7022,7 +7014,7 @@ IEnemy* CTheGame::GenerateObstacleEnemy(float fPosY)
 
 	if (pEnemy)
 	{
-		pEnemy->InitObstacleEnemy(this->m_pGameSettings->m_fObstacleSpeed1);
+		pEnemy->InitObstacleEnemy(this->m_pGameSettings->GetObstacleSpeed(1));
 		pEnemy->SetActive(TRUE);
 
 		D3DXVECTOR3 pos;
@@ -7172,8 +7164,8 @@ void CTheGame::EnemyLaunch(float fFrametime)
 				// checks that the new enemy doesn't collide with existing obstacles or enemies
 				while (bLoop)
 				{
-					// tries 3 times before stopping
-					if (iCheckTimes == 3)
+					// tries 6 times before stopping
+					if (iCheckTimes == 6)
 					{
 						bLoop = false;
 					}
@@ -7249,7 +7241,7 @@ void CTheGame::EnemyLaunch(float fFrametime)
 											// mesh to mesh collision
 											if(this->IsMeshCollision(pEnemy, pOther, false, false))
 											{
-
+												bCollision = true;
 											}
 											*/
 										}
@@ -7438,8 +7430,8 @@ void CTheGame::EnemyStrike(float fFrametime)
 				// with existing enemies and obstacles
 				while (bLoop)
 				{
-					// tries 3 times before stopping
-					if (iCheckTimes == 3)
+					// tries 6 times before stopping
+					if (iCheckTimes == 6)
 					{
 						bLoop = false;
 					}
@@ -9097,19 +9089,13 @@ void CTheGame::CollisionPlayerVsObstacle()
 											this->m_pPlayer->GetWidth(),
 											this->m_pPlayer->GetHeight()) )
 				{
-					this->PlayerDestroyed();
-					this->PlayerExplosion();
-					return;
-
-					/*
 					// mesh to mesh collision
-					if(this->IsMeshCollision(this->m_pPlayer, pObstacle, bInverseMatrix, false))
-					{
+					//if(this->IsMeshCollision(this->m_pPlayer, pObstacle, bInverseMatrix, false))
+					//{
 						this->PlayerDestroyed();
 						this->PlayerExplosion();
 						return;
-					}
-					*/
+					//}
 				}
 			}
 			else
@@ -9129,7 +9115,7 @@ void CTheGame::CollisionEnemyVsObstacle()
 	//START*********** ENEMY VS OBSTACLE *************
 
 	bool bInverseMatrix = false;
-	float fCheckBorder = this->m_fScreenHeight + (this->m_pGameSettings->m_fAsteroidBig1Height / 2);
+	float fCheckBorder = this->m_fScreenHeight + CGameSettings::BIG_ASTEROID_HEIGHT / 2.0f;
 
 	this->m_pObstaclesDepth1.SetFirst();
 	while( this->m_pObstaclesDepth1.GetCurrent() )
@@ -9160,14 +9146,14 @@ void CTheGame::CollisionEnemyVsObstacle()
 												pEnemy->GetHeight()) )
 					{
 						// mesh to mesh collision
-						if(this->IsMeshCollision(pEnemy, pObstacle, bInverseMatrix, false))
-						{
+						//if(this->IsMeshCollision(pEnemy, pObstacle, bInverseMatrix, false))
+						//{
 							pEnemy->ResetFleeMovement();
 							pEnemy->SetActive(FALSE);
 
 							// play sound effect
 							this->PlaySoundExplosionEnemy(pEnemy);
-						}
+						//}
 					}
 				}
 

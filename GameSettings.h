@@ -7,6 +7,7 @@ public:
 	virtual ~CGameSettings(void);
 
 	void Create();
+	float GetObstacleSpeed(int depth);
 
 	// SOUND VOLUME
 	
@@ -143,44 +144,14 @@ public:
 
 	// OBSTACLES
 
-	float					m_fAsteroidBig1Width;
-	float					m_fAsteroidBig1Height;
-	float					m_fAsteroidBig2Width;
-	float					m_fAsteroidBig2Height;
-	float					m_fAsteroidBig3Width;
-	float					m_fAsteroidBig3Height;
-	float					m_fAsteroidBig4Width;
-	float					m_fAsteroidBig4Height;
-	float					m_fAsteroidBig5Width;
-	float					m_fAsteroidBig5Height;
+	static float			BIG_ASTEROID_WIDTH;
+	static float			BIG_ASTEROID_HEIGHT;
 
-	float					m_fAsteroidMedium1Width;
-	float					m_fAsteroidMedium1Height;
-	float					m_fAsteroidMedium2Width;
-	float					m_fAsteroidMedium2Height;
-	float					m_fAsteroidMedium3Width;
-	float					m_fAsteroidMedium3Height;
-	float					m_fAsteroidMedium4Width;
-	float					m_fAsteroidMedium4Height;
-	float					m_fAsteroidMedium5Width;
-	float					m_fAsteroidMedium5Height;
+	static float			MEDIUM_ASTEROID_WIDTH;
+	static float			MEDIUM_ASTEROID_HEIGHT;
 
-	float					m_fAsteroidSmall1Width;
-	float					m_fAsteroidSmall1Height;
-	float					m_fAsteroidSmall2Width;
-	float					m_fAsteroidSmall2Height;
-	float					m_fAsteroidSmall3Width;
-	float					m_fAsteroidSmall3Height;
-	float					m_fAsteroidSmall4Width;
-	float					m_fAsteroidSmall4Height;
-	float					m_fAsteroidSmall5Width;
-	float					m_fAsteroidSmall5Height;
-
-	float					m_fObstacleSpeed1;
-	float					m_fObstacleSpeed2;
-	float					m_fObstacleSpeed3;
-	float					m_fObstacleSpeed4;
-	float					m_fObstacleSpeed5;
+	static float			SMALL_ASTEROID_WIDTH;
+	static float			SMALL_ASTEROID_HEIGHT;
 
 	// NUMBERS
 

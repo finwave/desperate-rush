@@ -1,5 +1,14 @@
 #include "GameSettings.h"
 
+float CGameSettings::BIG_ASTEROID_WIDTH = 74.0f;
+float CGameSettings::BIG_ASTEROID_HEIGHT = 45.0f;
+
+float CGameSettings::MEDIUM_ASTEROID_WIDTH = 50.0f;
+float CGameSettings::MEDIUM_ASTEROID_HEIGHT = 36.0f;
+
+float CGameSettings::SMALL_ASTEROID_WIDTH = 20.0f;
+float CGameSettings::SMALL_ASTEROID_HEIGHT = 15.0f;
+
 CGameSettings::CGameSettings(void)
 {
 	// SOUND VOLUME
@@ -134,47 +143,6 @@ CGameSettings::CGameSettings(void)
 	this->m_iEnemyBoss1ScatterShootMultiMax = 0;
 
 	this->m_fEnemyBoss1CannonShootTime = 0.0f;
-
-	// OBSTACLES
-
-	this->m_fAsteroidBig1Width = 0.0f;
-	this->m_fAsteroidBig1Height = 0.0f;
-	this->m_fAsteroidBig2Width = 0.0f;
-	this->m_fAsteroidBig2Height = 0.0f;
-	this->m_fAsteroidBig3Width = 0.0f;
-	this->m_fAsteroidBig3Height = 0.0f;
-	this->m_fAsteroidBig4Width = 0.0f;
-	this->m_fAsteroidBig4Height = 0.0f;
-	this->m_fAsteroidBig5Width = 0.0f;
-	this->m_fAsteroidBig5Height = 0.0f;
-
-	this->m_fAsteroidMedium1Width = 0.0f;
-	this->m_fAsteroidMedium1Height = 0.0f;
-	this->m_fAsteroidMedium2Width = 0.0f;
-	this->m_fAsteroidMedium2Height = 0.0f;
-	this->m_fAsteroidMedium3Width = 0.0f;
-	this->m_fAsteroidMedium3Height = 0.0f;
-	this->m_fAsteroidMedium4Width = 0.0f;
-	this->m_fAsteroidMedium4Height = 0.0f;
-	this->m_fAsteroidMedium5Width = 0.0f;
-	this->m_fAsteroidMedium5Height = 0.0f;
-
-	this->m_fAsteroidSmall1Width = 0.0f;
-	this->m_fAsteroidSmall1Height = 0.0f;
-	this->m_fAsteroidSmall2Width = 0.0f;
-	this->m_fAsteroidSmall2Height = 0.0f;
-	this->m_fAsteroidSmall3Width = 0.0f;
-	this->m_fAsteroidSmall3Height = 0.0f;
-	this->m_fAsteroidSmall4Width = 0.0f;
-	this->m_fAsteroidSmall4Height = 0.0f;
-	this->m_fAsteroidSmall5Width = 0.0f;
-	this->m_fAsteroidSmall5Height = 0.0f;
-
-	this->m_fObstacleSpeed1 = 0.0f;
-	this->m_fObstacleSpeed2 = 0.0f;
-	this->m_fObstacleSpeed3 = 0.0f;
-	this->m_fObstacleSpeed4 = 0.0f;
-	this->m_fObstacleSpeed5 = 0.0f;
 
 	// NUMBERS
 
@@ -349,47 +317,6 @@ void CGameSettings::Create()
 
 	this->m_fEnemyBoss1CannonShootTime = 4.0f;
 
-	// OBSTACLES
-
-	this->m_fAsteroidBig1Width = 40.5f;
-	this->m_fAsteroidBig1Height = 43.5f;
-	this->m_fAsteroidBig2Width = 63.0f;
-	this->m_fAsteroidBig2Height = 35.0f;
-	this->m_fAsteroidBig3Width = 43.0f;
-	this->m_fAsteroidBig3Height = 47.0f;
-	this->m_fAsteroidBig4Width = 45.0f;
-	this->m_fAsteroidBig4Height = 42.0f;
-	this->m_fAsteroidBig5Width = 55.0f;
-	this->m_fAsteroidBig5Height = 36.0f;
-
-	this->m_fAsteroidMedium1Width = 32.5f;
-	this->m_fAsteroidMedium1Height = 35.5f;
-	this->m_fAsteroidMedium2Width = 55.0f;
-	this->m_fAsteroidMedium2Height = 27.0f;
-	this->m_fAsteroidMedium3Width = 35.0f;
-	this->m_fAsteroidMedium3Height = 39.0f;
-	this->m_fAsteroidMedium4Width = 37.0f;
-	this->m_fAsteroidMedium4Height = 34.0f;
-	this->m_fAsteroidMedium5Width = 47.0f;
-	this->m_fAsteroidMedium5Height = 28.0f;
-
-	this->m_fAsteroidSmall1Width = 24.5f;
-	this->m_fAsteroidSmall1Height = 26.5f;
-	this->m_fAsteroidSmall2Width = 35.0f;
-	this->m_fAsteroidSmall2Height = 22.0f;
-	this->m_fAsteroidSmall3Width = 25.0f;
-	this->m_fAsteroidSmall3Height = 26.5f;
-	this->m_fAsteroidSmall4Width = 27.0f;
-	this->m_fAsteroidSmall4Height = 27.0f;
-	this->m_fAsteroidSmall5Width = 35.0f;
-	this->m_fAsteroidSmall5Height = 23.0f;
-
-	this->m_fObstacleSpeed1 = 35.0f;
-	this->m_fObstacleSpeed2 = 15.0f;
-	this->m_fObstacleSpeed3 = 11.0f;
-	this->m_fObstacleSpeed4 = 7.0f;
-	this->m_fObstacleSpeed5 = 3.0f;
-
 	// NUMBERS
 
 	this->m_fGameNumberWidth = 7.0f;
@@ -421,4 +348,21 @@ void CGameSettings::Create()
 	this->m_iPlayerCannonBarPositionY = 57;
 	this->m_iPlayerCannonMeterPositionX = this->m_iPlayerCannonBarPositionX + 5;
 	this->m_iPlayerCannonMeterPositionY = this->m_iPlayerCannonBarPositionY + 3;
+}
+
+float CGameSettings::GetObstacleSpeed(int depth)
+{
+	switch (depth)
+	{
+	case 2:
+		return 15.0f;
+	case 3:
+		return 11.0f;
+	case 4:
+		return 7.0f;
+	case 5:
+		return 3.0f;
+	default:
+		return 35.0f;
+	}
 }
