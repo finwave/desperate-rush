@@ -28,3 +28,9 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio project
+/.vs
+/DesperateRush
+/Debug
+/Release
