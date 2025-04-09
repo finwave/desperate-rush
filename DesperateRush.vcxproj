@@ -348,9 +348,6 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
   <ItemGroup>
     <Image Include="DesperateRush.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="highscores.dat" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
