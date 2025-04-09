@@ -83,7 +83,9 @@ protected:
 	virtual void Rotate(float fFrametime);
 	virtual void ResetSelfRotation();
 
+	void SetRandomMovePosition();
 	void Move(float fFrametime);
+
 	void ChangeDirection();
 
 	virtual void ChangeVertical();

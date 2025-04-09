@@ -94,6 +94,11 @@ void CMenuObject::Init()
 		this->ChangeSpeed();
 		this->RandomMoveTime();
 
+		// Randomize the ship start position, so we can show some of the menu ships right away.
+		if (this->m_pTheApp->RandInt(1, 3) > 1)
+		{
+			SetRandomMovePosition();
+		}
 		break;
 	}
 }
@@ -190,6 +195,13 @@ void CMenuObject::Rotate(float fFrametime)
 void CMenuObject::ResetSelfRotation()
 {
 	this->m_fSelfRotation = 0;
+}
+
+void CMenuObject::SetRandomMovePosition()
+{
+	this->m_fMovementPauseTimer = 0.0f;
+	float fFrametime = this->m_pTheApp->RandFloat(0.5f, 4.0f);
+	this->Move(fFrametime);
 }
 
 void CMenuObject::Move(float fFrametime)
