@@ -802,4 +802,10 @@ private:
 
 	int							m_iLoadLevelStep;
 
+	// keyboard virtual key values
+
+	int							m_iVkeyMinigun;
+	int							m_iVkeyFireMode;
+	int							m_iVkeyCannon;
+	int							m_iVkeyBlast;
 };

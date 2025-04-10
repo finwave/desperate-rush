@@ -232,6 +232,11 @@ CTheGame::CTheGame(void)
 	this->m_iGameStatePrevious = -1;
 	this->m_iGameStateEnd = 0;
 
+	this->m_iVkeyMinigun = 0;
+	this->m_iVkeyFireMode = 0;
+	this->m_iVkeyCannon = 0;
+	this->m_iVkeyBlast = 0;
+
 	SwitchGameState(GAME_STATE_INIT_LEVEL);
 }
 
@@ -255,6 +260,11 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 
 		this->m_pResourceGame = this->m_pTheApp->GetResourceGame();
 		this->m_pJoystick = this->m_pTheApp->GetJoystick();
+
+		this->m_iVkeyMinigun = this->m_pTheApp->GetConfig().GetVkeyMinigun();
+		this->m_iVkeyFireMode = this->m_pTheApp->GetConfig().GetVkeyMode();
+		this->m_iVkeyCannon = this->m_pTheApp->GetConfig().GetVkeyCannon();
+		this->m_iVkeyBlast = this->m_pTheApp->GetConfig().GetVkeyBlast();
 
 		/** SETTINGS **/
 
@@ -576,9 +586,6 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 				}
 
 				this->m_pPlayerController->Create(this->m_pPlayer);
-
-				// player ship control keys
-				this->m_pTheApp->GetConfig().SetVkeys();
 
 				break;
 
@@ -5527,25 +5534,13 @@ void CTheGame::PlayerShooting(float fFrametime)
 	if (bCheckKeyboard)
 	{
 		// read minigun button
-		if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyMinigun()))
-		{
-			bInputMinigun = true;
-		}
+		bInputMinigun = (GetAsyncKeyState(this->m_iVkeyMinigun) & 0x8000);
 		// read fire mode button
-		if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyMode()))
-		{
-			bInputFireMode = true;
-		}
+		bInputFireMode = (GetAsyncKeyState(this->m_iVkeyFireMode) & 0x8000);
 		// read cannon button
-		if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyCannon()))
-		{
-			bInputCannon = true;
-		}
+		bInputCannon = (GetAsyncKeyState(this->m_iVkeyCannon) & 0x8000);
 		// read blast button
-		if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyBlast()))
-		{
-			bInputBlast = true;
-		}
+		bInputBlast = (GetAsyncKeyState(this->m_iVkeyBlast) & 0x8000);
 	}
 
 	// updates button timers to avoid

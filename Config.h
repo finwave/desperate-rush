@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <malloc.h>
+#include <cstring>
 #include <fstream>
 #include <filesystem>
 
@@ -82,13 +83,7 @@ public:
 	 */
 	void RemoveDuplicate(int button);
 
-	bool ButtonEmpty(void);
-
-	/**
-	 * SetVkey
-	 * sets member values (integer) describing virtual-keys of player controls
-	 */
-	void SetVkeys(void);
+	bool ButtonEmpty();
 
 	inline eANTIALIASING GetAntialiasing() { return this->m_eAntialiasing; }
 	inline void SetAntialiasing(eANTIALIASING eAntialiasing) { this->m_eAntialiasing = eAntialiasing; }
@@ -109,6 +104,12 @@ private:
 	void CheckAntialiasing();
 	void CheckSpecularLighting();
 	void CheckControls();
+
+	/**
+	 * SetVkey
+	 * sets member values (integer) describing virtual-keys of player controls
+	 */
+	void SetVkeys();
 
 	/**
 	 * HexStringToInt

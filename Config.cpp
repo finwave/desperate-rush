@@ -1,3 +1,4 @@
+#include "TextUtils.h"
 #include "Config.h"
 
 CConfig::CConfig(void)
@@ -337,9 +338,10 @@ void CConfig::Load(void)
 		this->CheckSpecularLighting();
 		this->CheckControls();
 
+		SetVkeys();
+
 		this->m_bSuccess = true;
 	}
-
 	// create a default 'config.cfg' file
 	else
 	{
@@ -439,8 +441,9 @@ void CConfig::Save(void)
 
 		fileOut.close();
 		m_bSuccess = true;
-	}
 
+		SetVkeys();
+	}
 	else
 	{
 		m_bSuccess = false;
@@ -449,114 +452,14 @@ void CConfig::Save(void)
 
 void CConfig::DefaultAll(void)
 {
-	std::ofstream fileOut;
-	fileOut.open("config.cfg");
+	DefaultAudio();
+	DefaultAntialiasing();
+	DefaultSpecularLighting();
+	DefaultControls();
 
-	// file created successfully
-	if(fileOut.is_open())
-	{
-		// writes all default values to 'config.cfg' file
+	SetVkeys();
 
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=85";
-		fileOut<<"\n";
-		fileOut<<"sound effect=100";
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"antialiasing=0";
-		fileOut<<"\n";
-		fileOut<<"specular lighting=0";
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=0x26";
-		fileOut<<"\n";
-		fileOut<<"down=0x28";
-		fileOut<<"\n";
-		fileOut<<"left=0x25";
-		fileOut<<"\n";
-		fileOut<<"right=0x27";
-		fileOut<<"\n";
-		fileOut<<"fire mode=0x10";
-		fileOut<<"\n";
-		fileOut<<"minigun=0x11";
-		fileOut<<"\n";
-		fileOut<<"cannon=0x0D";
-		fileOut<<"\n";
-		fileOut<<"blast=0x20";
-		fileOut<<"\n";
-
-		fileOut.close();
-
-		// sets default values to member variables
-
-		this->m_iVolumeMusic = 85;
-		this->m_iVolumeSoundEffect = 100;
-
-		this->m_eAntialiasing = eANTIALIASING_0X;
-		this->m_eSpecularLighting = eSPECULAR_LIGHTING_OFF;
-
-		this->m_strUp[0] = '0';
-		this->m_strUp[1] = 'x';
-		this->m_strUp[2] = '2';
-		this->m_strUp[3] = '6';
-
-		this->m_strDown[0] = '0';
-		this->m_strDown[1] = 'x';
-		this->m_strDown[2] = '2';
-		this->m_strDown[3] = '8';
-
-		this->m_strLeft[0] = '0';
-		this->m_strLeft[1] = 'x';
-		this->m_strLeft[2] = '2';
-		this->m_strLeft[3] = '5';
-
-		this->m_strRight[0] = '0';
-		this->m_strRight[1] = 'x';
-		this->m_strRight[2] = '2';
-		this->m_strRight[3] = '7';
-
-		this->m_strFireMode[0] = '0';
-		this->m_strFireMode[1] = 'x';
-		this->m_strFireMode[2] = '1';
-		this->m_strFireMode[3] = '0';
-
-		this->m_strMinigun[0] = '0';
-		this->m_strMinigun[1] = 'x';
-		this->m_strMinigun[2] = '1';
-		this->m_strMinigun[3] = '1';
-
-		this->m_strCannon[0] = '0';
-		this->m_strCannon[1] = 'x';
-		this->m_strCannon[2] = '0';
-		this->m_strCannon[3] = 'D';
-
-		this->m_strBlast[0] = '0';
-		this->m_strBlast[1] = 'x';
-		this->m_strBlast[2] = '2';
-		this->m_strBlast[3] = '0';
-
-		m_bSuccess = true;
-	}
-
-	else
-	{
-		m_bSuccess = false;
-	}
+	m_bSuccess = true;
 }
 
 void CConfig::DefaultAudio()
@@ -579,7 +482,7 @@ void CConfig::DefaultAudio()
 		fileOut<<"\n";
 		fileOut<<"-----";
 		fileOut<<"\n\n";
-		fileOut<<"music=85";
+		fileOut<<"music=100";
 		fileOut<<"\n";
 		fileOut<<"sound effect=100";
 		fileOut<<"\n\n";
@@ -625,7 +528,7 @@ void CConfig::DefaultAudio()
 		fileOut.close();
 
 		// sets default values to member variables
-		this->m_iVolumeMusic = 85;
+		this->m_iVolumeMusic = 100;
 		this->m_iVolumeSoundEffect = 100;
 
 		m_bSuccess = true;
@@ -854,45 +757,16 @@ void CConfig::DefaultControls()
 
 		// sets default values to member variables
 
-		this->m_strUp[0] = '0';
-		this->m_strUp[1] = 'x';
-		this->m_strUp[2] = '2';
-		this->m_strUp[3] = '6';
+		this->m_strUp = TextUtils::ConstCharToChar("0x26", this->m_strUp);
+		this->m_strDown = TextUtils::ConstCharToChar("0x28", this->m_strDown);
+		this->m_strLeft = TextUtils::ConstCharToChar("0x25", this->m_strLeft);
+		this->m_strRight = TextUtils::ConstCharToChar("0x27", this->m_strRight);
+		this->m_strFireMode = TextUtils::ConstCharToChar("0x10", this->m_strFireMode);
+		this->m_strMinigun = TextUtils::ConstCharToChar("0x11", this->m_strMinigun);
+		this->m_strCannon = TextUtils::ConstCharToChar("0x0D", this->m_strCannon);
+		this->m_strBlast = TextUtils::ConstCharToChar("0x20", this->m_strBlast);
 
-		this->m_strDown[0] = '0';
-		this->m_strDown[1] = 'x';
-		this->m_strDown[2] = '2';
-		this->m_strDown[3] = '8';
-
-		this->m_strLeft[0] = '0';
-		this->m_strLeft[1] = 'x';
-		this->m_strLeft[2] = '2';
-		this->m_strLeft[3] = '5';
-
-		this->m_strRight[0] = '0';
-		this->m_strRight[1] = 'x';
-		this->m_strRight[2] = '2';
-		this->m_strRight[3] = '7';
-
-		this->m_strFireMode[0] = '0';
-		this->m_strFireMode[1] = 'x';
-		this->m_strFireMode[2] = '1';
-		this->m_strFireMode[3] = '0';
-
-		this->m_strMinigun[0] = '0';
-		this->m_strMinigun[1] = 'x';
-		this->m_strMinigun[2] = '1';
-		this->m_strMinigun[3] = '1';
-
-		this->m_strCannon[0] = '0';
-		this->m_strCannon[1] = 'x';
-		this->m_strCannon[2] = '0';
-		this->m_strCannon[3] = 'D';
-
-		this->m_strBlast[0] = '0';
-		this->m_strBlast[1] = 'x';
-		this->m_strBlast[2] = '2';
-		this->m_strBlast[3] = '0';
+		SetVkeys();
 
 		m_bSuccess = true;
 	}
@@ -937,6 +811,15 @@ void CConfig::CheckSpecularLighting()
 
 void CConfig::CheckControls()
 {
+	this->m_strUp = TextUtils::SubstrFromChar(this->m_strUp, 4);
+	this->m_strDown = TextUtils::SubstrFromChar(this->m_strDown, 4);
+	this->m_strLeft = TextUtils::SubstrFromChar(this->m_strLeft, 4);
+	this->m_strRight = TextUtils::SubstrFromChar(this->m_strRight, 4);
+	this->m_strFireMode = TextUtils::SubstrFromChar(this->m_strFireMode, 4);
+	this->m_strMinigun = TextUtils::SubstrFromChar(this->m_strMinigun, 4);
+	this->m_strCannon = TextUtils::SubstrFromChar(this->m_strCannon, 4);
+	this->m_strBlast = TextUtils::SubstrFromChar(this->m_strBlast, 4);
+
 	bool bValid = true;
 
 	// checks next control value if still valid

@@ -72,6 +72,12 @@ private:
 
 	float					m_fRotationSpeed;
 	float					m_fMaxRotation;
-
 	float					m_fAngleY;
+
+	// keyboard virtual key values
+
+	int						m_iVkeyUp;
+	int						m_iVkeyDown;
+	int						m_iVkeyLeft;
+	int						m_iVkeyRight;
 };

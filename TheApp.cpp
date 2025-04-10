@@ -721,7 +721,7 @@ void CTheApp::UpdateCharCursor(void)
 
 char* CTheApp::GetButtonPress(void)
 {
-	char* hex = NULL;
+	char* pHex = NULL;
 
 	if(SUCCEEDED(m_Keyboard.Update()))
 	{
@@ -729,22 +729,26 @@ char* CTheApp::GetButtonPress(void)
 		{
 			if(m_Keyboard.GetButton(i))
 			{
-				hex = m_keyReference.GetHex(i);
-
-				// ends for-loop
-				i = m_Keyboard.GetButtonCount();
+				pHex = m_keyReference.GetHex(i);
 
 				// button pressed is not supported by the game
 				// doesn't have a valid hex value in m_keyReference object
-				if(hex[2] == 'Í' || hex[3] == 'Í')
+				if(pHex[2] == 'Í' || pHex[3] == 'Í')
 				{
-					hex = NULL;
+					pHex = NULL;
 				}
+
+				break;
 			}
 		}
 	}
 
-	return hex;
+	if (pHex != NULL)
+	{
+		pHex = TextUtils::SubstrFromChar(pHex, 4);
+	}
+
+	return pHex;
 }
 
 int CTheApp::GetVolumeMusic()

@@ -37,8 +37,12 @@ CPlayerController::CPlayerController(CTheApp* pTheApp,
 
 	this->m_fRotationSpeed = 1.7f;
 	this->m_fMaxRotation = 0.65f;
-
 	this->m_fAngleY = 0.0f;
+
+	this->m_iVkeyUp = this->m_pTheApp->GetConfig().GetVkeyUp();
+	this->m_iVkeyDown = this->m_pTheApp->GetConfig().GetVkeyDown();
+	this->m_iVkeyLeft = this->m_pTheApp->GetConfig().GetVkeyLeft();
+	this->m_iVkeyRight = this->m_pTheApp->GetConfig().GetVkeyRight();
 }
 
 CPlayerController::~CPlayerController(void)
@@ -402,9 +406,8 @@ void CPlayerController::CheckControlsFirst()
 			{
 				bInputUp = true;
 			}
-
 			// read backward movement control
-			if (iJoystickY > 0)
+			else if (iJoystickY > 0)
 			{
 				bInputDown = true;
 			}
@@ -414,9 +417,8 @@ void CPlayerController::CheckControlsFirst()
 			{
 				bInputLeft = true;
 			}
-
 			// read right movement control
-			if (iJoystickX > 0)
+			else if (iJoystickX > 0)
 			{
 				bInputRight = true;
 			}
@@ -430,29 +432,10 @@ void CPlayerController::CheckControlsFirst()
 
 		if (bCheckKeyboard)
 		{
-			// read forward movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyUp()))
-			{
-				bInputUp = true;
-			}
-
-			// read backward movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyDown()))
-			{
-				bInputDown = true;
-			}
-
-			// read left movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyLeft()))
-			{
-				bInputLeft = true;
-			}
-
-			// read right movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyRight()))
-			{
-				bInputRight = true;
-			}
+			bInputUp = (GetAsyncKeyState(this->m_iVkeyUp) & 0x8000);
+			bInputDown = (GetAsyncKeyState(this->m_iVkeyDown) & 0x8000);
+			bInputLeft = (GetAsyncKeyState(this->m_iVkeyLeft) & 0x8000);
+			bInputRight = (GetAsyncKeyState(this->m_iVkeyRight) & 0x8000);
 		}
 
 		if (bInputUp)
@@ -462,6 +445,7 @@ void CPlayerController::CheckControlsFirst()
 				this->m_bMoveUp = true;
 				this->m_eMove = eMOVE_UP;
 			}
+
 			// left and right movement keys are not pressed
 			if (!bInputLeft && !bInputRight)
 			{
@@ -495,6 +479,7 @@ void CPlayerController::CheckControlsFirst()
 				this->m_bMoveDown = true;
 				this->m_eMove = eMOVE_DOWN;
 			}
+
 			// left and right movement keys are not pressed
 			if (!bInputLeft && !bInputRight)
 			{
@@ -605,6 +590,7 @@ void CPlayerController::CheckControlsLast(CPlayer* pPlayer)
 		{
 			bCheckJoystick = true;
 		}
+
 		if (bCheckJoystick)
 		{
 			int iJoystickX = this->m_pJoystick->GetState().lX;
@@ -616,70 +602,49 @@ void CPlayerController::CheckControlsLast(CPlayer* pPlayer)
 				bInputUp = true;
 			}
 			// read backward movement control
-			if (iJoystickY > 0)
+			else if (iJoystickY > 0)
 			{
 				bInputDown = true;
 			}
+
 			// read left movement control
 			if (iJoystickX < 0)
 			{
 				bInputLeft = true;
 			}
 			// read right movement control
-			if (iJoystickX > 0)
+			else if (iJoystickX > 0)
 			{
 				bInputRight = true;
 			}
+
 			// joystick has priority over keyboard
 			if (bInputUp || bInputDown || bInputLeft || bInputRight)
 			{
 				bCheckKeyboard = false;
 			}
 		}
+
 		if (bCheckKeyboard)
 		{
-			// read forward movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyUp()))
-			{
-				bInputUp = true;
-			}
-			// read backward movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyDown()))
-			{
-				bInputDown = true;
-			}
-			// read left movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyLeft()))
-			{
-				bInputLeft = true;
-			}
-			// read right movement control
-			if (::GetAsyncKeyState(this->m_pTheApp->GetConfig().GetVkeyRight()))
-			{
-				bInputRight = true;
-			}
+			bInputUp = (GetAsyncKeyState(this->m_iVkeyUp) & 0x8000);
+			bInputDown = (GetAsyncKeyState(this->m_iVkeyDown) & 0x8000);
+			bInputLeft = (GetAsyncKeyState(this->m_iVkeyLeft) & 0x8000);
+			bInputRight = (GetAsyncKeyState(this->m_iVkeyRight) & 0x8000);
 		}
-		if (!bInputUp)
-		{
-			this->m_bMoveUp = false;
 
+		this->m_bMoveUp = bInputUp;
+		this->m_bMoveDown = bInputDown;
+		this->m_bMoveLeft = bInputLeft;
+		this->m_bMoveRight = bInputRight;
+
+		if (!this->m_bMoveUp)
+		{
 			if (pPlayer->IsVelocityControl())
 			{
 				pPlayer->DisableBoostIncrease();
 				pPlayer->SetBoostSoundCheck();
 			}
-		}
-		if (!bInputDown)
-		{
-			this->m_bMoveDown = false;
-		}
-		if (!bInputLeft)
-		{
-			this->m_bMoveLeft = false;
-		}
-		if (!bInputRight)
-		{
-			this->m_bMoveRight = false;
 		}
 	}
 	else
