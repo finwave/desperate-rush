@@ -62,6 +62,38 @@ std::string TextUtils::WcharToString(const std::wstring& s)
 	return TextUtils::s_tempString;
 }
 
+char* TextUtils::SubstrFromChar(char* my_char, int new_length)
+{
+	int len = strlen(my_char) + 1;
+	std::string my_string(my_char, len);
+
+	if (new_length > len)
+	{
+		new_length = len;
+	}
+
+	std::string sub_string = my_string.substr(0, new_length);
+	const char* sub_char = sub_string.c_str();
+
+	my_char = ConstCharToChar(sub_char, my_char);
+	return my_char;
+}
+
+char* TextUtils::ConstCharToChar(const char* const_char, char* my_char)
+{
+	if (my_char != NULL)
+	{
+		delete[] my_char;
+		my_char = NULL;
+	}
+
+	int len = strlen(const_char) + 1;
+	my_char = new char[len];
+
+	strncpy_s(my_char, len, const_char, len);
+	return my_char;
+}
+
 std::string TextUtils::IntToString(int iNumber)
 {
 	std::stringstream ss;

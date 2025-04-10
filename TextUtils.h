@@ -6,6 +6,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <sstream>
 
 // include all windows specific stuff
@@ -23,6 +24,9 @@ public:
 	static LPCWSTR StringToLPCWSTR(const std::string& s);
 
 	static std::string WcharToString(const std::wstring& s);
+
+	static char* SubstrFromChar(char* source, int new_length);
+	static char* ConstCharToChar(const char* const_char, char* my_char);
 
 	static std::string IntToString(int iNumber);
 	static std::string IntToHex(int iNumber);
