@@ -3112,21 +3112,21 @@ void CTheGame::Release()
 
 	/* LAUNCH ENEMIES */
 
-	for (int i = 0; i < this->m_vTemplateEnemyDroneLaunch.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateEnemyDroneLaunch.size(); i++)
 	{
 		this->m_vTemplateEnemyDroneLaunch[i]->Release();
 		delete this->m_vTemplateEnemyDroneLaunch[i];
 		this->m_vTemplateEnemyDroneLaunch[i] = NULL;
 	}
 
-	for (int i = 0; i < this->m_vTemplateEnemySniperLaunch.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateEnemySniperLaunch.size(); i++)
 	{
 		this->m_vTemplateEnemySniperLaunch[i]->Release();
 		delete this->m_vTemplateEnemySniperLaunch[i];
 		this->m_vTemplateEnemySniperLaunch[i] = NULL;
 	}
 
-	for (int i = 0; i < this->m_vTemplateEnemyRollerLaunch.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateEnemyRollerLaunch.size(); i++)
 	{
 		this->m_vTemplateEnemyRollerLaunch[i]->Release();
 		delete this->m_vTemplateEnemyRollerLaunch[i];
@@ -3134,7 +3134,7 @@ void CTheGame::Release()
 	}
 
 	/*
-	for (int i = 0; i < this->m_vTemplateEnemyGuardLaunch.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateEnemyGuardLaunch.size(); i++)
 	{
 		this->m_vTemplateEnemyGuardLaunch[i]->Release();
 		delete this->m_vTemplateEnemyGuardLaunch[i];
@@ -3206,21 +3206,21 @@ void CTheGame::Release()
 
 	/* OBSTACLES */
 
-	for (int i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
 	{
 		this->m_vTemplateAsteroidBig[i]->Release();
 		delete this->m_vTemplateAsteroidBig[i];
 		this->m_vTemplateAsteroidBig[i] = NULL;
 	}
 
-	for (int i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
 	{
 		this->m_vTemplateAsteroidMedium[i]->Release();
 		delete this->m_vTemplateAsteroidMedium[i];
 		this->m_vTemplateAsteroidMedium[i] = NULL;
 	}
 
-	for (int i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
+	for (DWORD i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
 	{
 		this->m_vTemplateAsteroidSmall[i]->Release();
 		delete this->m_vTemplateAsteroidSmall[i];
@@ -13847,7 +13847,7 @@ HRESULT CTheGame::CreateCollisionMeshEnemies()
 	{
 	case LOAD_TEMPLATE_SHIP_COLLISION_MESH_LAUNCH_DRONE:
 
-		for (int i = 0; i < this->m_vTemplateEnemyDroneLaunch.size(); i++)
+		for (DWORD i = 0; i < this->m_vTemplateEnemyDroneLaunch.size(); i++)
 		{
 			hres = this->m_vTemplateEnemyDroneLaunch[i]->CreateCollisionMesh();
 		}
@@ -13855,7 +13855,7 @@ HRESULT CTheGame::CreateCollisionMeshEnemies()
 
 	case LOAD_TEMPLATE_SHIP_COLLISION_MESH_LAUNCH_SNIPER:
 
-		for (int i = 0; i < this->m_vTemplateEnemySniperLaunch.size(); i++)
+		for (DWORD i = 0; i < this->m_vTemplateEnemySniperLaunch.size(); i++)
 		{
 			hres = this->m_vTemplateEnemySniperLaunch[i]->CreateCollisionMesh();
 		}
@@ -13863,7 +13863,7 @@ HRESULT CTheGame::CreateCollisionMeshEnemies()
 
 	case LOAD_TEMPLATE_SHIP_COLLISION_MESH_LAUNCH_ROLLER:
 
-		for (int i = 0; i < this->m_vTemplateEnemyRollerLaunch.size(); i++)
+		for (DWORD i = 0; i < this->m_vTemplateEnemyRollerLaunch.size(); i++)
 		{
 			hres = this->m_vTemplateEnemyRollerLaunch[i]->CreateCollisionMesh();
 		}
@@ -13871,7 +13871,7 @@ HRESULT CTheGame::CreateCollisionMeshEnemies()
 
 	case LOAD_TEMPLATE_SHIP_COLLISION_MESH_LAUNCH_GUARD:
 		/*
-		for (int i = 0; i < this->m_vTemplateEnemyGuardLaunch.size(); i++)
+		for (DWORD i = 0; i < this->m_vTemplateEnemyGuardLaunch.size(); i++)
 		{
 			hres = this->m_vTemplateEnemyGuardLaunch[i]->CreateCollisionMesh();
 		}
@@ -14046,7 +14046,7 @@ HRESULT CTheGame::CreateCollisionMeshObstacles()
 		{
 		case LOAD_LEVEL_ASTEROID_BIG:
 		
-			for (int i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
+			for (DWORD i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
 			{
 				hres = this->m_vTemplateAsteroidBig[i]->CreateCollisionMesh();
 			}
@@ -14054,7 +14054,7 @@ HRESULT CTheGame::CreateCollisionMeshObstacles()
 
 		case LOAD_LEVEL_ASTEROID_MEDIUM:
 
-			for (int i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
+			for (DWORD i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
 			{
 				hres = this->m_vTemplateAsteroidMedium[i]->CreateCollisionMesh();
 			}
@@ -14062,7 +14062,7 @@ HRESULT CTheGame::CreateCollisionMeshObstacles()
 
 		case LOAD_LEVEL_ASTEROID_SMALL:
 
-			for (int i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
+			for (DWORD i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
 			{
 				hres = this->m_vTemplateAsteroidSmall[i]->CreateCollisionMesh();
 			}
