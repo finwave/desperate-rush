@@ -121,6 +121,7 @@ CStateMenus::CStateMenus(void)
 
 	this->m_bMessageBoxEmpty = false;
 	this->m_bMessageBoxKey = false;
+	this->m_bMessageBoxKeyPause = false;
 
 	this->m_bChangeSpecularity = false;
 	this->m_bDisplayChangesExit = false;
@@ -798,21 +799,16 @@ void CStateMenus::OnKeyDown(DWORD dwKey)
 		this->m_bInputSelect = true;
 		m_eInputDevice = Keyboard;
 	}
-	else if (dwKey == VK_LEFT)
-	{
-		m_bInputLeft = true;
-		m_eInputDevice = Keyboard;
-	}
-	else if (dwKey == VK_RIGHT)
-	{
-		m_bInputRight = true;
-		m_eInputDevice = Keyboard;
-	}
-	else if ((dwKey == VK_UP) || (dwKey == VK_DOWN))
+	else if ((dwKey == VK_UP) || (dwKey == VK_DOWN) || (dwKey == VK_LEFT) || (dwKey == VK_RIGHT))
 	{
 		OnKeyboardMenuBrowse(dwKey);
 		m_eInputDevice = Keyboard;
 	}
+}
+
+void CStateMenus::OnKeyUp(DWORD dwKey)
+{
+	m_bMessageBoxKeyPause = false;
 }
 
 DWORD CStateMenus::Update(float fFrametime)
@@ -1253,7 +1249,7 @@ void CStateMenus::RenderInput()
 			// draw message box
 			this->m_pSpriteMessageInputKey->Draw(432, 450);
 
-			if (this->m_fBoxKeyTimer <= 0.0f)
+			if (!this->m_bMessageBoxKeyPause && (this->m_fBoxKeyTimer <= 0.0f))
 			{
 				pHex = this->GetApp()->GetButtonPress();
 
@@ -1316,8 +1312,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 1;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Down text
@@ -1332,8 +1327,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 2;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Left text
@@ -1348,8 +1342,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 3;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Right text
@@ -1364,8 +1357,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 4;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Fire mode text
@@ -1380,8 +1372,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 5;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Minigun text
@@ -1396,8 +1387,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 6;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Cannon text
@@ -1412,8 +1402,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 7;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Blast text
@@ -1428,8 +1417,7 @@ void CStateMenus::RenderInput()
 				if (IsValidSelectClick())
 				{
 					this->m_iControlInput = 8;
-					this->m_fBoxKeyTimer = 0.1f;
-					this->m_bMessageBoxKey = true;
+					ActivateInputKeyBox();
 				}
 			}
 			// mouse cursor is on top of Back text
@@ -2614,6 +2602,13 @@ void CStateMenus::OnBackAction()
 	}
 }
 
+void CStateMenus::ActivateInputKeyBox()
+{
+	this->m_fBoxKeyTimer = 0.1f;
+	this->m_bMessageBoxKey = true;
+	this->m_bMessageBoxKeyPause = true;
+}
+
 void CStateMenus::ResetPlayerInput()
 {
 	this->m_bIsClickPause = false;
@@ -2706,6 +2701,15 @@ bool CStateMenus::IsValidSelectClick()
 
 void CStateMenus::OnKeyboardMenuBrowse(DWORD dwKey)
 {
+	if (dwKey == VK_LEFT)
+	{
+		m_bInputLeft = true;
+	}
+	else if (dwKey == VK_RIGHT)
+	{
+		m_bInputRight = true;
+	}
+
 	if (this->m_bMessageBoxKey)
 	{
 		return;
@@ -2749,11 +2753,64 @@ void CStateMenus::OnKeyboardMenuBrowse(DWORD dwKey)
 		switch (dwKey)
 		{
 		case VK_UP:
-			intValue--;
+
+			if (m_eMenus == eMENUS::Input)
+			{
+				if ((m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Default) ||
+					(m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Back))
+				{
+					intValue = (int)eKEYBOARD_MENU_BROWSE::Input_Key_Blast;
+				}
+				else if (m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Up)
+				{
+					intValue = (int)eKEYBOARD_MENU_BROWSE::Input_Back;
+				}
+				else
+				{
+					intValue--;
+				}
+			}
+			else
+			{
+				intValue--;
+			}
 			break;
 
 		case VK_DOWN:
-			intValue++;
+
+			if (m_eMenus == eMENUS::Input)
+			{
+				if ((m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Default) ||
+					(m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Back))
+				{
+					intValue = (int)eKEYBOARD_MENU_BROWSE::Input_Key_Up;
+				}
+				else
+				{
+					intValue++;
+				}
+			}
+			else
+			{
+				intValue++;
+			}
+			break;
+
+		case VK_LEFT:
+		case VK_RIGHT:
+
+			if (m_eMenus == eMENUS::Input)
+			{
+				if (m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Default)
+				{
+					intValue = (int)eKEYBOARD_MENU_BROWSE::Input_Back;
+				}
+				else if (m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Back)
+				{
+					intValue = (int)eKEYBOARD_MENU_BROWSE::Input_Default;
+				}
+			}
+
 			break;
 		}
 

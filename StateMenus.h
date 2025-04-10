@@ -112,6 +112,13 @@ public:
 	 */
 	virtual void OnKeyDown(DWORD dwKey);
 
+	/**
+	 * OnKeyUp
+	 * virtual keyboard handler for the application states
+	 * @param dwKey keycode of the pressed key
+	 */
+	virtual void OnKeyUp(DWORD dwKey);
+
 #ifdef SHADOWS
 	virtual CShadowVolume* GetShadowVolumes();
 #endif
@@ -206,6 +213,7 @@ private:
 #endif
 
 	void OnBackAction();
+	void ActivateInputKeyBox();
 
 	void ResetPlayerInput();
 	void UpdatePlayerInput();
@@ -351,6 +359,7 @@ private:
 
 	bool					m_bMessageBoxEmpty;
 	bool					m_bMessageBoxKey;
+	bool					m_bMessageBoxKeyPause;
 
 	int						m_iAntialiasingCurrent;
 	bool					m_bChangeSpecularity;
