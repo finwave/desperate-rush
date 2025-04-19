@@ -48,7 +48,7 @@
 #define LOAD_MESH_MENUS_PLANET					36
 #define LOAD_MESH_MENUS_MAX						37
 
-#define LOAD_SPRITE_MENUS_MAX					47
+#define LOAD_SPRITE_MENUS_MAX					0
 
 #define MESH_SHADOW_COUNT_MENUS					7
 
@@ -280,75 +280,6 @@ private:
 
 	CLetter*				m_pLetters;
 	CNumber*				m_pNumbers;
-
-	// 2d sprites
-
-	CSprite*				m_pSpriteCursor;
-
-#ifdef MENUS_FOG
-	CSpriteScrolling*		m_pSpriteFogBack;
-	CSpriteScrolling*		m_pSpriteFogFront;
-#endif
-	
-	CSpriteScrolling*		m_pSpriteStarsFront;
-	CSpriteScrolling*		m_pSpriteStarsBack;
-	CSprite*				m_pSpriteMenuBackground;
-
-	CSprite*				m_pSpriteMenuTitleMain;
-	CSprite*				m_pSpriteMenuTitleHighscore;
-
-	CSprite*				m_pSpriteMenuMain;
-	CSprite*				m_pSpriteMenuOptions;
-	CSprite*				m_pSpriteMenuInput;
-	CSprite*				m_pSpriteMenuAudio;
-	CSprite*				m_pSpriteMenuDisplay;
-	CSprite*				m_pSpriteMenuHighscore;
-
-	CSprite*				m_pSpriteVideoAntialiasingBarBorder;
-	CSprite*				m_pSpriteVideoAntialiasingBar2x;
-	CSprite*				m_pSpriteVideoAntialiasingBar46x;
-	CSprite*				m_pSpriteVideoAntialiasingBar8x;
-
-	CSprite*				m_pSpriteArrowInput;
-	CSprite*				m_pSpriteArrowAntialiasingNormalLeft;
-	CSprite*				m_pSpriteArrowAntialiasingNormalRight;
-	CSprite*				m_pSpriteArrowAntialiasingGlowLeft;
-	CSprite*				m_pSpriteArrowAntialiasingGlowRight;
-	CSprite*				m_pSpriteArrowAntialiasingHideLeft;
-	CSprite*				m_pSpriteArrowAntialiasingHideRight;
-
-	CSprite*				m_pSpriteSpecularLightingOn;
-	CSprite*				m_pSpriteSpecularLightingOnGlow;
-	CSprite*				m_pSpriteSpecularLightingOff;
-	CSprite*				m_pSpriteSpecularLightingOffGlow;
-
-	CSprite*				m_pSpriteMessageInputEmpty;
-	CSprite*				m_pSpriteMessageInputKey;
-	CSprite*				m_pSpriteMessageRestart;
-	CSprite*				m_pSpriteMessageOK1;
-	CSprite*				m_pSpriteMessageOK2;
-
-	CSprite*				m_pSpriteUnderlineAudio;
-	CSprite*				m_pSpriteUnderlineBack;
-	CSprite*				m_pSpriteUnderlineDefault;
-	CSprite*				m_pSpriteUnderlineDisplay;
-	CSprite*				m_pSpriteUnderlineExit;
-	CSprite*				m_pSpriteUnderlineHighscore;
-	CSprite*				m_pSpriteUnderlineInput;
-	CSprite*				m_pSpriteUnderlineNewgame;
-	CSprite*				m_pSpriteUnderlineOptions;
-
-#ifdef MENU_CREDITS
-	CSprite*				m_pSpriteUnderlineCredits;
-
-	CSprite*				m_pSpriteCreditsBackLayer;
-	CSpriteScrolling*		m_pSpriteCreditsText;
-#endif
-
-	CSprite*				m_pSpriteVersion;
-
-	CSprite*				m_pSpriteAudioBarBorder;
-	CSprite*				m_pSpriteAudioBarMeter;
 
 	bool					m_bFadeOutMusic;
 	float					m_fPauseFadeOut;

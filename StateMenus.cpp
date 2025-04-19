@@ -46,72 +46,6 @@ CStateMenus::CStateMenus(void)
 	this->m_pLetters = NULL;
 	this->m_pNumbers = NULL;
 
-	this->m_pSpriteCursor = NULL;
-
-#ifdef MENUS_FOG
-	this->m_pSpriteFogBack = NULL;
-	this->m_pSpriteFogFront = NULL;
-#endif
-
-	this->m_pSpriteStarsFront = NULL;
-	this->m_pSpriteStarsBack = NULL;
-	this->m_pSpriteMenuBackground = NULL;
-
-	this->m_pSpriteMenuTitleMain = NULL;
-	this->m_pSpriteMenuTitleHighscore = NULL;
-
-	this->m_pSpriteMenuMain = NULL;
-	this->m_pSpriteMenuOptions = NULL;
-	this->m_pSpriteMenuInput = NULL;
-	this->m_pSpriteMenuAudio = NULL;
-	this->m_pSpriteMenuDisplay = NULL;
-	this->m_pSpriteMenuHighscore = NULL;
-
-	this->m_pSpriteAudioBarBorder = NULL;
-	this->m_pSpriteAudioBarMeter = NULL;
-	this->m_pSpriteVideoAntialiasingBarBorder = NULL;
-	this->m_pSpriteVideoAntialiasingBar2x = NULL;
-	this->m_pSpriteVideoAntialiasingBar46x = NULL;
-	this->m_pSpriteVideoAntialiasingBar8x = NULL;
-
-	this->m_pSpriteArrowInput = NULL;
-	this->m_pSpriteArrowAntialiasingNormalLeft = NULL;
-	this->m_pSpriteArrowAntialiasingNormalRight = NULL;
-	this->m_pSpriteArrowAntialiasingGlowLeft = NULL;
-	this->m_pSpriteArrowAntialiasingGlowRight = NULL;
-	this->m_pSpriteArrowAntialiasingHideLeft = NULL;
-	this->m_pSpriteArrowAntialiasingHideRight = NULL;
-
-	this->m_pSpriteSpecularLightingOn = NULL;
-	this->m_pSpriteSpecularLightingOnGlow = NULL;
-	this->m_pSpriteSpecularLightingOff = NULL;
-	this->m_pSpriteSpecularLightingOffGlow = NULL;
-
-	this->m_pSpriteMessageInputEmpty = NULL;
-	this->m_pSpriteMessageInputKey = NULL;
-	this->m_pSpriteMessageRestart = NULL;
-	this->m_pSpriteMessageOK1 = NULL;
-	this->m_pSpriteMessageOK2 = NULL;
-
-	this->m_pSpriteUnderlineAudio = NULL;
-	this->m_pSpriteUnderlineBack = NULL;
-	this->m_pSpriteUnderlineDefault = NULL;
-	this->m_pSpriteUnderlineExit = NULL;
-	this->m_pSpriteUnderlineHighscore = NULL;
-	this->m_pSpriteUnderlineInput = NULL;
-	this->m_pSpriteUnderlineNewgame = NULL;
-	this->m_pSpriteUnderlineOptions = NULL;
-	this->m_pSpriteUnderlineDisplay = NULL;
-
-#ifdef MENU_CREDITS
-	this->m_pSpriteUnderlineCredits = NULL;
-
-	this->m_pSpriteCreditsBackLayer = NULL;
-	this->m_pSpriteCreditsText = NULL;
-#endif
-
-	this->m_pSpriteVersion = NULL;
-
 	this->m_bFadeOutMusic = true;
 	this->m_fPauseFadeOut = 0.025f;
 	this->m_fPauseFadeOutLast = 0.1f;
@@ -399,8 +333,8 @@ HRESULT CStateMenus::InitState(DWORD dwState)
 
 		for (int i = 0; i < DISPLAY_NUMBER_COUNT_MENUS; i++)
 		{
-			hres = (this->m_pNumbers + i)->Create(this->m_pXFile[i + 26].GetMesh(),
-				this->m_pXFile[i + 26],
+			hres = (this->m_pNumbers + i)->Create(this->m_pXFile[i + DISPLAY_LETTER_COUNT_MENUS].GetMesh(),
+				this->m_pXFile[i + DISPLAY_LETTER_COUNT_MENUS],
 				this->m_fNumberWidth,
 				10.0f,
 				false,
@@ -907,11 +841,11 @@ void CStateMenus::Render()
 
 	if (m_eMenus == Highscore)
 	{
-		m_pSpriteMenuTitleHighscore->Draw(0, 0);
+		this->m_pResourceMenus->m_pSpriteMenuTitleHighscore->Draw(0, 0);
 	}
 	else
 	{
-		m_pSpriteMenuTitleMain->Draw(0, 0);
+		this->m_pResourceMenus->m_pSpriteMenuTitleMain->Draw(0, 0);
 	}
 
 	// render menu content
@@ -963,7 +897,7 @@ void CStateMenus::Render()
 	// render mouse cursor
 	if((m_eInputDevice != Keyboard) && (m_eMenus != New_Game) && (m_eMenus != Exit))
 	{
-		m_pSpriteCursor->Draw(GetApp()->GetMouseX(), GetApp()->GetMouseY());
+		this->m_pResourceMenus->m_pSpriteCursor->Draw(GetApp()->GetMouseX(), GetApp()->GetMouseY());
 	}
 
 	ResetPlayerInput();
@@ -1007,7 +941,7 @@ void CStateMenus::RenderNewGame(float fFrametime)
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuMain->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 	// draw game version
 	this->RenderGameVersion();
 	// draw fade-out
@@ -1032,7 +966,7 @@ void CStateMenus::RenderMain()
 		this->GetApp()->GetMouseY() > 375 && GetApp()->GetMouseY() < 404) )
 	{
 		// draw underline
-		this->m_pSpriteUnderlineNewgame->Draw(395, 414);
+		this->m_pResourceMenus->m_pSpriteUnderlineNewgame->Draw(395, 414);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1056,7 +990,7 @@ void CStateMenus::RenderMain()
 			this->GetApp()->GetMouseY() > 449 && this->GetApp()->GetMouseY() < 478))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineOptions->Draw(429, 488);
+		this->m_pResourceMenus->m_pSpriteUnderlineOptions->Draw(429, 488);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1075,7 +1009,7 @@ void CStateMenus::RenderMain()
 			this->GetApp()->GetMouseY() > 522 && this->GetApp()->GetMouseY() < 552))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineHighscore->Draw(405, 562);
+		this->m_pResourceMenus->m_pSpriteUnderlineHighscore->Draw(405, 562);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1097,7 +1031,7 @@ void CStateMenus::RenderMain()
 			this->GetApp()->GetMouseY() > 546 && this->GetApp()->GetMouseY() < 577))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineCredits->Draw(434, 586);
+		this->m_pResourceMenus->m_pSpriteUnderlineCredits->Draw(434, 586);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1116,7 +1050,7 @@ void CStateMenus::RenderMain()
 			this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineExit->Draw(470, 713);
+		this->m_pResourceMenus->m_pSpriteUnderlineExit->Draw(470, 713);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1126,7 +1060,7 @@ void CStateMenus::RenderMain()
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuMain->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 }
 
 void CStateMenus::RenderOptions()
@@ -1137,7 +1071,7 @@ void CStateMenus::RenderOptions()
 		this->GetApp()->GetMouseY() > 374 && this->GetApp()->GetMouseY() < 405))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineInput->Draw(457, 414);
+		this->m_pResourceMenus->m_pSpriteUnderlineInput->Draw(457, 414);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1158,7 +1092,7 @@ void CStateMenus::RenderOptions()
 			this->GetApp()->GetMouseY() > 448 && this->GetApp()->GetMouseY() < 479))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineAudio->Draw(452, 488);
+		this->m_pResourceMenus->m_pSpriteUnderlineAudio->Draw(452, 488);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1179,7 +1113,7 @@ void CStateMenus::RenderOptions()
 			this->GetApp()->GetMouseY() > 522 && this->GetApp()->GetMouseY() < 553))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineDisplay->Draw(433, 562);
+		this->m_pResourceMenus->m_pSpriteUnderlineDisplay->Draw(433, 562);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1198,7 +1132,7 @@ void CStateMenus::RenderOptions()
 			this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineBack->Draw(458, 713);
+		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1208,7 +1142,7 @@ void CStateMenus::RenderOptions()
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuOptions->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuOptions->Draw(0,0);
 }
 
 void CStateMenus::RenderInput()
@@ -1220,9 +1154,9 @@ void CStateMenus::RenderInput()
 	if(this->m_bMessageBoxEmpty)
 	{
 		// draw message box
-		this->m_pSpriteMessageInputEmpty->Draw(432, 422);
+		this->m_pResourceMenus->m_pSpriteMessageInputEmpty->Draw(432, 422);
 		// draw message box OK 1 text
-		this->m_pSpriteMessageOK1->Draw(496, 503);
+		this->m_pResourceMenus->m_pSpriteMessageOK1->Draw(496, 503);
 
 		// mouse cursor is on top of message box OK text
 		if((m_eInputDevice == eINPUT_DEVICE::Keyboard) || (m_eInputDevice != eINPUT_DEVICE::Keyboard && 
@@ -1230,7 +1164,7 @@ void CStateMenus::RenderInput()
 			this->GetApp()->GetMouseY() > 505 && this->GetApp()->GetMouseY() < 519))
 		{
 			// draw message box OK 2 text
-			this->m_pSpriteMessageOK2->Draw(496, 503);
+			this->m_pResourceMenus->m_pSpriteMessageOK2->Draw(496, 503);
 
 			// select button is pressed
 			if(IsValidSelectClick())
@@ -1247,7 +1181,7 @@ void CStateMenus::RenderInput()
 		if (this->m_bMessageBoxKey)
 		{
 			// draw message box
-			this->m_pSpriteMessageInputKey->Draw(432, 450);
+			this->m_pResourceMenus->m_pSpriteMessageInputKey->Draw(432, 450);
 
 			if (!this->m_bMessageBoxKeyPause && (this->m_fBoxKeyTimer <= 0.0f))
 			{
@@ -1306,7 +1240,7 @@ void CStateMenus::RenderInput()
 				this->GetApp()->GetMouseY() > 401 && this->GetApp()->GetMouseY() < 421))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 402);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 402);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1321,7 +1255,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 428 && this->GetApp()->GetMouseY() < 449))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 429);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 429);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1336,7 +1270,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 457 && this->GetApp()->GetMouseY() < 477))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 458);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 458);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1351,7 +1285,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 485 && this->GetApp()->GetMouseY() < 505))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 486);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 486);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1366,7 +1300,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 513 && this->GetApp()->GetMouseY() < 533))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 514);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 514);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1381,7 +1315,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 541 && this->GetApp()->GetMouseY() < 561))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 542);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 542);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1396,7 +1330,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 569 && this->GetApp()->GetMouseY() < 589))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 570);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 570);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1411,7 +1345,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 597 && this->GetApp()->GetMouseY() < 617))
 			{
 				// draw arrow
-				this->m_pSpriteArrowInput->Draw(235, 598);
+				this->m_pResourceMenus->m_pSpriteArrowInput->Draw(235, 598);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1426,7 +1360,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 			{
 				// draw underline
-				this->m_pSpriteUnderlineBack->Draw(367, 713);
+				this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(367, 713);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1440,7 +1374,7 @@ void CStateMenus::RenderInput()
 					 this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 			{
 				// draw underline
-				this->m_pSpriteUnderlineDefault->Draw(559, 713);
+				this->m_pResourceMenus->m_pSpriteUnderlineDefault->Draw(559, 713);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1456,7 +1390,7 @@ void CStateMenus::RenderInput()
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuInput->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuInput->Draw(0,0);
 }
 
 void CStateMenus::RenderAudio(float fFrametime)
@@ -1615,7 +1549,7 @@ void CStateMenus::RenderAudio(float fFrametime)
 			this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineBack->Draw(458, 713);
+		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1625,7 +1559,7 @@ void CStateMenus::RenderAudio(float fFrametime)
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuAudio->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuAudio->Draw(0,0);
 }
 
 void CStateMenus::RenderDisplay()
@@ -1635,17 +1569,17 @@ void CStateMenus::RenderDisplay()
 	if(this->m_bDisplayChangesExit)
 	{
 		// draw restart box
-		this->m_pSpriteMessageRestart->Draw(371,397);
+		this->m_pResourceMenus->m_pSpriteMessageRestart->Draw(371,397);
 
 		// draw OK text
 		if(this->GetApp()->GetMouseX() > 498 && this->GetApp()->GetMouseX() < 526 && 
 			this->GetApp()->GetMouseY() > 480 && this->GetApp()->GetMouseY() < 495)
 		{
-			this->m_pSpriteMessageOK2->Draw(499,481);
+			this->m_pResourceMenus->m_pSpriteMessageOK2->Draw(499,481);
 		}
 		else
 		{
-			this->m_pSpriteMessageOK1->Draw(499,481);
+			this->m_pResourceMenus->m_pSpriteMessageOK1->Draw(499,481);
 		}
 
 		// mouse cursor is on top of OK text
@@ -1668,32 +1602,32 @@ void CStateMenus::RenderDisplay()
 	bool bShowArrow;
 
 	// draw antialiasing border
-	this->m_pSpriteVideoAntialiasingBarBorder->Draw(384,412);
+	this->m_pResourceMenus->m_pSpriteVideoAntialiasingBarBorder->Draw(384,412);
 
 	// draw currently selected antialiasing option
 
 	switch(this->GetApp()->GetConfig().GetAntialiasing())
 	{
 	case CConfig::eANTIALIASING_2X:
-		this->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
 		break;
 
 	case CConfig::eANTIALIASING_4X:
-		this->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
 		break;
 
 	case CConfig::eANTIALIASING_6X:
-		this->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
-		this->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
 		break;
 
 	case CConfig::eANTIALIASING_8X:
-		this->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
-		this->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
-		this->m_pSpriteVideoAntialiasingBar8x->Draw(574,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar8x->Draw(574,421);
 		break;
 	}
 
@@ -1714,7 +1648,7 @@ void CStateMenus::RenderDisplay()
 			this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441)
 		{
 			// draw glowing left arrow
-			this->m_pSpriteArrowAntialiasingGlowLeft->Draw(325,413);
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowLeft->Draw(325,413);
 
 			// select button is pressed
 			if(IsValidSelectClick())
@@ -1746,13 +1680,13 @@ void CStateMenus::RenderDisplay()
 		else
 		{
 			// draw normal left arrow
-			this->m_pSpriteArrowAntialiasingNormalLeft->Draw(333,421);
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalLeft->Draw(333,421);
 		}
 	}
 	else
 	{
 		// draw hidden left arrow
-		this->m_pSpriteArrowAntialiasingHideLeft->Draw(333,421);
+		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideLeft->Draw(333,421);
 	}
 
 	bShowArrow = false;
@@ -1797,7 +1731,7 @@ void CStateMenus::RenderDisplay()
 			this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441)
 		{
 			// draw glowing right arrow
-			this->m_pSpriteArrowAntialiasingGlowRight->Draw(649,413);
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowRight->Draw(649,413);
 
 			// select button is pressed
 			if(IsValidSelectClick())
@@ -1829,13 +1763,13 @@ void CStateMenus::RenderDisplay()
 		else
 		{
 			// draw normal right arrow
-			this->m_pSpriteArrowAntialiasingNormalRight->Draw(657,421);
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalRight->Draw(657,421);
 		}
 	}
 	else
 	{
 		// draw hidden right arrow
-		this->m_pSpriteArrowAntialiasingHideRight->Draw(657,421);
+		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideRight->Draw(657,421);
 	}
 
 	/* SPECULAR LIGHTING */
@@ -1851,7 +1785,7 @@ void CStateMenus::RenderDisplay()
 			this->GetApp()->GetMouseY() > 568 && this->GetApp()->GetMouseY() < 594)
 		{
 			// draw specular lighting arrows
-			this->m_pSpriteSpecularLightingOffGlow->Draw(476,561);
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOffGlow->Draw(476,561);
 
 			// select button is pressed
 			if(IsValidSelectClick())
@@ -1873,7 +1807,7 @@ void CStateMenus::RenderDisplay()
 		}
 		else
 		{
-			this->m_pSpriteSpecularLightingOff->Draw(484,569);
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOff->Draw(484,569);
 		}
 
 		break;
@@ -1884,7 +1818,7 @@ void CStateMenus::RenderDisplay()
 		if(	this->GetApp()->GetMouseX() > 487 && this->GetApp()->GetMouseX() < 537 &&
 			this->GetApp()->GetMouseY() > 568 && this->GetApp()->GetMouseY() < 594)
 		{
-			this->m_pSpriteSpecularLightingOnGlow->Draw(479,561);
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOnGlow->Draw(479,561);
 
 			// select button is pressed
 			if(IsValidSelectClick())
@@ -1906,7 +1840,7 @@ void CStateMenus::RenderDisplay()
 		}
 		else
 		{
-			this->m_pSpriteSpecularLightingOn->Draw(487,569);
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOn->Draw(487,569);
 		}
 
 		break;
@@ -1918,7 +1852,7 @@ void CStateMenus::RenderDisplay()
 		this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineBack->Draw(458,713);
+		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458,713);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1928,7 +1862,7 @@ void CStateMenus::RenderDisplay()
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuDisplay->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuDisplay->Draw(0,0);
 }
 
 void CStateMenus::RenderHighScore(float fFrametime)
@@ -1944,7 +1878,7 @@ void CStateMenus::RenderHighScore(float fFrametime)
 		this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 	{
 		// draw underline
-		this->m_pSpriteUnderlineBack->Draw(458, 713);
+		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1954,17 +1888,17 @@ void CStateMenus::RenderHighScore(float fFrametime)
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuHighscore->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuHighscore->Draw(0,0);
 }
 
 #ifdef MENU_CREDITS
 void CStateMenus::RenderCredits()
 {
-	this->m_pSpriteCreditsBackLayer->Draw(0,0);
-	this->m_pSpriteCreditsText->Draw(false);
+	this->m_pResourceMenus->m_pSpriteCreditsBackLayer->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteCreditsText->Draw(false);
 
 	// credits has reached to the end
-	if(this->m_pSpriteCreditsText->GetPositionY() < -(this->m_pSpriteCreditsText->GetSpriteHeight()))
+	if(this->m_pResourceMenus->m_pSpriteCreditsText->GetPositionY() < -(this->m_pResourceMenus->m_pSpriteCreditsText->GetSpriteHeight()))
 	{
 		OnBackAction();
 	}
@@ -2013,7 +1947,7 @@ void CStateMenus::RenderExit(float fFrametime)
 	}
 
 	// draw menu text
-	this->m_pSpriteMenuMain->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 	// draw game version
 	this->RenderGameVersion();
 	// draw fade-out
@@ -2038,25 +1972,25 @@ void CStateMenus::RenderAudioBars()
 	int iVolumeSoundEffect = this->GetApp()->GetConfig().GetVolumeSoundEffect();
 
 	// render audio bar borders
-	this->m_pSpriteAudioBarBorder->Draw(iMusicX,iMusicY);
-	this->m_pSpriteAudioBarBorder->Draw(iSoundEffectX,iSoundEffectY);
+	this->m_pResourceMenus->m_pSpriteAudioBarBorder->Draw(iMusicX,iMusicY);
+	this->m_pResourceMenus->m_pSpriteAudioBarBorder->Draw(iSoundEffectX,iSoundEffectY);
 
 	// render audio bar meters
 	if(iVolumeMusic > 0)
 	{
-		this->m_pSpriteAudioBarMeter[iVolumeMusic - 1].Draw(iMusicX,iMusicY);
+		this->m_pResourceMenus->m_pSpriteAudioBarMeter[iVolumeMusic - 1].Draw(iMusicX,iMusicY);
 	}
 	if(iVolumeSoundEffect > 0)
 	{
-		this->m_pSpriteAudioBarMeter[iVolumeSoundEffect - 1].Draw(iSoundEffectX,iSoundEffectY);
+		this->m_pResourceMenus->m_pSpriteAudioBarMeter[iVolumeSoundEffect - 1].Draw(iSoundEffectX,iSoundEffectY);
 	}
 }
 
 void CStateMenus::RenderBackground()
 {
-	this->m_pSpriteMenuBackground->Draw(0, 0);
-	this->m_pSpriteStarsBack->Draw(false);
-	this->m_pSpriteStarsFront->Draw(false);
+	this->m_pResourceMenus->m_pSpriteMenuBackground->Draw(0, 0);
+	this->m_pResourceMenus->m_pSpriteMenuStarsBack->Draw(false);
+	this->m_pResourceMenus->m_pSpriteMenuStarsFront->Draw(false);
 }
 
 void CStateMenus::RenderShips(float fFrametime)
@@ -2458,7 +2392,7 @@ void CStateMenus::RenderScores(float fFrametime)
 
 void CStateMenus::RenderGameVersion()
 {
-	this->m_pSpriteVersion->Draw(957,736);
+	this->m_pResourceMenus->m_pSpriteVersion->Draw(957,736);
 }
 
 #ifdef MENUS_PLANET
@@ -2472,8 +2406,8 @@ void CStateMenus::RenderPlanet()
 #ifdef MENUS_FOG
 void CStateMenus::RenderFog()
 {
-	this->m_pSpriteFogBack->Draw(false);
-	this->m_pSpriteFogFront->Draw(false);
+	this->m_pResourceMenus->m_pSpriteFogBack->Draw(false);
+	this->m_pResourceMenus->m_pSpriteFogFront->Draw(false);
 }
 #endif
 
@@ -2592,7 +2526,7 @@ void CStateMenus::OnBackAction()
 
 		// reset sprite
 #ifdef MENU_CREDITS
-		this->m_pSpriteCreditsText->Reset();
+		this->m_pResourceMenus->m_pSpriteCreditsText->Reset();
 #endif
 		// change menu
 		this->m_eMenus = Main;
@@ -3399,175 +3333,6 @@ char CStateMenus::HexToAscii(char first, char second)
 
 void CStateMenus::LoadSprites()
 {
-	CResourceMenus* resourceMenus = this->m_pApp->GetResourceMenus();
-
-	switch(this->m_iSpriteSteps)
-	{
-	// mouse cursor
-	case 1:
-		this->m_pSpriteCursor = this->m_pResourceMenus->GetSpriteCursor();
-		break;
-	// background effects
-#ifdef MENUS_FOG
-	case 2:
-		this->m_pSpriteFogBack = this->m_pResourceMenus->GetSpriteFogBack();
-		break;
-	case 3:
-		this->m_pSpriteFogFront = this->m_pResourceMenus->GetSpriteFogFront();
-		break;
-#endif
-	// background images
-	case 4:
-		this->m_pSpriteMenuBackground = this->m_pResourceMenus->GetSpriteMenuBackground();
-		this->m_pSpriteStarsBack = this->m_pResourceMenus->GetSpriteMenuStarsBack();
-		break;
-	case 5:
-		this->m_pSpriteStarsFront = this->m_pResourceMenus->GetSpriteMenuStarsFront();
-		break;
-	// background texts
-	case 6:
-		this->m_pSpriteMenuMain = this->m_pResourceMenus->GetSpriteMenuMain();
-		break;
-	case 7:
-		this->m_pSpriteMenuOptions = this->m_pResourceMenus->GetSpriteMenuOptions();
-		break;
-	case 8:
-		this->m_pSpriteMenuInput = this->m_pResourceMenus->GetSpriteMenuInput();
-		break;
-	case 9:
-		this->m_pSpriteMenuAudio = this->m_pResourceMenus->GetSpriteMenuAudio();
-		break;
-	case 10:
-		this->m_pSpriteMenuDisplay = this->m_pResourceMenus->GetSpriteMenuDisplay();
-		break;
-	case 11:
-		this->m_pSpriteMenuHighscore = this->m_pResourceMenus->GetSpriteMenuHighscore();
-		break;
-	case 12:
-		this->m_pSpriteMenuTitleMain = this->m_pResourceMenus->GetSpriteMenuTitleMain();
-		this->m_pSpriteMenuTitleHighscore = this->m_pResourceMenus->GetSpriteMenuTitleHighscore();
-		break;
-		// bars
-	case 13:
-		this->m_pSpriteVideoAntialiasingBarBorder = this->m_pResourceMenus->GetSpriteVideoAntialiasingBarBorder();
-		break;
-	case 14:
-		this->m_pSpriteVideoAntialiasingBar2x = this->m_pResourceMenus->GetSpriteVideoAntialiasingBar2x();
-		break;
-	case 15:
-		this->m_pSpriteVideoAntialiasingBar46x = this->m_pResourceMenus->GetSpriteVideoAntialiasingBar46x();
-		break;
-	case 16:
-		this->m_pSpriteVideoAntialiasingBar8x = this->m_pResourceMenus->GetSpriteVideoAntialiasingBar8x();
-		break;
-		// arrows
-	case 17:
-		this->m_pSpriteArrowInput = this->m_pResourceMenus->GetSpriteArrowInput();
-		break;
-	case 18:
-		this->m_pSpriteArrowAntialiasingNormalLeft = this->m_pResourceMenus->GetSpriteArrowAntialiasingNormalLeft();
-		break;
-	case 19:
-		this->m_pSpriteArrowAntialiasingNormalRight = this->m_pResourceMenus->GetSpriteArrowAntialiasingNormalRight();
-		break;
-	case 20:
-		this->m_pSpriteArrowAntialiasingGlowLeft = this->m_pResourceMenus->GetSpriteArrowAntialiasingGlowLeft();
-		break;
-	case 21:
-		this->m_pSpriteArrowAntialiasingGlowRight = this->m_pResourceMenus->GetSpriteArrowAntialiasingGlowRight();
-		break;
-	case 22:
-		this->m_pSpriteArrowAntialiasingHideLeft = this->m_pResourceMenus->GetSpriteArrowAntialiasingHideLeft();
-		break;
-	case 23:
-		this->m_pSpriteArrowAntialiasingHideRight = this->m_pResourceMenus->GetSpriteArrowAntialiasingHideRight();
-		break;
-		// on/off messages
-	case 24:
-		this->m_pSpriteSpecularLightingOn = this->m_pResourceMenus->GetSpriteSpecularLightingOn();
-		break;
-	case 25:
-		this->m_pSpriteSpecularLightingOnGlow = this->m_pResourceMenus->GetSpriteSpecularLightingOnGlow();
-		break;
-	case 26:
-		this->m_pSpriteSpecularLightingOff = this->m_pResourceMenus->GetSpriteSpecularLightingOff();
-		break;
-	case 27:
-		this->m_pSpriteSpecularLightingOffGlow = this->m_pResourceMenus->GetSpriteSpecularLightingOffGlow();
-		break;
-		// message boxes
-	case 28:
-		this->m_pSpriteMessageInputEmpty = this->m_pResourceMenus->GetSpriteMessageInputEmpty();
-		break;
-	case 29:
-		this->m_pSpriteMessageInputKey = this->m_pResourceMenus->GetSpriteMessageInputKey();
-		break;
-	case 30:
-		this->m_pSpriteMessageRestart = this->m_pResourceMenus->GetSpriteMessageRestart();
-		break;
-	case 31:
-		this->m_pSpriteMessageOK1 = this->m_pResourceMenus->GetSpriteMessageOK1();
-		break;
-	case 32:
-		this->m_pSpriteMessageOK2 = this->m_pResourceMenus->GetSpriteMessageOK2();
-		break;
-		// underlines
-	case 33:
-		this->m_pSpriteUnderlineAudio = this->m_pResourceMenus->GetSpriteUnderlineAudio();
-		break;
-	case 34:
-		this->m_pSpriteUnderlineBack = this->m_pResourceMenus->GetSpriteUnderlineBack();
-		break;
-	case 35:
-#ifdef MENU_CREDITS
-		this->m_pSpriteUnderlineCredits = this->m_pResourceMenus->GetSpriteUnderlineCredits();
-#endif
-		break;
-	case 36:
-		this->m_pSpriteUnderlineDefault = this->m_pResourceMenus->GetSpriteUnderlineDefault();
-		break;
-	case 37:
-		this->m_pSpriteUnderlineDisplay = this->m_pResourceMenus->GetSpriteUnderlineDisplay();
-		break;
-	case 38:
-		this->m_pSpriteUnderlineExit = this->m_pResourceMenus->GetSpriteUnderlineExit();
-		break;
-	case 39:
-		this->m_pSpriteUnderlineHighscore = this->m_pResourceMenus->GetSpriteUnderlineHighscore();
-		break;
-	case 40:
-		this->m_pSpriteUnderlineInput = this->m_pResourceMenus->GetSpriteUnderlineInput();
-		break;
-	case 41:
-		this->m_pSpriteUnderlineNewgame = this->m_pResourceMenus->GetSpriteUnderlineNewgame();
-		break;
-	case 42:
-		this->m_pSpriteUnderlineOptions = this->m_pResourceMenus->GetSpriteUnderlineOptions();
-		break;
-		// credits
-	case 43:
-#ifdef MENU_CREDITS
-		this->m_pSpriteCreditsBackLayer = this->m_pResourceMenus->GetSpriteCreditsBackLayer();
-#endif
-		break;
-	case 44:
-#ifdef MENU_CREDITS
-		this->m_pSpriteCreditsText = this->m_pResourceMenus->GetSpriteCreditsText();
-#endif
-		break;
-		//game version
-	case 45:
-		this->m_pSpriteVersion = this->m_pResourceMenus->GetSpriteVersion();
-		break;
-		// audio bar border
-	case 46:
-		this->m_pSpriteAudioBarBorder = this->m_pResourceMenus->GetSpriteAudioBarBorder();
-		break;
-		// audio bar meter
-	case 47:
-		this->m_pSpriteAudioBarMeter = this->m_pResourceMenus->GetSpriteAudioBarMeter();
-		break;
-	}
 }
 
 HRESULT CStateMenus::LoadMeshes()
