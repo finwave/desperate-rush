@@ -249,6 +249,9 @@ public:
 	float GetScreenWidth(void);
 	float GetScreenHeight(void);
 
+	float GetScreenPixelWidth(void);
+	float GetScreenPixelHeight(void);
+
 	inline void SetLoadingScreen(bool set) { this->m_bShowLoadingScreen = set; }
 
 private:

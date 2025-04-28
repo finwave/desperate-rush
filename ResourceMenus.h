@@ -5,7 +5,7 @@
 #define MESH_MENUS_TEXT										36
 
 // SPRITE COUNT
-#define SPRITE_MENUS										146
+#define SPRITE_MENUS										136
 
 // MULTI-PART SPRITES
 #define SPRITE_LOADING_BAR									327
@@ -99,22 +99,16 @@ public:
 
 	// Menus
 
+	void RenderMenuTextHighlight(int posY);
+	void RenderMenuTextHighlight(int posX, int posY);
+
 	CSpriteScrolling* m_pSpriteMenuStarsBack;
 	CSpriteScrolling* m_pSpriteMenuStarsFront;
 
 	CSprite* m_pSpriteMenuBackground;
 
-	CSprite* m_pSpriteUnderlineNewgame;
-	CSprite* m_pSpriteUnderlineOptions;
-	CSprite* m_pSpriteUnderlineHighscore;
-	CSprite* m_pSpriteUnderlineExit;
-
-	CSprite* m_pSpriteUnderlineInput;
-	CSprite* m_pSpriteUnderlineAudio;
-	CSprite* m_pSpriteUnderlineDisplay;
-	CSprite* m_pSpriteUnderlineBack;
-
-	CSprite* m_pSpriteUnderlineDefault;
+	CSprite* m_pSpriteMenuTextHighlightLong;
+	CSprite* m_pSpriteMenuTextHighlightShort;
 
 	CSprite* m_pSpriteMenuTitleMain;
 	CSprite* m_pSpriteMenuTitleHighscore;
@@ -157,7 +151,6 @@ public:
 	CSprite* m_pSpriteCursor;
 
 #ifdef MENU_CREDITS
-	CSprite* m_pSpriteUnderlineCredits;
 	CSprite* m_pSpriteCreditsBackLayer;
 	CSpriteScrolling* m_pSpriteCreditsText;
 #endif
@@ -193,7 +186,13 @@ private:
 	// SPRITE DEPTH
 
 	float m_fDepthMenuText;
-	float m_fDepthMenuUnderline;
+	float m_fDepthMenuHighlight;
+
+	// SPRITE DIMENSIONS
+
+	const int SPRITE_WIDTH_MENU_TEXT_HIGHLIGHT_LONG = 353;
+	const int SPRITE_WIDTH_MENU_TEXT_HIGHLIGHT_SHORT = 148;
+	const int SPRITE_HEIGHT_MENU_TEXT_HIGHLIGHT = 60;
 
 	// MESHES
 

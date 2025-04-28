@@ -19,7 +19,7 @@ void CResourceMenus::Init(CTheApp* pApp, CZipManager* pZipManager)
 	this->m_iSpriteStepsMax += SPRITE_MENUS;
 
 	this->m_fDepthMenuText = 0.05f;
-	this->m_fDepthMenuUnderline = 0.1f;
+	this->m_fDepthMenuHighlight = 0.1f;
 }
 
 void CResourceMenus::Release(void)
@@ -110,12 +110,6 @@ void CResourceMenus::Release(void)
 		m_pSpriteFogFront = NULL;
 	}
 #endif
-	if (m_pSpriteMenuBackground)
-	{
-		m_pSpriteMenuBackground->Release();
-		delete m_pSpriteMenuBackground;
-		m_pSpriteMenuBackground = NULL;
-	}
 	if (m_pSpriteMenuStarsBack)
 	{
 		m_pSpriteMenuStarsBack->Release();
@@ -127,6 +121,26 @@ void CResourceMenus::Release(void)
 		m_pSpriteMenuStarsFront->Release();
 		delete m_pSpriteMenuStarsFront;
 		m_pSpriteMenuStarsFront = NULL;
+	}
+
+	if (m_pSpriteMenuBackground)
+	{
+		m_pSpriteMenuBackground->Release();
+		delete m_pSpriteMenuBackground;
+		m_pSpriteMenuBackground = NULL;
+	}
+
+	if (m_pSpriteMenuTextHighlightLong)
+	{
+		m_pSpriteMenuTextHighlightLong->Release();
+		delete m_pSpriteMenuTextHighlightLong;
+		m_pSpriteMenuTextHighlightLong = NULL;
+	}
+	if (m_pSpriteMenuTextHighlightShort)
+	{
+		m_pSpriteMenuTextHighlightShort->Release();
+		delete m_pSpriteMenuTextHighlightShort;
+		m_pSpriteMenuTextHighlightShort = NULL;
 	}
 
 	if (m_pSpriteMenuTitleMain)
@@ -303,68 +317,7 @@ void CResourceMenus::Release(void)
 		m_pSpriteMessageOK2 = NULL;
 	}
 
-	if (m_pSpriteUnderlineAudio)
-	{
-		m_pSpriteUnderlineAudio->Release();
-		delete m_pSpriteUnderlineAudio;
-		m_pSpriteUnderlineAudio = NULL;
-	}
-	if (m_pSpriteUnderlineBack)
-	{
-		m_pSpriteUnderlineBack->Release();
-		delete m_pSpriteUnderlineBack;
-		m_pSpriteUnderlineBack = NULL;
-	}
-	if (m_pSpriteUnderlineDefault)
-	{
-		m_pSpriteUnderlineDefault->Release();
-		delete m_pSpriteUnderlineDefault;
-		m_pSpriteUnderlineDefault = NULL;
-	}
-	if (m_pSpriteUnderlineDisplay)
-	{
-		m_pSpriteUnderlineDisplay->Release();
-		delete m_pSpriteUnderlineDisplay;
-		m_pSpriteUnderlineDisplay = NULL;
-	}
-	if (m_pSpriteUnderlineExit)
-	{
-		m_pSpriteUnderlineExit->Release();
-		delete m_pSpriteUnderlineExit;
-		m_pSpriteUnderlineExit = NULL;
-	}
-	if (m_pSpriteUnderlineHighscore)
-	{
-		m_pSpriteUnderlineHighscore->Release();
-		delete m_pSpriteUnderlineHighscore;
-		m_pSpriteUnderlineHighscore = NULL;
-	}
-	if (m_pSpriteUnderlineInput)
-	{
-		m_pSpriteUnderlineInput->Release();
-		delete m_pSpriteUnderlineInput;
-		m_pSpriteUnderlineInput = NULL;
-	}
-	if (m_pSpriteUnderlineNewgame)
-	{
-		m_pSpriteUnderlineNewgame->Release();
-		delete m_pSpriteUnderlineNewgame;
-		m_pSpriteUnderlineNewgame = NULL;
-	}
-	if (m_pSpriteUnderlineOptions)
-	{
-		m_pSpriteUnderlineOptions->Release();
-		delete m_pSpriteUnderlineOptions;
-		m_pSpriteUnderlineOptions = NULL;
-	}
-
 #ifdef MENU_CREDITS
-	if (m_pSpriteUnderlineCredits)
-	{
-		m_pSpriteUnderlineCredits->Release();
-		delete m_pSpriteUnderlineCredits;
-		m_pSpriteUnderlineCredits = NULL;
-	}
 	if (m_pSpriteCreditsBackLayer)
 	{
 		m_pSpriteCreditsBackLayer->Release();
@@ -1167,6 +1120,28 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 	// background texts
 	case 6:
 
+		// long text highlight
+		this->m_pSpriteMenuTextHighlightLong = new CSprite;
+
+		if (!this->m_pSpriteMenuTextHighlightLong)
+		{
+			return E_OUTOFMEMORY;
+		}
+
+		hres = this->m_pSpriteMenuTextHighlightLong->Create(
+			"menu_text_highlight_long.png", m_pDevice, this->m_fDepthMenuHighlight);
+
+		// short text highlight
+		this->m_pSpriteMenuTextHighlightShort = new CSprite;
+
+		if (!this->m_pSpriteMenuTextHighlightShort)
+		{
+			return E_OUTOFMEMORY;
+		}
+
+		hres = this->m_pSpriteMenuTextHighlightShort->Create(
+			"menu_text_highlight_short.png", m_pDevice, this->m_fDepthMenuHighlight);
+
 		this->m_pSpriteMenuMain = new CSprite;
 
 		if (!this->m_pSpriteMenuMain)
@@ -1556,150 +1531,9 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 
 		break;
 
-	// underlines
-	case 33:
-
-		this->m_pSpriteUnderlineAudio = new CSprite;
-
-		if (!this->m_pSpriteUnderlineAudio)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineAudio->Create(
-			"underline_audio.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 34:
-
-		this->m_pSpriteUnderlineBack = new CSprite;
-
-		if (!this->m_pSpriteUnderlineBack)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineBack->Create(
-			"underline_back.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 35:
-#ifdef MENU_CREDITS
-		this->m_pSpriteUnderlineCredits = new CSprite;
-
-		if (!this->m_pSpriteUnderlineCredits)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineCredits->Create(
-			"underline_credits.png", m_pDevice, this->m_fDepthMenuUnderline);
-#endif
-		break;
-
-	case 36:
-
-		this->m_pSpriteUnderlineDefault = new CSprite;
-
-		if (!this->m_pSpriteUnderlineDefault)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineDefault->Create(
-			"underline_default.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 37:
-
-		this->m_pSpriteUnderlineDisplay = new CSprite;
-
-		if (!this->m_pSpriteUnderlineDisplay)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineDisplay->Create(
-			"underline_display.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 38:
-
-		this->m_pSpriteUnderlineExit = new CSprite;
-
-		if (!this->m_pSpriteUnderlineExit)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineExit->Create(
-			"underline_exit.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 39:
-
-		this->m_pSpriteUnderlineHighscore = new CSprite;
-
-		if (!this->m_pSpriteUnderlineHighscore)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineHighscore->Create(
-			"underline_highscore.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 40:
-
-		this->m_pSpriteUnderlineInput = new CSprite;
-
-		if (!this->m_pSpriteUnderlineInput)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineInput->Create(
-			"underline_input.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 41:
-
-		this->m_pSpriteUnderlineNewgame = new CSprite;
-
-		if (!this->m_pSpriteUnderlineNewgame)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineNewgame->Create(
-			"underline_new_game.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
-	case 42:
-
-		this->m_pSpriteUnderlineOptions = new CSprite;
-
-		if (!this->m_pSpriteUnderlineOptions)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		hres = this->m_pSpriteUnderlineOptions->Create(
-			"underline_options.png", m_pDevice, this->m_fDepthMenuUnderline);
-
-		break;
-
 #ifdef MENU_CREDITS
 	// credits
-	case 43:
+	case 33:
 
 		this->m_pSpriteCreditsBackLayer = new CSprite;
 
@@ -1713,7 +1547,7 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 
 		break;
 
-	case 44:
+	case 34:
 
 		this->m_pSpriteCreditsText = new CSpriteScrolling;
 
@@ -1731,7 +1565,7 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 #endif
 
 	//game version
-	case 45:
+	case 35:
 
 		this->m_pSpriteVersion = new CSprite;
 
@@ -1746,7 +1580,7 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 		break;
 
 	// audio bar border
-	case 46:
+	case 36:
 
 		this->m_pSpriteAudioBarBorder = new CSprite;
 
@@ -1762,9 +1596,11 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 	}
 
 	// audio bar meter
-	if (this->m_iSpriteSteps >= 47)
+	int audioBarMeterFirstLoadingStep = 37;
+
+	if (this->m_iSpriteSteps >= audioBarMeterFirstLoadingStep)
 	{
-		if (this->m_iSpriteSteps == 47)
+		if (this->m_iSpriteSteps == audioBarMeterFirstLoadingStep)
 		{
 			this->m_pSpriteAudioBarMeter = new CSprite[SPRITE_MENUS_AUDIO_BAR];
 
@@ -1778,8 +1614,8 @@ HRESULT CResourceMenus::LoadSpriteMenus()
 		std::string sNumber;
 		int iIndex;
 
-		sNumber = TextUtils::IntToString(this->m_iSpriteSteps - 47 + 1);
-		iIndex = this->m_iSpriteSteps - 47;
+		sNumber = TextUtils::IntToString(this->m_iSpriteSteps - audioBarMeterFirstLoadingStep + 1);
+		iIndex = this->m_iSpriteSteps - audioBarMeterFirstLoadingStep;
 
 		fileName = "bar_audio_";
 		fileName += sNumber;
@@ -1814,4 +1650,36 @@ void CResourceMenus::InitMeshMenusBosses()
 {
 	RotateEnemy(GetMesh(CResources::MODEL_GAME_BOSS_1_FRAME));
 	RotateEnemy(GetMesh(CResources::MODEL_GAME_BOSS_1_SCATTER));
+}
+
+void CResourceMenus::RenderMenuTextHighlight(int posY)
+{
+	float exactPosX = m_pApp->GetScreenPixelWidth() / 2.0f;
+	exactPosX -= (float)SPRITE_WIDTH_MENU_TEXT_HIGHLIGHT_LONG / 2.0f;
+
+	float exactPosY = (float)posY - (float)SPRITE_HEIGHT_MENU_TEXT_HIGHLIGHT / 2.0f;
+
+	// we round up
+	exactPosX += 0.5f;
+	exactPosY += 0.5f;
+
+	int roundedPosX = (int)exactPosX;
+	int roundedPosY = (int)exactPosY;
+
+	m_pSpriteMenuTextHighlightLong->Draw(roundedPosX, roundedPosY);
+}
+
+void CResourceMenus::RenderMenuTextHighlight(int posX, int posY)
+{
+	float exactPosX = (float)posX - (float)SPRITE_WIDTH_MENU_TEXT_HIGHLIGHT_SHORT / 2.0f;
+	float exactPosY = (float)posY - (float)SPRITE_HEIGHT_MENU_TEXT_HIGHLIGHT / 2.0f;
+
+	// we round up
+	exactPosX += 0.5f;
+	exactPosY += 0.5f;
+
+	int roundedPosX = (int)exactPosX;
+	int roundedPosY = (int)exactPosY;
+
+	m_pSpriteMenuTextHighlightShort->Draw(roundedPosX, roundedPosY);
 }

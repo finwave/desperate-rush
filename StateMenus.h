@@ -141,7 +141,6 @@ private:
 	enum eINPUT_DEVICE
 	{
 		Mouse,
-		Joystick,
 		Keyboard
 	};
 
@@ -218,6 +217,8 @@ private:
 	void ResetPlayerInput();
 	void UpdatePlayerInput();
 	bool IsValidSelectClick();
+	bool IsValidLeftClick();
+	bool IsValidRightClick();
 
 	void OnKeyboardMenuBrowse(DWORD dwKey);
 	void PlaySoundBarNoise(bool bIsForced);
@@ -303,13 +304,31 @@ private:
 	float					m_fBoxKeyTimer;
 	float					m_fSoundBarNoiseTimer;
 
-	bool					m_bInputUp;
-	bool					m_bInputDown;
-	bool					m_bInputLeft;
-	bool					m_bInputRight;
-	bool					m_bInputSelect;
+	DWORD					m_KeyDown;
 	bool					m_bIsClickPause;
 
 	const int				MOUSE_CURSOR_SPEED = 4;
 	const int				MAX_HIGHSCORE_ITEMS = 10;
+
+	// Menu text position references
+
+	const int MENU_TEXT_POS_X_INPUT_BACK			= 421;
+	const int MENU_TEXT_POS_X_INPUT_DEFAULT			= 636;
+
+	const int MENU_TEXT_POS_Y_MAIN_NEW_GAME			= 390;
+	const int MENU_TEXT_POS_Y_MAIN_OPTIONS			= 468;
+	const int MENU_TEXT_POS_Y_MAIN_HIGHSCORE		= 542;
+	const int MENU_TEXT_POS_Y_MAIN_EXIT				= 688;
+
+	const int MENU_TEXT_POS_Y_OPTIONS_INPUT			= 394;
+	const int MENU_TEXT_POS_Y_OPTIONS_AUDIO			= 464;
+	const int MENU_TEXT_POS_Y_OPTIONS_DISPLAY		= 542;
+
+	const int MENU_TEXT_POS_Y_AUDIO_MUSIC			= 357;
+	const int MENU_TEXT_POS_Y_AUDIO_SOUND_EFFECTS	= 495;
+
+	const int MENU_TEXT_POS_Y_DISPLAY_ANTIALIASING	= 362;
+	const int MENU_TEXT_POS_Y_DISPLAY_SPECULAR		= 520;
+
+	const int MENU_TEXT_POS_Y_BACK					= 688;
 };

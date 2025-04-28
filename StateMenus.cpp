@@ -67,6 +67,7 @@ CStateMenus::CStateMenus(void)
 	this->m_fBoxKeyTimer = 0.0f;
 	this->m_fSoundBarNoiseTimer = 0.0f;
 
+	this->m_KeyDown = 0;
 	this->m_bIsClickPause = false;
 
 	ResetPlayerInput();
@@ -724,16 +725,14 @@ void CStateMenus::Release()
 
 void CStateMenus::OnKeyDown(DWORD dwKey)
 {
+	this->m_KeyDown = dwKey;
+
 	if (dwKey == VK_ESCAPE)
 	{
 		OnBackAction();
 	}
-	else if (dwKey == VK_RETURN)
-	{
-		this->m_bInputSelect = true;
-		m_eInputDevice = Keyboard;
-	}
-	else if ((dwKey == VK_UP) || (dwKey == VK_DOWN) || (dwKey == VK_LEFT) || (dwKey == VK_RIGHT))
+	else if ((dwKey == VK_RETURN) || (dwKey == VK_UP) ||
+		(dwKey == VK_DOWN) || (dwKey == VK_LEFT) || (dwKey == VK_RIGHT))
 	{
 		OnKeyboardMenuBrowse(dwKey);
 		m_eInputDevice = Keyboard;
@@ -798,26 +797,6 @@ void CStateMenus::Render()
 
 	// update joystick/keyboard controls
 	UpdatePlayerInput();
-
-	if (m_eInputDevice == Joystick)
-	{
-		if (m_bInputUp)
-		{
-			GetApp()->SetMouseY(GetApp()->GetMouseY() - MOUSE_CURSOR_SPEED);
-		}
-		if (m_bInputDown)
-		{
-			GetApp()->SetMouseY(GetApp()->GetMouseY() + MOUSE_CURSOR_SPEED);
-		}
-		if (m_bInputLeft)
-		{
-			GetApp()->SetMouseX(GetApp()->GetMouseX() - MOUSE_CURSOR_SPEED);
-		}
-		if (m_bInputRight)
-		{
-			GetApp()->SetMouseX(GetApp()->GetMouseX() + MOUSE_CURSOR_SPEED);
-		}
-	}
 
 	// render background
 	RenderBackground();
@@ -965,8 +944,8 @@ void CStateMenus::RenderMain()
 		(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 394 && GetApp()->GetMouseX() < 630 &&
 		this->GetApp()->GetMouseY() > 375 && GetApp()->GetMouseY() < 404) )
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineNewgame->Draw(395, 414);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_MAIN_NEW_GAME);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -983,14 +962,13 @@ void CStateMenus::RenderMain()
 			this->m_eMenus = New_Game;
 		}
 	}
-
 	// mouse cursor is on top of Options text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Main_Options) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 428 && this->GetApp()->GetMouseX() < 596 &&
 			this->GetApp()->GetMouseY() > 449 && this->GetApp()->GetMouseY() < 478))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineOptions->Draw(429, 488);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_MAIN_OPTIONS);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1002,14 +980,13 @@ void CStateMenus::RenderMain()
 			m_eKeyboardMenuBrowse = (eKEYBOARD_MENU_BROWSE)((int)eKEYBOARD_MENU_BROWSE::Options_First + 1);
 		}
 	}
-
 	// mouse cursor is on top of Highscore text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Main_Highscore) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 381 && this->GetApp()->GetMouseX() < 644 &&
 			this->GetApp()->GetMouseY() > 522 && this->GetApp()->GetMouseY() < 552))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineHighscore->Draw(405, 562);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_MAIN_HIGHSCORE);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1023,16 +1000,12 @@ void CStateMenus::RenderMain()
 			m_eKeyboardMenuBrowse = eKEYBOARD_MENU_BROWSE::Highscore_Back;
 		}
 	}
-
 #ifdef MENU_CREDITS
 	// mouse cursor is on top of Credits text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Main_Credits) || 
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 434 && this->GetApp()->GetMouseX() < 591 &&
 			this->GetApp()->GetMouseY() > 546 && this->GetApp()->GetMouseY() < 577))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineCredits->Draw(434, 586);
-
 		// select button is pressed
 		if(IsValidSelectClick())
 		{
@@ -1043,14 +1016,13 @@ void CStateMenus::RenderMain()
 		}
 	}
 #endif
-
 	// mouse cursor is on top of Exit text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Main_Exit) || 
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 469 && this->GetApp()->GetMouseX() < 553 &&
 			this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineExit->Draw(470, 713);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_MAIN_EXIT);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1070,8 +1042,8 @@ void CStateMenus::RenderOptions()
 		(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 456 && this->GetApp()->GetMouseX() < 568 &&
 		this->GetApp()->GetMouseY() > 374 && this->GetApp()->GetMouseY() < 405))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineInput->Draw(457, 414);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_OPTIONS_INPUT);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1085,14 +1057,13 @@ void CStateMenus::RenderOptions()
 			m_eKeyboardMenuBrowse = eKEYBOARD_MENU_BROWSE::Input_Back;
 		}
 	}
-
 	// mouse cursor is on top of Audio text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Options_Audio) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 451 && this->GetApp()->GetMouseX() < 575 &&
 			this->GetApp()->GetMouseY() > 448 && this->GetApp()->GetMouseY() < 479))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineAudio->Draw(452, 488);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_OPTIONS_AUDIO);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1106,14 +1077,13 @@ void CStateMenus::RenderOptions()
 			m_fSoundBarNoiseTimer = 0.0f;
 		}
 	}
-
 	// mouse cursor is on top of Display text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Options_Display) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 432 && this->GetApp()->GetMouseX() < 591 &&
 			this->GetApp()->GetMouseY() > 522 && this->GetApp()->GetMouseY() < 553))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineDisplay->Draw(433, 562);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_OPTIONS_DISPLAY);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1125,14 +1095,13 @@ void CStateMenus::RenderOptions()
 			m_eKeyboardMenuBrowse = eKEYBOARD_MENU_BROWSE::Display_Back;
 		}
 	}
-
 	// mouse cursor is on top of Back text
 	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Options_Back) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 457 && this->GetApp()->GetMouseX() < 565 &&
 			this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_BACK);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1236,7 +1205,7 @@ void CStateMenus::RenderInput()
 		{
 			// mouse cursor is on top of Up text
 			if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Up) || 
-				(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 320 &&
+				(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 				this->GetApp()->GetMouseY() > 401 && this->GetApp()->GetMouseY() < 421))
 			{
 				// draw arrow
@@ -1251,7 +1220,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Down text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Down) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 358 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 428 && this->GetApp()->GetMouseY() < 449))
 			{
 				// draw arrow
@@ -1266,7 +1235,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Left text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Left) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 337 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 457 && this->GetApp()->GetMouseY() < 477))
 			{
 				// draw arrow
@@ -1281,7 +1250,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Right text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Right) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 355 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 485 && this->GetApp()->GetMouseY() < 505))
 			{
 				// draw arrow
@@ -1311,7 +1280,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Minigun text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Minigun) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 389 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 541 && this->GetApp()->GetMouseY() < 561))
 			{
 				// draw arrow
@@ -1326,7 +1295,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Cannon text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Cannon) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 386 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 569 && this->GetApp()->GetMouseY() < 589))
 			{
 				// draw arrow
@@ -1341,7 +1310,7 @@ void CStateMenus::RenderInput()
 			}
 			// mouse cursor is on top of Blast text
 			else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Input_Key_Blast) || 
-					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 360 &&
+					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 283 && this->GetApp()->GetMouseX() < 419 &&
 					 this->GetApp()->GetMouseY() > 597 && this->GetApp()->GetMouseY() < 617))
 			{
 				// draw arrow
@@ -1359,8 +1328,8 @@ void CStateMenus::RenderInput()
 					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 366 && this->GetApp()->GetMouseX() < 475 &&
 					 this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 			{
-				// draw underline
-				this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(367, 713);
+				// draw menu text highlight
+				this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_X_INPUT_BACK, MENU_TEXT_POS_Y_BACK);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1373,8 +1342,8 @@ void CStateMenus::RenderInput()
 					(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 558 && this->GetApp()->GetMouseX() < 713 &&
 					 this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 			{
-				// draw underline
-				this->m_pResourceMenus->m_pSpriteUnderlineDefault->Draw(559, 713);
+				// draw menu text highlight
+				this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_X_INPUT_DEFAULT, MENU_TEXT_POS_Y_BACK);
 
 				// select button is pressed
 				if (IsValidSelectClick())
@@ -1397,75 +1366,88 @@ void CStateMenus::RenderAudio(float fFrametime)
 {
 	m_fSoundBarNoiseTimer -= fFrametime;
 
-	int iValue;
-	int iMinus = 412;
+	int currentValue;
 	int invalidBarValue = -1000;
+	int newValue = invalidBarValue;
+
+	int iMinus = 412;
 	float fValue;
 
 	// draw audio bars
 	this->RenderAudioBars();
 
 	// mouse cursor is on top of music bar
-	if( (m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Music) || 
+	if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Music) ||
 		(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 624 &&
-		this->GetApp()->GetMouseY() > 408 && this->GetApp()->GetMouseY() < 423))
+		this->GetApp()->GetMouseY() >= 390 && this->GetApp()->GetMouseY() <= 441))
 	{
-		iValue = invalidBarValue;
+		int currentValue = this->GetApp()->GetConfig().GetVolumeMusic();
 
-		// keyboard left/right arrow keys
+		// keyboard controls
 		if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
 		{
-			if (m_bInputLeft)
-			{
+			// draw menu text highlight
+			this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_AUDIO_MUSIC);
 
+			// left button is pressed
+			if (IsValidLeftClick())
+			{
+				newValue = currentValue - 10;
+				newValue = max(newValue, 0);
 			}
-			else if (m_bInputRight)
+			// right button is pressed
+			else if (IsValidRightClick())
 			{
-
+				newValue = currentValue + 10;
+				newValue = min(newValue, 100);
 			}
 		}
-		// select button is pressed
-		else if (this->m_bInputSelect)
+		// mouse controls
+		else
 		{
-			if (this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 413)
+			// mouse button is pressed
+			if (this->m_KeyDown == VK_RETURN)
 			{
-				iValue = 0;
-			}
-			else if (this->GetApp()->GetMouseX() > 611 && this->GetApp()->GetMouseX() < 624)
-			{
-				iValue = 100;
-			}
-			else
-			{
-				fValue = (this->GetApp()->GetMouseX() - iMinus) / 2;
-				// rounds value down
-				iValue = floor(fValue);
+				if (this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 413)
+				{
+					newValue = 0;
+				}
+				else if (this->GetApp()->GetMouseX() > 611 && this->GetApp()->GetMouseX() < 624)
+				{
+					newValue = 100;
+				}
+				else
+				{
+					fValue = (this->GetApp()->GetMouseX() - iMinus) / 2;
+					// rounds value down
+					newValue = floor(fValue);
+				}
 			}
 		}
 
 		// new music volume is different than the current one
-		if ((iValue != invalidBarValue) && (iValue != this->GetApp()->GetConfig().GetVolumeMusic()))
+		if ((newValue != invalidBarValue) && (newValue != currentValue))
 		{
-			this->GetApp()->GetConfig().SetVolumeMusic(iValue);
+			this->GetApp()->GetConfig().SetVolumeMusic(newValue);
 
 			// set music volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
-			this->GetApp()->GetMP3Player2().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMP3Player1().SetVolume(this->GetApp()->GetVolumeMusic());
+			this->GetApp()->GetMP3Player2().SetVolume(this->GetApp()->GetVolumeMusic());
 
 			// music is stopped or paused
-			if(	(this->GetApp()->GetMP3Player1().GetState() == 0) || 
+			if ((this->GetApp()->GetMP3Player1().GetState() == 0) ||
 				(this->GetApp()->GetMP3Player1().GetState() == 2))
 			{
-				if(iValue > 0)
+				if (newValue > 0)
 				{
 					// play music
 					this->GetApp()->GetMP3Player1().Play();
 				}
 			}
 			// music is playing
-			else if(this->GetApp()->GetMP3Player1().GetState() == 1)
+			else if (this->GetApp()->GetMP3Player1().GetState() == 1)
 			{
-				if(iValue == 0)
+				if (newValue == 0)
 				{
 					// pause music
 					this->GetApp()->GetMP3Player1().Pause();
@@ -1474,49 +1456,60 @@ void CStateMenus::RenderAudio(float fFrametime)
 		}
 	}
 	// mouse cursor is on top of sound effect bar
-	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Sound) || 
+	else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Sound) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 624 &&
-			this->GetApp()->GetMouseY() > 546 && this->GetApp()->GetMouseY() < 561))
+			this->GetApp()->GetMouseY() >= 528 && this->GetApp()->GetMouseY() <= 579))
 	{
-		iValue = invalidBarValue;
+		int currentValue = this->GetApp()->GetConfig().GetVolumeSoundEffect();
 
-		// keyboard left/right arrow keys
+		// keyboard controls
 		if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
 		{
-			if (m_bInputLeft)
-			{
+			// draw menu text highlight
+			this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_AUDIO_SOUND_EFFECTS);
 
+			// left button is pressed
+			if (IsValidLeftClick())
+			{
+				newValue = currentValue - 10;
+				newValue = max(newValue, 0);
 			}
-			else if (m_bInputRight)
+			// right button is pressed
+			else if (IsValidRightClick())
 			{
-
+				newValue = currentValue + 10;
+				newValue = min(newValue, 100);
 			}
 		}
-		// select button is pressed
-		else if (this->m_bInputSelect)
+		// mouse controls
+		else
 		{
-			if (this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 413)
+			// mouse button is pressed
+			if (this->m_KeyDown == VK_RETURN)
 			{
-				iValue = 0;
-			}
-			else if (this->GetApp()->GetMouseX() > 611 && this->GetApp()->GetMouseX() < 624)
-			{
-				iValue = 100;
-			}
-			else
-			{
-				fValue = (this->GetApp()->GetMouseX() - iMinus) / 2;
-				// rounds value down
-				iValue = floor(fValue);
+				if (this->GetApp()->GetMouseX() > 400 && this->GetApp()->GetMouseX() < 413)
+				{
+					newValue = 0;
+				}
+				else if (this->GetApp()->GetMouseX() > 611 && this->GetApp()->GetMouseX() < 624)
+				{
+					newValue = 100;
+				}
+				else
+				{
+					fValue = (this->GetApp()->GetMouseX() - iMinus) / 2;
+					// rounds value down
+					newValue = floor(fValue);
+				}
 			}
 		}
 
-		if (iValue != invalidBarValue)
+		if (newValue != invalidBarValue)
 		{
 			// new sound effect volume is different than the current one
-			if(iValue != this->GetApp()->GetConfig().GetVolumeSoundEffect())
+			if (newValue != currentValue)
 			{
-				this->GetApp()->GetConfig().SetVolumeSoundEffect(iValue);
+				this->GetApp()->GetConfig().SetVolumeSoundEffect(newValue);
 
 				// set volume of sound effects that don't use duplicates
 				for (int i = 0; i < FIRST_DUPLICATE_SOUND; i++)
@@ -1544,22 +1537,22 @@ void CStateMenus::RenderAudio(float fFrametime)
 		}
 	}
 	// mouse cursor is on top of Back text
-	else if((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Back) || 
+	else if ((m_eInputDevice == eINPUT_DEVICE::Keyboard && m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Audio_Back) ||
 			(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 457 && this->GetApp()->GetMouseX() < 565 &&
 			this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_BACK);
 
 		// select button is pressed
-		if(IsValidSelectClick())
+		if (IsValidSelectClick())
 		{
 			OnBackAction();
 		}
 	}
 
 	// draw menu text
-	this->m_pResourceMenus->m_pSpriteMenuAudio->Draw(0,0);
+	this->m_pResourceMenus->m_pSpriteMenuAudio->Draw(0, 0);
 }
 
 void CStateMenus::RenderDisplay()
@@ -1571,26 +1564,43 @@ void CStateMenus::RenderDisplay()
 		// draw restart box
 		this->m_pResourceMenus->m_pSpriteMessageRestart->Draw(371,397);
 
-		// draw OK text
-		if(this->GetApp()->GetMouseX() > 498 && this->GetApp()->GetMouseX() < 526 && 
-			this->GetApp()->GetMouseY() > 480 && this->GetApp()->GetMouseY() < 495)
+		// keyboard controls
+		if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
 		{
-			this->m_pResourceMenus->m_pSpriteMessageOK2->Draw(499,481);
-		}
-		else
-		{
-			this->m_pResourceMenus->m_pSpriteMessageOK1->Draw(499,481);
-		}
+			// draw OK text
+			this->m_pResourceMenus->m_pSpriteMessageOK1->Draw(499, 481);
 
-		// mouse cursor is on top of OK text
-		if(this->GetApp()->GetMouseX() > 498 && this->GetApp()->GetMouseX() < 526 && 
-			this->GetApp()->GetMouseY() > 480 && this->GetApp()->GetMouseY() < 495)
-		{
 			// select button is pressed
-			if(IsValidSelectClick())
+			if (IsValidSelectClick() || (this->m_KeyDown == VK_ESCAPE))
 			{
 				this->m_bDisplayChangesExit = false;
 				OnBackAction();
+			}
+		}
+		// mouse controls
+		else
+		{
+			// draw OK text
+			if (this->GetApp()->GetMouseX() > 498 && this->GetApp()->GetMouseX() < 526 &&
+				this->GetApp()->GetMouseY() > 480 && this->GetApp()->GetMouseY() < 495)
+			{
+				this->m_pResourceMenus->m_pSpriteMessageOK2->Draw(499, 481);
+			}
+			else
+			{
+				this->m_pResourceMenus->m_pSpriteMessageOK1->Draw(499, 481);
+			}
+
+			// mouse cursor is on top of OK text
+			if (this->GetApp()->GetMouseX() > 498 && this->GetApp()->GetMouseX() < 526 &&
+				this->GetApp()->GetMouseY() > 480 && this->GetApp()->GetMouseY() < 495)
+			{
+				// select button is pressed
+				if (IsValidSelectClick())
+				{
+					this->m_bDisplayChangesExit = false;
+					OnBackAction();
+				}
 			}
 		}
 
@@ -1599,251 +1609,301 @@ void CStateMenus::RenderDisplay()
 
 	/* ANTIALIASING */
 
-	bool bShowArrow;
+	CConfig::eANTIALIASING currentAntialiasing = this->GetApp()->GetConfig().GetAntialiasing();
+	int currentAntialiasingValue = (int)currentAntialiasing;
+	DWORD maxAntialiasing = this->GetApp()->GetMaxAntialiasing();
+	bool isAntialiasingLeftChanged = false;
+	bool isAntialiasingRightChanged = false;
 
-	// draw antialiasing border
+	// check if antialiasing left arrow can be drawn
+	bool bShowLeftAntialiasingArrow = (currentAntialiasing != CConfig::eANTIALIASING_0X);
+	// check if antialiasing right arrow can be drawn
+	bool bShowRightAntialiasingArrow = false;
+
+	if (currentAntialiasing != CConfig::eANTIALIASING_8X)
+	{
+		if ((currentAntialiasing == CConfig::eANTIALIASING_0X) && (maxAntialiasing >= 2))
+		{
+			bShowRightAntialiasingArrow = true;
+		}
+		else if ((currentAntialiasing == CConfig::eANTIALIASING_2X) && (maxAntialiasing >= 4))
+		{
+			bShowRightAntialiasingArrow = true;
+		}
+		else if ((currentAntialiasing == CConfig::eANTIALIASING_6X) && (maxAntialiasing >= 8))
+		{
+			bShowRightAntialiasingArrow = true;
+		}
+	}
+
+	// draw antialiasing bar border
 	this->m_pResourceMenus->m_pSpriteVideoAntialiasingBarBorder->Draw(384,412);
 
-	// draw currently selected antialiasing option
-
-	switch(this->GetApp()->GetConfig().GetAntialiasing())
+	// draw antialiasing bar filler
+	if (currentAntialiasingValue > 0)
 	{
-	case CConfig::eANTIALIASING_2X:
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		break;
-
-	case CConfig::eANTIALIASING_4X:
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
-		break;
-
-	case CConfig::eANTIALIASING_6X:
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
-		break;
-
-	case CConfig::eANTIALIASING_8X:
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(514,421);
-		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar8x->Draw(574,421);
-		break;
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar2x->Draw(394, 421);
 	}
 
-	// draw arrows
-
-	bShowArrow = false;
-
-	// checks if antialiasing left arrow can be drawn
-	if(this->GetApp()->GetConfig().GetAntialiasing() != CConfig::eANTIALIASING_0X)
+	if (currentAntialiasingValue > 1)
 	{
-		bShowArrow = true;
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(454, 421);
 	}
 
-	if(bShowArrow)
+	if (currentAntialiasingValue > 2)
 	{
-		// mouse cursor is on top of left arrow
-		if(	this->GetApp()->GetMouseX() > 332 && this->GetApp()->GetMouseX() < 364 && 
-			this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441)
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar46x->Draw(514, 421);
+	}
+
+	if (currentAntialiasingValue == 4)
+	{
+		this->m_pResourceMenus->m_pSpriteVideoAntialiasingBar8x->Draw(574, 421);
+	}
+
+	// mouse cursor is on top of left arrow
+	bool isMouseOnLeftArrow = (m_eInputDevice != eINPUT_DEVICE::Keyboard &&
+		this->GetApp()->GetMouseX() > 332 && this->GetApp()->GetMouseX() < 364 &&
+		this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441);
+
+	// mouse cursor is on top of right arrow
+	bool isMouseOnRightArrow = (m_eInputDevice != eINPUT_DEVICE::Keyboard &&
+		this->GetApp()->GetMouseX() > 656 && this->GetApp()->GetMouseX() < 688 &&
+		this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441);
+
+	// draw the antialiasing left arrow
+
+	if (bShowLeftAntialiasingArrow)
+	{
+		if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
 		{
-			// draw glowing left arrow
-			this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowLeft->Draw(325,413);
-
-			// select button is pressed
-			if(IsValidSelectClick())
-			{
-				// play menu "option" sound
-				this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());;
-							
-				// change antialiasing option
-				switch(this->GetApp()->GetConfig().GetAntialiasing())
-				{
-				case CConfig::eANTIALIASING_2X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_0X);
-					break;
-
-				case CConfig::eANTIALIASING_4X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_2X);
-					break;
-
-				case CConfig::eANTIALIASING_6X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_4X);
-					break;
-
-				case CConfig::eANTIALIASING_8X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_6X);
-					break; 
-				}
-			}
+			// draw normal left arrow
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalLeft->Draw(333, 421);
 		}
 		else
 		{
-			// draw normal left arrow
-			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalLeft->Draw(333,421);
+			// mouse cursor is on top of left arrow
+			if (isMouseOnLeftArrow)
+			{
+				// draw glowing left arrow
+				this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowLeft->Draw(325, 413);
+			}
+			else
+			{
+				// draw normal left arrow
+				this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalLeft->Draw(333, 421);
+			}
 		}
 	}
 	else
 	{
 		// draw hidden left arrow
-		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideLeft->Draw(333,421);
+		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideLeft->Draw(333, 421);
 	}
 
-	bShowArrow = false;
-
-	// checks if antialiasing right arrow can be drawn
-	if(this->GetApp()->GetConfig().GetAntialiasing() != CConfig::eANTIALIASING_8X)
+	// draw the antialiasing right arrow
+	if (bShowRightAntialiasingArrow)
 	{
-		if(this->GetApp()->GetConfig().GetAntialiasing() == CConfig::eANTIALIASING_0X)
+		if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
 		{
-			if(this->GetApp()->GetMaxAntialiasing() >= 2)
-			{
-				bShowArrow = true;
-			}
-		}
-		else if(this->GetApp()->GetConfig().GetAntialiasing() == CConfig::eANTIALIASING_2X)
-		{
-			if(this->GetApp()->GetMaxAntialiasing() >= 4)
-			{
-				bShowArrow = true;
-			}
-		}
-		else if(this->GetApp()->GetConfig().GetAntialiasing() == CConfig::eANTIALIASING_6X)
-		{
-			if(this->GetApp()->GetMaxAntialiasing() >= 6)
-			{
-				bShowArrow = true;
-			}
-		}
-		else if(this->GetApp()->GetConfig().GetAntialiasing() == CConfig::eANTIALIASING_8X)
-		{
-			if(this->GetApp()->GetMaxAntialiasing() >= 8)
-			{
-				bShowArrow = true;
-			}
-		}
-	}
-
-	if(bShowArrow)
-	{
-		// mouse cursor is on top of right arrow
-		if(	this->GetApp()->GetMouseX() > 656 && this->GetApp()->GetMouseX() < 688 && 
-			this->GetApp()->GetMouseY() > 420 && this->GetApp()->GetMouseY() < 441)
-		{
-			// draw glowing right arrow
-			this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowRight->Draw(649,413);
-
-			// select button is pressed
-			if(IsValidSelectClick())
-			{
-				// play menu "option" sound
-				this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
-							
-				// change antialiasing option
-				switch(this->GetApp()->GetConfig().GetAntialiasing())
-				{
-				case CConfig::eANTIALIASING_0X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_2X);
-					break;
-
-				case CConfig::eANTIALIASING_2X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_4X);
-					break;
-
-				case CConfig::eANTIALIASING_4X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_6X);
-					break;
-
-				case CConfig::eANTIALIASING_6X:
-					this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_8X);
-					break; 
-				}
-			}
+			// draw normal right arrow
+			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalRight->Draw(657, 421);
 		}
 		else
 		{
-			// draw normal right arrow
-			this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalRight->Draw(657,421);
+			// mouse cursor is on top of right arrow
+			if (isMouseOnRightArrow)
+			{
+				// draw glowing right arrow
+				this->m_pResourceMenus->m_pSpriteArrowAntialiasingGlowRight->Draw(649, 413);
+			}
+			else
+			{
+				// draw normal right arrow
+				this->m_pResourceMenus->m_pSpriteArrowAntialiasingNormalRight->Draw(657, 421);
+			}
 		}
 	}
 	else
 	{
 		// draw hidden right arrow
-		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideRight->Draw(657,421);
+		this->m_pResourceMenus->m_pSpriteArrowAntialiasingHideRight->Draw(657, 421);
+	}
+
+	// keyboard controls
+	if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
+	{
+		if (m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Display_Antialiasing)
+		{
+			// draw the antialiasing menu text highlight
+			this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_DISPLAY_ANTIALIASING);
+
+			// left button is pressed
+			if (bShowLeftAntialiasingArrow && IsValidLeftClick())
+			{
+				isAntialiasingLeftChanged = true;
+			}
+			// right button is pressed
+			else if (bShowRightAntialiasingArrow && IsValidRightClick())
+			{
+				isAntialiasingRightChanged = true;
+			}
+		}
+	}
+	// mouse controls
+	else
+	{
+		// mouse cursor is on top of left arrow and select button is pressed
+		if (bShowLeftAntialiasingArrow && isMouseOnLeftArrow && IsValidSelectClick())
+		{
+			isAntialiasingLeftChanged = true;
+		}
+		// mouse cursor is on top of right arrow and select button is pressed
+		else if (bShowRightAntialiasingArrow && isMouseOnRightArrow && IsValidSelectClick())
+		{
+			isAntialiasingRightChanged = true;
+		}
+	}
+
+	// change antialiasing option
+	if (isAntialiasingLeftChanged || isAntialiasingRightChanged)
+	{
+		// play menu "option" sound
+		this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());;
+
+		if (isAntialiasingLeftChanged)
+		{
+			switch (currentAntialiasing)
+			{
+			case CConfig::eANTIALIASING_2X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_0X);
+				break;
+
+			case CConfig::eANTIALIASING_4X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_2X);
+				break;
+
+			case CConfig::eANTIALIASING_6X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_4X);
+				break;
+
+			case CConfig::eANTIALIASING_8X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_6X);
+				break;
+			}
+		}
+		else if (isAntialiasingRightChanged)
+		{
+			switch (this->GetApp()->GetConfig().GetAntialiasing())
+			{
+			case CConfig::eANTIALIASING_0X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_2X);
+				break;
+
+			case CConfig::eANTIALIASING_2X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_4X);
+				break;
+
+			case CConfig::eANTIALIASING_4X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_6X);
+				break;
+
+			case CConfig::eANTIALIASING_6X:
+				this->GetApp()->GetConfig().SetAntialiasing(CConfig::eANTIALIASING_8X);
+				break;
+			}
+		}
 	}
 
 	/* SPECULAR LIGHTING */
 
-	// draw currently selected specular lighting option and arrows
+	CConfig::eSPECULAR_LIGHTING currentSpecular = this->GetApp()->GetConfig().GetSpecularLighting();
+	CConfig::eSPECULAR_LIGHTING nextSpecular = currentSpecular;
+	bool isSpecularChanged = false;
 
-	switch(this->GetApp()->GetConfig().GetSpecularLighting())
+	// draw specular on/off text with glow effect
+	switch (currentSpecular)
 	{
 	case CConfig::eSPECULAR_LIGHTING_OFF:
-
-		// mouse cursor is on top of OFF text
-		if(	this->GetApp()->GetMouseX() > 483 && this->GetApp()->GetMouseX() < 539 && 
-			this->GetApp()->GetMouseY() > 568 && this->GetApp()->GetMouseY() < 594)
-		{
-			// draw specular lighting arrows
-			this->m_pResourceMenus->m_pSpriteSpecularLightingOffGlow->Draw(476,561);
-
-			// select button is pressed
-			if(IsValidSelectClick())
-			{
-				// play menu "option" sound
-				this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
-
-				this->GetApp()->GetConfig().SetSpecularLighting(CConfig::eSPECULAR_LIGHTING_ON);
-
-				if(this->m_bChangeSpecularity)
-				{
-					this->m_bChangeSpecularity = false;
-				}
-				else if(!this->m_bChangeSpecularity)
-				{
-					this->m_bChangeSpecularity = true;
-				}
-			}
-		}
-		else
-		{
-			this->m_pResourceMenus->m_pSpriteSpecularLightingOff->Draw(484,569);
-		}
-
+		nextSpecular = CConfig::eSPECULAR_LIGHTING_ON;
 		break;
-
 	case CConfig::eSPECULAR_LIGHTING_ON:
+		nextSpecular = CConfig::eSPECULAR_LIGHTING_OFF;
+		break;
+	}
 
-		// mouse cursor is on top of ON text
-		if(	this->GetApp()->GetMouseX() > 487 && this->GetApp()->GetMouseX() < 537 &&
+	// keyboard controls
+	if (m_eInputDevice == eINPUT_DEVICE::Keyboard)
+	{
+		// draw specular on/off text without glow effect
+		switch (currentSpecular)
+		{
+		case CConfig::eSPECULAR_LIGHTING_OFF:
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOff->Draw(484, 569);
+			break;
+		case CConfig::eSPECULAR_LIGHTING_ON:
+			this->m_pResourceMenus->m_pSpriteSpecularLightingOn->Draw(487, 569);
+			break;
+		}
+
+		// specular menu text is selected
+		if (m_eKeyboardMenuBrowse == eKEYBOARD_MENU_BROWSE::Display_Specular_Lighting)
+		{
+			// draw menu text highlight
+			this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_DISPLAY_SPECULAR);
+
+			// select, left or right button is pressed
+			if (IsValidSelectClick() || IsValidLeftClick() || IsValidRightClick())
+			{
+				isSpecularChanged = true;
+			}
+		}
+	}
+	// mouse controls
+	else
+	{
+		if (this->GetApp()->GetMouseX() > 483 && this->GetApp()->GetMouseX() < 539 &&
 			this->GetApp()->GetMouseY() > 568 && this->GetApp()->GetMouseY() < 594)
 		{
-			this->m_pResourceMenus->m_pSpriteSpecularLightingOnGlow->Draw(479,561);
+			// draw specular on/off text with glow effect
+			switch (currentSpecular)
+			{
+			case CConfig::eSPECULAR_LIGHTING_OFF:
+				this->m_pResourceMenus->m_pSpriteSpecularLightingOffGlow->Draw(476, 561);
+				break;
+			case CConfig::eSPECULAR_LIGHTING_ON:
+				this->m_pResourceMenus->m_pSpriteSpecularLightingOnGlow->Draw(479, 561);
+				break;
+			}
 
 			// select button is pressed
-			if(IsValidSelectClick())
+			if (IsValidSelectClick())
 			{
-				// play menu "option" sound
-				this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
-
-				this->GetApp()->GetConfig().SetSpecularLighting(CConfig::eSPECULAR_LIGHTING_OFF);
-
-				if(this->m_bChangeSpecularity)
-				{
-					this->m_bChangeSpecularity = false;
-				}
-				else if(!this->m_bChangeSpecularity)
-				{
-					this->m_bChangeSpecularity = true;
-				}
+				isSpecularChanged = true;
 			}
 		}
 		else
 		{
-			this->m_pResourceMenus->m_pSpriteSpecularLightingOn->Draw(487,569);
+			// draw specular on/off text without glow effect
+			switch (currentSpecular)
+			{
+			case CConfig::eSPECULAR_LIGHTING_OFF:
+				this->m_pResourceMenus->m_pSpriteSpecularLightingOff->Draw(484, 569);
+				break;
+			case CConfig::eSPECULAR_LIGHTING_ON:
+				this->m_pResourceMenus->m_pSpriteSpecularLightingOn->Draw(487, 569);
+				break;
+			}
 		}
+	}
 
-		break;
+	if (isSpecularChanged)
+	{
+		// play menu "option" sound
+		this->GetApp()->GetWave(SOUND_MENU_OPTION).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
+
+		// change specularity on/off
+		this->GetApp()->GetConfig().SetSpecularLighting(nextSpecular);
+		this->m_bChangeSpecularity = !this->m_bChangeSpecularity;
 	}
 
 	// mouse cursor is on top of Back text
@@ -1851,8 +1911,8 @@ void CStateMenus::RenderDisplay()
 		(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 457 && this->GetApp()->GetMouseX() < 565 &&
 		this->GetApp()->GetMouseY() > 675 && this->GetApp()->GetMouseY() < 702))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458,713);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_BACK);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -1877,8 +1937,8 @@ void CStateMenus::RenderHighScore(float fFrametime)
 		(m_eInputDevice != eINPUT_DEVICE::Keyboard && this->GetApp()->GetMouseX() > 457 && this->GetApp()->GetMouseX() < 566 &&
 		this->GetApp()->GetMouseY() > 673 && this->GetApp()->GetMouseY() < 704))
 	{
-		// draw underline
-		this->m_pResourceMenus->m_pSpriteUnderlineBack->Draw(458, 713);
+		// draw menu text highlight
+		this->m_pResourceMenus->RenderMenuTextHighlight(MENU_TEXT_POS_Y_BACK);
 
 		// select button is pressed
 		if(IsValidSelectClick())
@@ -2478,15 +2538,23 @@ void CStateMenus::OnBackAction()
 
 	case Display:
 
+		if (this->m_bDisplayChangesExit)
+		{
+			return;
+		}
+
 		// antialiasing changed
 		if (this->m_iAntialiasingCurrent != (int)this->GetApp()->GetConfig().GetAntialiasing())
 		{
 			this->m_iAntialiasingCurrent = (int)this->GetApp()->GetConfig().GetAntialiasing();
 			this->m_bDisplayChangesExit = true;
 
-			// move mouse cursor on top of the OK text of message box
-			this->GetApp()->SetMouseX(512);
-			this->GetApp()->SetMouseY(488);
+			// set mouse cursor on top of the OK text of the message box
+			if (m_eInputDevice != eINPUT_DEVICE::Keyboard)
+			{
+				this->GetApp()->SetMouseX(512);
+				this->GetApp()->SetMouseY(488);
+			}
 		}
 		else
 		{
@@ -2547,41 +2615,41 @@ void CStateMenus::ResetPlayerInput()
 {
 	this->m_bIsClickPause = false;
 
-	if (this->m_bInputSelect)
+	switch (m_KeyDown)
 	{
+	case VK_RETURN:
+	case VK_UP:
+	case VK_DOWN:
+	case VK_LEFT:
+	case VK_RIGHT:
 		this->m_bIsClickPause = true;
+		break;
 	}
 
-	this->m_bInputUp = false;
-	this->m_bInputDown = false;
-	this->m_bInputLeft = false;
-	this->m_bInputRight = false;
-	this->m_bInputSelect = false;
+	this->m_KeyDown = 0;
 }
 
 void CStateMenus::UpdatePlayerInput()
 {
+	// MOUSE DEVICE
+
 	if (this->GetApp()->IsMouseMovement() || this->m_pMouse->GetButton(0))
 	{
 		m_eInputDevice = Mouse;
 
 		if (this->m_pMouse->GetButton(0))
 		{
-			this->m_bInputSelect = true;
+			this->m_KeyDown = VK_RETURN;
 		}
 
 		return;
 	}
-
-	bool bCheckKeyboard = true;
 
 	// JOYSTICK DEVICE
 
 	if (SUCCEEDED(this->m_pJoystick->Update()))
 	{
 		DWORD buttons = this->m_pJoystick->GetButtonCount();
-		int iJoystickY = this->m_pJoystick->GetState().lY;
-		int iJoystickX = this->m_pJoystick->GetState().lX;
 
 		// read buttons
 		for (DWORD i = 0; i < buttons; i++)
@@ -2589,62 +2657,70 @@ void CStateMenus::UpdatePlayerInput()
 			// read select control
 			if (this->m_pJoystick->GetButton(i))
 			{
-				this->m_bInputSelect = true;
-				m_eInputDevice = Joystick;
+				OnKeyDown(VK_RETURN);
 				break;
 			}
 		}
 
+		int iJoystickY = this->m_pJoystick->GetState().lY;
+		int iJoystickX = this->m_pJoystick->GetState().lX;
+
 		// read up control
 		if (iJoystickY < 0)
 		{
-			this->m_bInputUp = true;
-			m_eInputDevice = Joystick;
+			OnKeyDown(VK_UP);
 		}
 		// read down control
 		else if (iJoystickY > 0)
 		{
-			this->m_bInputDown = true;
-			m_eInputDevice = Joystick;
+			OnKeyDown(VK_DOWN);
 		}
-
 		// read left control
-		if (iJoystickX < 0)
+		else if (iJoystickX < 0)
 		{
-			this->m_bInputLeft = true;
-			m_eInputDevice = Joystick;
+			OnKeyDown(VK_LEFT);
 		}
 		// read right control
 		else if (iJoystickX > 0)
 		{
-			this->m_bInputRight = true;
-			m_eInputDevice = Joystick;
+			OnKeyDown(VK_RIGHT);
 		}
 	}
 }
 
 bool CStateMenus::IsValidSelectClick()
 {
-	if (!this->m_bIsClickPause && this->m_bInputSelect)
+	if (this->m_bIsClickPause)
 	{
-		return true;
+		return false;
 	}
 
-	return false;
+	return (this->m_KeyDown == VK_RETURN);
+}
+
+bool CStateMenus::IsValidLeftClick()
+{
+	if (this->m_bIsClickPause)
+	{
+		return false;
+	}
+
+	return (this->m_KeyDown == VK_LEFT);
+}
+
+bool CStateMenus::IsValidRightClick()
+{
+	if (this->m_bIsClickPause)
+	{
+		return false;
+	}
+
+	return (this->m_KeyDown == VK_RIGHT);
 }
 
 void CStateMenus::OnKeyboardMenuBrowse(DWORD dwKey)
 {
-	if (dwKey == VK_LEFT)
-	{
-		m_bInputLeft = true;
-	}
-	else if (dwKey == VK_RIGHT)
-	{
-		m_bInputRight = true;
-	}
-
-	if (this->m_bMessageBoxKey)
+	if (this->m_bMessageBoxKey || this->m_bIsClickPause)
 	{
 		return;
 	}
