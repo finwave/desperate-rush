@@ -2173,6 +2173,7 @@ void CTheGame::Render(void)
 		else
 		{
 			this->CollisionPlayerVsBoss();
+			this->CollisionBulletVsBoss();
 			this->CollisionBulletVsBorder();
 
 			this->ClearBullets(false);
