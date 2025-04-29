@@ -105,12 +105,18 @@ void CWeapon::Update(float fFrametime, float fPlayerVelocity)
 
 	case eOWNER_ENEMY:
 
-		// boss bullets will be moved in their own classes
-		if( (this->m_eBulletType != eBULLET_TYPE_BOSS_1_LASER) && 
-			(this->m_eBulletType != eBULLET_TYPE_BOSS_1_SCATTER))
+		switch (this->m_eBulletType)
 		{
+		case eBULLET_TYPE::eBULLET_TYPE_BOSS_1_LASER:
+		case eBULLET_TYPE::eBULLET_TYPE_BOSS_1_SCATTER:
+		case eBULLET_TYPE::eBULLET_TYPE_ENEMY_ROLLER:
+			// do nothing
+			break;
+
+		default:
 			pos.y -= fMove;
 			pos.y -= fPlayerVelocity * fFrametime;
+			break;
 		}
 
 		break;
