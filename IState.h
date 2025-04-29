@@ -153,8 +153,6 @@ public:
 
 	inline float GetScreenWidth() { return m_fScreenWidth; }
 	inline float GetScreenHeight() { return m_fScreenHeight; }
-	inline float GetScreenPixelWidth() { return m_fScreenPixelWidth; }
-	inline float GetScreenPixelHeight() { return m_fScreenPixelHeight; }
 
 #ifdef SHADOWS
 	inline int GetShadowCount() { return this->m_iShadowCount; }
@@ -190,8 +188,6 @@ protected:
 
 	float				m_fScreenWidth;
 	float				m_fScreenHeight;
-	float				m_fScreenPixelWidth;
-	float				m_fScreenPixelHeight;
 
 	int					m_iVolumeSoundEffect;
 

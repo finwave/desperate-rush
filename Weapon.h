@@ -185,7 +185,4 @@ protected:
 	float				m_fHeight;
 	float				m_fSpeed;
 	int					m_iDamage;
-
-	float				m_fScreenPixelWidth;
-	float				m_fScreenPixelHeight;
 };

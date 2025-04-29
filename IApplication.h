@@ -17,6 +17,9 @@
 #include "Timer.h"
 #include "ZipManager.h"
 
+// define the screen resolution
+#define SCREEN_WIDTH	1024
+#define SCREEN_HEIGHT	768
 
 class IApplication
 {
@@ -27,17 +30,13 @@ public:
 	/**
 	 * Create
 	 * initialise application main window with given parameters
-	 * @param iWidth screen resolution width
-	 * @param iHeight screen resolution height
 	 * @param iBPP bits per pixel (16 or 32)
 	 * @param bWindowed TRUE if started in windowed mode
 	 * @param strTitle application title text
 	 * @param dwFlags additional startup flags
 	 * @return S_OK, or system wide error code
 	 */
-	HRESULT Create(	int iWidth,
-					int iHeight,
-					int iBPP,
+	HRESULT Create(	int iBPP,
 					BOOL bWindowed,
 					LPCTSTR strTitle,
 					DWORD dwFlags);
@@ -168,15 +167,11 @@ protected:
 	/**
 	 * CreateAppWindow
 	 * create application main window
-	 * @param iWidth screen resolution width
-	 * @param iHeight screen resolution height
 	 * @param bWindowed TRUE if started in windowed mode
 	 * @param strTitle application title text
 	 * @return TRUE if successful
 	 */
-	BOOL CreateAppWindow(	int iWidth,
-							int iHeight,
-							BOOL bWindowed,
+	BOOL CreateAppWindow(	BOOL bWindowed,
 							LPCTSTR strTitle);
 
 	/**

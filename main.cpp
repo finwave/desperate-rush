@@ -10,9 +10,7 @@ int main()
 	HRESULT hres;
 	CTheApp app;
 
-	hres = app.Create(	1024,
-						768,
-						32,
+	hres = app.Create(	32,
 						FALSE,
 						_T("Desperate Rush"),
 						0);

@@ -751,9 +751,7 @@ private:
 	float						m_fDepth;
 
 	float						m_fScreenWidth;
-	float						m_fScreenHeight;
-	float						m_fScreenPixelWidth;
-	float						m_fScreenPixelHeight;	
+	float						m_fScreenHeight;	
 
 	int							m_iVolumeSoundEffect;
 

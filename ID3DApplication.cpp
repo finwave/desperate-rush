@@ -39,17 +39,13 @@ ID3DApplication::~ID3DApplication(void)
 }
 
 
-HRESULT ID3DApplication::Create(	int iWidth,
-									int iHeight,
-									int iBPP,
-									BOOL bWindowed,
-									LPCTSTR strTitle,
-									DWORD dwFlags)
+HRESULT ID3DApplication::Create(int iBPP,
+								BOOL bWindowed,
+								LPCTSTR strTitle,
+								DWORD dwFlags)
 {
-	if(!CreateAppWindow(	iWidth,
-							iHeight,
-							bWindowed,
-							strTitle))
+	if(!CreateAppWindow(bWindowed,
+						strTitle))
 	{
 		return E_FAIL;
 	}
@@ -84,8 +80,8 @@ HRESULT ID3DApplication::Create(	int iWidth,
 	else
 	{
 		// init fullscreen present parameters
-		this->m_Present.BackBufferWidth = iWidth;
-		this->m_Present.BackBufferHeight = iHeight;
+		this->m_Present.BackBufferWidth = SCREEN_WIDTH;
+		this->m_Present.BackBufferHeight = SCREEN_HEIGHT;
 
 		// bits per pixel
 		switch (iBPP)

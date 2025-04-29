@@ -353,8 +353,6 @@ protected:
 
 	float					m_fScreenWidth;
 	float					m_fScreenHeight;
-	float					m_fScreenPixelWidth;
-	float					m_fScreenPixelHeight;
 
 	const float				SHIP_ENTER_AFTERBURN_END_DELTA = 0.45f;
 

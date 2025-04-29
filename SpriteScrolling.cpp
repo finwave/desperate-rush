@@ -16,10 +16,6 @@ CSpriteScrolling::CSpriteScrolling(void)
 
 	this->m_fDepth = 0.0f;
 
-	// game resolution is 1024x768
-	this->m_iScreenWidth = 1024;
-	this->m_iScreenHeight = 768;
-
 	this->m_iOffset1 = 0;
 	this->m_iOffset2 = 0;
 
@@ -138,7 +134,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 
 			case eDIRECTION_DOWN:
 
-				if( (m_iStartPositionY + this->m_iOffset1) > m_iScreenHeight )
+				if( (m_iStartPositionY + this->m_iOffset1) > SCREEN_HEIGHT)
 				{
 					this->m_bOutOfBorder = true;
 				}
@@ -154,7 +150,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 
 			case eDIRECTION_RIGHT:
 
-				if( (m_iStartPositionX + this->m_iOffset1) > m_iScreenWidth )
+				if( (m_iStartPositionX + this->m_iOffset1) > SCREEN_WIDTH)
 				{
 					this->m_bOutOfBorder = true;
 				}
@@ -189,7 +185,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 
 
 			// first offset is higher than sprite height - screen height
-			if( this->m_iOffset1 > (this->m_iSpriteHeight - this->m_iScreenHeight) )
+			if( this->m_iOffset1 > (this->m_iSpriteHeight - SCREEN_HEIGHT) )
 			{
 				if( this->m_iPause == 0 )
 				{
@@ -213,9 +209,9 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				// bottom sprite
 
 				rct.top = 0;
-				rct.bottom = this->m_iScreenHeight + this->m_iOffset2;
+				rct.bottom = SCREEN_HEIGHT + this->m_iOffset2;
 
-				pos.y = this->m_iScreenHeight - this->m_iOffset2;
+				pos.y = SCREEN_HEIGHT - this->m_iOffset2;
 
 				// render sprite
 				this->RenderRepeat(&rct, &pos, 255);
@@ -225,7 +221,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				// top sprite
 
 				rct.top = this->m_iOffset1;
-				rct.bottom = this->m_iScreenHeight + this->m_iOffset1;
+				rct.bottom = SCREEN_HEIGHT + this->m_iOffset1;
 
 				pos.y = 0;
 
@@ -244,7 +240,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 			rct.right = this->m_iSpriteWidth;
 
 			// first offset is higher than sprite height - screen height
-			if( this->m_iOffset1 > (this->m_iSpriteHeight - this->m_iScreenHeight) )
+			if( this->m_iOffset1 > (this->m_iSpriteHeight - SCREEN_HEIGHT) )
 			{
 				if( this->m_iPause == 0 )
 				{
@@ -258,7 +254,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				// bottom sprite
 
 				rct.top = 0;
-				rct.bottom = this->m_iScreenHeight - this->m_iOffset2;
+				rct.bottom = SCREEN_HEIGHT - this->m_iOffset2;
 
 				pos.y = this->m_iOffset2;
 
@@ -279,7 +275,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 			{
 				// bottom sprite
 
-				rct.top = (this->m_iSpriteHeight - this->m_iScreenHeight) - this->m_iOffset1;
+				rct.top = (this->m_iSpriteHeight - SCREEN_HEIGHT) - this->m_iOffset1;
 				rct.bottom = this->m_iSpriteHeight - this->m_iOffset1;
 
 				pos.y = 0;
@@ -299,7 +295,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 			rct.bottom = this->m_iSpriteHeight;
 
 			// first offset is higher than sprite width - screen width
-			if( this->m_iOffset1 > (this->m_iSpriteWidth - this->m_iScreenWidth) )
+			if( this->m_iOffset1 > (this->m_iSpriteWidth - SCREEN_WIDTH) )
 			{
 				if( this->m_iPause == 0 )
 				{
@@ -325,7 +321,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				rct.left = 0;
 				rct.right = this->m_iOffset2;
 
-				pos.x = this->m_iScreenWidth - this->m_iOffset2;
+				pos.x = SCREEN_WIDTH - this->m_iOffset2;
 
 				// render sprite
 				this->RenderRepeat(&rct, &pos, 255);
@@ -335,7 +331,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				// left sprite
 
 				rct.left = this->m_iOffset1;
-				rct.right = this->m_iScreenWidth + this->m_iOffset1;
+				rct.right = SCREEN_WIDTH + this->m_iOffset1;
 
 				pos.x = 0;
 
@@ -354,7 +350,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 			rct.bottom = this->m_iSpriteHeight;
 
 			// first offset is higher than sprite width - screen width
-			if( this->m_iOffset1 > (this->m_iSpriteWidth - this->m_iScreenWidth) )
+			if( this->m_iOffset1 > (this->m_iSpriteWidth - SCREEN_WIDTH) )
 			{
 				if( this->m_iPause == 0 )
 				{
@@ -368,7 +364,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 				// right sprite
 
 				rct.left = 0;
-				rct.right = this->m_iScreenWidth - this->m_iOffset2;
+				rct.right = SCREEN_WIDTH - this->m_iOffset2;
 
 				pos.x = this->m_iOffset2;
 
@@ -389,7 +385,7 @@ void CSpriteScrolling::Draw(bool bForcedStop)
 			{
 				// right sprite
 
-				rct.left = (this->m_iSpriteWidth - this->m_iScreenWidth) - this->m_iOffset1;
+				rct.left = (this->m_iSpriteWidth - SCREEN_WIDTH) - this->m_iOffset1;
 				rct.right = this->m_iSpriteWidth - this->m_iOffset1;
 
 				pos.x = 0;

@@ -27,8 +27,6 @@ IEnemy::IEnemy(void)
 
 	this->m_fScreenWidth = 0.0f;
 	this->m_fScreenHeight = 0.0f;
-	this->m_fScreenPixelWidth = 1024.0f;
-	this->m_fScreenPixelHeight = 768.0f;
 
 	this->m_fShipEnterMoveDuration = 0.0f;
 	this->m_fShipEnterMoveTimer = 0.0f;
@@ -770,8 +768,8 @@ void IEnemy::RenderEnemyAfterburn(bool bFreeze, bool bPauseTimer)
 
 			fMoveY = fMoveY * -1.0f;
 
-			int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-			int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+			int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+			int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 			switch(this->m_eType)
 			{
@@ -832,8 +830,8 @@ void IEnemy::RenderEnemyAfterburn(bool bFreeze, bool bPauseTimer)
 
 		fMoveY = fMoveY * -1.0f;
 
-		int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-		int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 		switch(this->m_eType)
 		{

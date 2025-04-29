@@ -17,7 +17,7 @@ IApplication::IApplication(void)
 	::memset(&m_rcWindow, 0, sizeof(RECT));
 
 	// seed the random number generator
-	::srand( ::GetTickCount() );
+	::srand( ::GetTickCount64() );
 }
 
 IApplication::~IApplication(void)
@@ -25,18 +25,14 @@ IApplication::~IApplication(void)
 }
 
 
-HRESULT IApplication::Create(	int iWidth,
-								int iHeight,
-								int iBPP,
+HRESULT IApplication::Create(	int iBPP,
 								BOOL bWindowed,
 								LPCTSTR strTitle,
 								DWORD dwFlags)
 {
 	// create application window
-	if(!CreateAppWindow(	iWidth,
-							iHeight,
-							bWindowed,
-							strTitle))
+	if(!CreateAppWindow(bWindowed,
+						strTitle))
 	{
 		return E_FAIL;
 	}
@@ -74,9 +70,7 @@ void IApplication::Release(void)
 }
 
 
-BOOL IApplication::CreateAppWindow(	int iWidth,
-									int iHeight,
-									BOOL bWindowed,
+BOOL IApplication::CreateAppWindow(	BOOL bWindowed,
 									LPCTSTR strTitle)
 {
 	HINSTANCE		hInstance = ::GetModuleHandle(NULL);
@@ -96,9 +90,9 @@ BOOL IApplication::CreateAppWindow(	int iWidth,
 		// compute overall window size
 		// width and height parameters are window client
 		// area size, we need to compute total window size
-		iWindowWidth = iWidth +
+		iWindowWidth = SCREEN_WIDTH +
 			::GetSystemMetrics(SM_CXSIZEFRAME) * 2;
-		iWindowHeight = iHeight +
+		iWindowHeight = SCREEN_HEIGHT +
 			::GetSystemMetrics(SM_CYSIZEFRAME) * 2 +
 			::GetSystemMetrics(SM_CYMENU);
 	}
@@ -107,8 +101,8 @@ BOOL IApplication::CreateAppWindow(	int iWidth,
 		// init fullscreen mode window
 		// WS_POPUP is a borderless no-titlebar window
 		dwStyle = WS_POPUP;
-		iWindowWidth = iWidth;
-		iWindowHeight = iHeight;
+		iWindowWidth = SCREEN_WIDTH;
+		iWindowHeight = SCREEN_HEIGHT;
 	}
 
 	// register window class

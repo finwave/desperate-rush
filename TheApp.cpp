@@ -516,16 +516,6 @@ float CTheApp::GetScreenHeight()
 	return m_pState->GetScreenHeight();
 }
 
-float CTheApp::GetScreenPixelWidth()
-{
-	return m_pState->GetScreenPixelWidth();
-}
-
-float CTheApp::GetScreenPixelHeight()
-{
-	return m_pState->GetScreenPixelHeight();
-}
-
 void CTheApp::SetTextY(int iTextY)
 {
 	this->m_iTextY = iTextY;

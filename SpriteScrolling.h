@@ -81,9 +81,6 @@ private:
 
 	float				m_fDepth;
 
-	int					m_iScreenWidth;
-	int					m_iScreenHeight;
-
 	int					m_iOffset1;
 	int					m_iOffset2;
 

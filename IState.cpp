@@ -37,8 +37,6 @@ IState::IState(void)
 
 	this->m_fScreenWidth = 203.0f;
 	this->m_fScreenHeight = 152.25f;
-	this->m_fScreenPixelWidth = 1024.0f;
-	this->m_fScreenPixelHeight = 768.0f;
 
 	this->m_iVolumeSoundEffect = 0;
 

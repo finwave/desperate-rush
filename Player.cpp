@@ -51,9 +51,6 @@ CPlayer::CPlayer(void)
 
 	this->m_fHitSoundTimer = 0.0f;
 
-	this->m_fScreenPixelWidth = 1024.0f;
-	this->m_fScreenPixelHeight = 768.0f;
-
 	this->m_fVelocity = 0.0f;
 	this->m_fBoostClock = 0.0f;
 	this->m_fBoostSpeed = 1.5f;
@@ -553,14 +550,14 @@ void CPlayer::RenderBlast()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosOriginalX = ( (this->m_fScreenPixelWidth / 2) - 12.0f) + fMoveX;
+	iPosOriginalX = ( (SCREEN_WIDTH / 2) - 12.0f) + fMoveX;
 
 	// y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosOriginalY = ( (this->m_fScreenPixelHeight / 2) - 12.0f) + fMoveY;
+	iPosOriginalY = ( (SCREEN_HEIGHT / 2) - 12.0f) + fMoveY;
 
 	// draw blast beams
 

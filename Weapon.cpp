@@ -1,4 +1,5 @@
 #include "Weapon.h"
+#include "IApplication.h"
 
 std::vector<CSprite> CWeapon::s_SpritesGame;
 std::vector<CSprite> CWeapon::s_SpritesHighscore;
@@ -14,9 +15,6 @@ CWeapon::CWeapon(void)
 	this->m_fHeight = 0.0f;
 	this->m_fSpeed = 0.0f;
 	this->m_iDamage = 0;
-
-	this->m_fScreenPixelWidth = 1024.0f;
-	this->m_fScreenPixelHeight = 768.0f;
 }
 
 CWeapon::~CWeapon(void)
@@ -150,12 +148,12 @@ void CWeapon::DrawSpriteBulletPlayer(	D3DXVECTOR3 posLeft,
 		if(bBulletLeft)
 		{
 			fMoveX = posLeft.x * fPixelMultiplier;
-			iPosX = ( (this->m_fScreenPixelWidth / 2) - 14.0f) + fMoveX;
+			iPosX = ( (SCREEN_WIDTH / 2) - 14.0f) + fMoveX;
 
 			fMoveY = posLeft.y * fPixelMultiplier;
 			fMoveY = fMoveY * -1.0f;
 
-			iPosY = ( (this->m_fScreenPixelHeight / 2) - 14.0f) + fMoveY;
+			iPosY = ( (SCREEN_HEIGHT / 2) - 14.0f) + fMoveY;
 
 			iPosY += 6;
 
@@ -165,12 +163,12 @@ void CWeapon::DrawSpriteBulletPlayer(	D3DXVECTOR3 posLeft,
 		if(bBulletRight)
 		{
 			fMoveX = posRight.x * fPixelMultiplier;
-			iPosX = ( (this->m_fScreenPixelWidth / 2) - 14.0f) + fMoveX;
+			iPosX = ( (SCREEN_WIDTH / 2) - 14.0f) + fMoveX;
 
 			fMoveY = posRight.y * fPixelMultiplier;
 			fMoveY = fMoveY * -1.0f;
 
-			iPosY = ( (this->m_fScreenPixelHeight / 2) - 14.0f) + fMoveY;
+			iPosY = ( (SCREEN_HEIGHT / 2) - 14.0f) + fMoveY;
 
 			iPosY -= 3;
 
@@ -186,21 +184,21 @@ void CWeapon::DrawSpriteBulletPlayer(	D3DXVECTOR3 posLeft,
 		pos = posLeft;
 
 		fMoveX = pos.x * fPixelMultiplier;
-		iPosLeftX = ( (this->m_fScreenPixelWidth / 2) - 11.0f) + fMoveX;
+		iPosLeftX = ( (SCREEN_WIDTH / 2) - 11.0f) + fMoveX;
 
 		// right bullet x-position
 
 		pos = posRight;
 
 		fMoveX = pos.x * fPixelMultiplier;
-		iPosRightX = ( (this->m_fScreenPixelWidth / 2) - 10.0f) + fMoveX;
+		iPosRightX = ( (SCREEN_WIDTH / 2) - 10.0f) + fMoveX;
 
 		// left and right bullets y-position
 
 		fMoveY = pos.y * fPixelMultiplier;
 		fMoveY = fMoveY * -1.0f;
 
-		iPosY = ( (this->m_fScreenPixelHeight / 2) - 14.0f) + fMoveY;
+		iPosY = ( (SCREEN_HEIGHT / 2) - 14.0f) + fMoveY;
 
 		// fine-tune bullet positions and draw
 
@@ -295,14 +293,14 @@ void CWeapon::DrawSpriteBulletDrone()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosX = ( (this->m_fScreenPixelWidth / 2) - 12.0f) + fMoveX;
+	iPosX = ( (SCREEN_WIDTH / 2) - 12.0f) + fMoveX;
 
 	// bullet y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = ( (this->m_fScreenPixelHeight / 2) - 12.0f) + fMoveY;
+	iPosY = ( (SCREEN_HEIGHT / 2) - 12.0f) + fMoveY;
 
 	// draw bullet
 	int spriteIndex = CResources::SPRITE_GAME_BULLET_DRONE - CResources::SPRITE_GAME_BULLET_FIRST;
@@ -326,14 +324,14 @@ void CWeapon::DrawSpriteBulletSniper()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosX = ( (this->m_fScreenPixelWidth / 2) - 14.0f) + fMoveX;
+	iPosX = ( (SCREEN_WIDTH / 2) - 14.0f) + fMoveX;
 
 	// bullet y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = ( (this->m_fScreenPixelHeight / 2) - 21.0f) + fMoveY;
+	iPosY = ( (SCREEN_HEIGHT / 2) - 21.0f) + fMoveY;
 
 	// draw bullet
 	int spriteIndex = CResources::SPRITE_GAME_BULLET_SNIPER - CResources::SPRITE_GAME_BULLET_FIRST;
@@ -357,14 +355,14 @@ void CWeapon::DrawSpriteBulletRoller()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosX = (this->m_fScreenPixelWidth / 2) + fMoveX;
+	iPosX = (SCREEN_WIDTH / 2) + fMoveX;
 
 	// bullet y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = (this->m_fScreenPixelHeight / 2) + fMoveY;
+	iPosY = (SCREEN_HEIGHT / 2) + fMoveY;
 
 	iPosX -= 12;
 	iPosY -= 12;
@@ -396,14 +394,14 @@ void CWeapon::DrawSpriteBulletBoss1Laser()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosX = (this->m_fScreenPixelWidth / 2) + fMoveX;
+	iPosX = (SCREEN_WIDTH / 2) + fMoveX;
 
 	// bullet y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = (this->m_fScreenPixelHeight / 2) + fMoveY;
+	iPosY = (SCREEN_HEIGHT / 2) + fMoveY;
 
 	switch(this->m_eDirection)
 	{
@@ -458,14 +456,14 @@ void CWeapon::DrawSpriteBulletBoss1Scatter()
 	pos = this->GetPosition();
 
 	fMoveX = pos.x * fPixelMultiplier;
-	iPosX = (this->m_fScreenPixelWidth / 2) + fMoveX;
+	iPosX = (SCREEN_WIDTH / 2) + fMoveX;
 
 	// bullet y-position
 
 	fMoveY = pos.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = (this->m_fScreenPixelHeight / 2) + fMoveY;
+	iPosY = (SCREEN_HEIGHT / 2) + fMoveY;
 
 	iPosX -= 12;
 	iPosY -= 12;

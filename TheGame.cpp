@@ -252,8 +252,6 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 	{
 		this->m_fScreenWidth = pState->GetScreenWidth();
 		this->m_fScreenHeight = pState->GetScreenHeight();
-		this->m_fScreenPixelWidth = pState->GetScreenPixelWidth();
-		this->m_fScreenPixelHeight = pState->GetScreenPixelHeight();
 
 		this->m_pTheApp = pTheApp;
 		this->m_pState = pState;
@@ -12338,8 +12336,8 @@ void CTheGame::RenderPlayerAfterburn(bool bFreeze)
 
 		fMoveY = fMoveY * -1.0f;
 
-		int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-		int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 		posY += 66;
 
@@ -12500,8 +12498,8 @@ void CTheGame::RenderPlayerCannonCharge(float fFrametime, bool bFreeze)
 
 		fMoveY = fMoveY * -1.0f;
 
-		int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-		int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 		posY = posY - 45;
 
@@ -12729,8 +12727,8 @@ void CTheGame::RenderPlayerCannonBeam(float fFrametime, bool bFreeze)
 
 	fMoveY = fMoveY * -1.0f;
 
-	int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-	int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+	int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+	int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 	posX = posX - 22;
 	posY = posY - 700;

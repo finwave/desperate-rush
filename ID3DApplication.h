@@ -32,17 +32,13 @@ public:
 	/**
 	 * Create
 	 * initialise Direct3D application
-	 * @param iWidth screen resolution width
-	 * @param iHeight screen resolution height
 	 * @param iBPP bits per pixel (16 or 32)
 	 * @param bWindowed TRUE if started in windowed mode
 	 * @param strTitle application title text
 	 * @param dwFlags additional startup flags
 	 * @return S_OK, or system wide error code
 	 */
-	HRESULT Create(	int iWidth,
-					int iHeight,
-					int iBPP,
+	HRESULT Create(	int iBPP,
 					BOOL bWindowed,
 					LPCTSTR strTitle,
 					DWORD dwFlags);

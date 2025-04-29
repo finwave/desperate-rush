@@ -266,7 +266,6 @@ private:
 	float		m_fBlastBeamCounter;
 
 	bool		m_bBlast;
-
 	bool		m_bBlastBeamUp;
 	bool		m_bBlastBeamDown;
 	bool		m_bBlastBeamLeft;
@@ -275,13 +274,8 @@ private:
 	bool		m_bBlastBeamUpRight;
 	bool		m_bBlastBeamDownLeft;
 	bool		m_bBlastBeamDownRight;
-
 	bool		m_bShield;
 
 	int			m_iScore;
-
 	float		m_fHitSoundTimer;
-
-	float		m_fScreenPixelWidth;
-	float		m_fScreenPixelHeight;
 };

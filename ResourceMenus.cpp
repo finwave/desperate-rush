@@ -1654,7 +1654,7 @@ void CResourceMenus::InitMeshMenusBosses()
 
 void CResourceMenus::RenderMenuTextHighlight(int posY)
 {
-	float exactPosX = m_pApp->GetScreenPixelWidth() / 2.0f;
+	float exactPosX = (float)SCREEN_WIDTH / 2.0f;
 	exactPosX -= (float)SPRITE_WIDTH_MENU_TEXT_HIGHLIGHT_LONG / 2.0f;
 
 	float exactPosY = (float)posY - (float)SPRITE_HEIGHT_MENU_TEXT_HIGHLIGHT / 2.0f;

@@ -121,11 +121,11 @@ HRESULT CFading::CreateVertices()
     CUSTOMVERTEX vertices[] =
     {
 		{0.0f, 0.0f, 0.0f, 1.0f, m_vertexColor},
-        {1024.0f, 0.0f, 0.0f, 1.0f, m_vertexColor},
-        {0.0f, 768.0f, 0.0f, 1.0f, m_vertexColor},
-		{0.0f, 768.0f, 0.0f, 1.0f, m_vertexColor},
-        {1024.0f, 0.0f, 0.0f, 1.0f, m_vertexColor},
-		{1024.0f, 768.0f, 0.0f, 1.0f, m_vertexColor},
+        {SCREEN_WIDTH, 0.0f, 0.0f, 1.0f, m_vertexColor},
+        {0.0f, SCREEN_HEIGHT, 0.0f, 1.0f, m_vertexColor},
+		{0.0f, SCREEN_HEIGHT, 0.0f, 1.0f, m_vertexColor},
+        {SCREEN_WIDTH, 0.0f, 0.0f, 1.0f, m_vertexColor},
+		{SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 1.0f, m_vertexColor},
     };
 
     // create a vertex buffer interface called this->m_pVB

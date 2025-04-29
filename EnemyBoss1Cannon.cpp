@@ -207,14 +207,14 @@ bool CEnemyBoss1Cannon::ChargeCannon(	D3DXVECTOR3 posFrame,
 	// x-position
 
 	fMoveX = posCharge.x * fPixelMultiplier;
-	iPosX = ( (this->m_fScreenPixelWidth / 2) - 12.0f) + fMoveX;
+	iPosX = ( (SCREEN_WIDTH / 2) - 12.0f) + fMoveX;
 
 	// y-position
 
 	fMoveY = posCharge.y * fPixelMultiplier;
 	fMoveY = fMoveY * -1.0f;
 
-	iPosY = ( (this->m_fScreenPixelHeight / 2) - 12.0f) + fMoveY;
+	iPosY = ( (SCREEN_HEIGHT / 2) - 12.0f) + fMoveY;
 
 	// fine-tune position
 	iPosX -= 35;
@@ -309,14 +309,14 @@ bool CEnemyBoss1Cannon::ShootCannon(D3DXVECTOR3 posFrame,
 		// x-position
 
 		fMoveX = posCurrent.x * fPixelMultiplier;
-		iPosX = ( (this->m_fScreenPixelWidth / 2) - 12.0f) + fMoveX;
+		iPosX = ( (SCREEN_WIDTH / 2) - 12.0f) + fMoveX;
 
 		// y-position
 
 		fMoveY = posCurrent.y * fPixelMultiplier;
 		fMoveY = fMoveY * -1.0f;
 
-		iPosY = ( (this->m_fScreenPixelHeight / 2) - 12.0f) + fMoveY;
+		iPosY = ( (SCREEN_HEIGHT / 2) - 12.0f) + fMoveY;
 
 		// fine-tune position
 		iPosX -= 36;

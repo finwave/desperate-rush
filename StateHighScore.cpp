@@ -694,8 +694,8 @@ void CStateHighScore::RenderSelectBox()
 
 	D3DXVECTOR3 letterWheelPos = this->m_pLetterWheel->GetPosition();
 
-	float halfScreenWidth = 0.5f * this->m_fScreenPixelWidth;
-	float halfScreenHeight = 0.5f * this->m_fScreenPixelHeight;
+	float halfScreenWidth = 0.5f * SCREEN_WIDTH;
+	float halfScreenHeight = 0.5f * SCREEN_HEIGHT;
 
 	posX += halfScreenWidth;
 	posY += halfScreenHeight;
@@ -1042,8 +1042,8 @@ void CStateHighScore::RenderPlayerAfterburn()
 
 		fMoveY = fMoveY * -1.0f;
 
-		int posX = ( (this->m_fScreenPixelWidth / 2) - 38.0f) + fMoveX;
-		int posY = ( (this->m_fScreenPixelHeight / 2) - 38.0f) + fMoveY;
+		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
 
 		posX -= 89;
 		posY += 26;
