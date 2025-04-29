@@ -1811,8 +1811,9 @@ void CTheGame::Render(void)
 	// wait for all the obstacles to pass by
 	case GAME_STATE_WAIT_OBSTACLES:
 
-		if( this->m_pObstaclesDepth1.IsEmpty() && 
-			this->m_pObstacleEnemies.IsEmpty() )
+		if( this->m_pObstaclesDepth1.IsEmpty() && this->m_pObstaclesDepth2.IsEmpty() &&
+			this->m_pObstaclesDepth3.IsEmpty() && this->m_pObstaclesDepth4.IsEmpty() &&
+			this->m_pObstaclesDepth5.IsEmpty() && this->m_pObstacleEnemies.IsEmpty() )
 		{
 			this->PlayerShooting(fFrametime);
 			this->EnemyShooting();
@@ -1922,25 +1923,36 @@ void CTheGame::Render(void)
 		}
 		else
 		{
-			switch(this->m_pLevel->GetLevelNumber())
+			switch (this->m_iGameStatePrevious)
 			{
-			case 1:
-				if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
+			case GAME_STATE_PLAY_ENEMIES:
+			{
+				if (this->m_pLevel->IsObstaclesFirst())
+				{
 					this->m_iGameStateNext = GAME_STATE_BOSS_INTRO;
-				break;
-
-			case 2:
-				if(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES)
-					this->m_iGameStateNext = GAME_STATE_PLAY_ENEMIES;
-				else if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
-					this->m_iGameStateNext = GAME_STATE_BOSS_INTRO;
-				break;
-
-			case 3:
-				if(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES)
-					this->m_iGameStateNext = GAME_STATE_BOSS_INTRO;
-				else if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
+				}
+				else
+				{
 					this->m_iGameStateNext = GAME_STATE_PLAY_OBSTACLES;
+				}
+			}
+			break;
+
+			case GAME_STATE_WAIT_OBSTACLES:
+			{
+				if (this->m_pLevel->IsObstaclesFirst())
+				{
+					this->m_iGameStateNext = GAME_STATE_PLAY_ENEMIES;
+				}
+				else
+				{
+					this->m_iGameStateNext = GAME_STATE_BOSS_INTRO;
+				}
+			}
+			break;
+
+			default:
+				this->m_iGameStateNext = GAME_STATE_BOSS_INTRO;
 				break;
 			}
 
