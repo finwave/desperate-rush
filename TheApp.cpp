@@ -163,7 +163,7 @@ HRESULT CTheApp::LoadSoundFiles()
 
 		if (i >= FIRST_DUPLICATE_SOUND)
 		{
-			dwDuplicates = 1;
+			dwDuplicates = DUPLICATE_SOUND_BUFFER;
 		}
 
 		resourcePath = m_ZipManager.GetResourceFilePath(waveFilenames[i].c_str());

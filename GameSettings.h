@@ -23,6 +23,9 @@ public:
 	float					m_fVolumeBossLaser;
 	float					m_fVolumeBossCannon;
 
+	float					m_fVolumeBossChainExplosionMin;
+	float					m_fVolumeBossChainExplosionMax;
+
 	// PLAYER
 
 	int						m_iPlayerLives;

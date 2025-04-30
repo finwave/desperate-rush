@@ -1234,7 +1234,6 @@ void CTheGame::Render(void)
 	static float fPauseBossChainExplosion = 0.0f;
 	static float fPauseBossPartExplosion = 0.0f;
 	static float fPauseBossBigExplosion = 0.0f;
-	static int iSoundBossChainExplosion = 1;
 
 	static float fTimerLevelTitle = (float)TIMER_LEVEL_TITLE;
 
@@ -1278,7 +1277,6 @@ void CTheGame::Render(void)
 			fPauseBossChainExplosion = 0.0f;
 			fPauseBossPartExplosion = 0.0f;
 			fPauseBossBigExplosion = 0.0f;
-			iSoundBossChainExplosion = 1;
 
 			fTimerLevelTitle = (float)TIMER_LEVEL_TITLE;
 
@@ -2325,43 +2323,27 @@ void CTheGame::Render(void)
 				this->BossFrameChainExplosion();
 
 				// play sound effect
-
-				if(iSoundBossChainExplosion == 1)
-				{
-					iSoundBossChainExplosion = 2;
-					this->PlaySoundExplosionBossChain(1);
-				}
-				else
-				{
-					iSoundBossChainExplosion = 1;
-					this->PlaySoundExplosionBossChain(2);
-				}
+				this->PlaySoundExplosionBossChain();
 
 				// new chain explosion timer value
 				switch(this->m_pLevel->GetLevelNumber())
 				{
 				case 1:
-
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
 					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_1,
 					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_1);
-
 					break;
 
 				case 2:
-
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
 					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_2,
 					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_2);
-
 					break;
 
 				case 3:
-
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
 					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_3,
 					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_3);
-
 					break;
 				}
 
@@ -2401,7 +2383,6 @@ void CTheGame::Render(void)
 					break;
 				}
 
-				iSoundBossChainExplosion = 1;
 				// boss core big explosion
 				this->BossFrameBigExplosion();
 				// play sound effect
@@ -4814,28 +4795,62 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 	}
 }
 
-void CTheGame::PlaySoundExplosionBossChain(int iWave)
+void CTheGame::PlaySoundExplosionBossChain()
 {
-	switch(iWave)
+	static int muffledSoundCount = 0;
+	static int muffledSoundMax = 3;
+
+	int iConfigVolume = this->m_pTheApp->GetConfig().GetVolumeSoundEffect();
+	int iGameVolume = -10000;
+
+	if (iConfigVolume > 0)
+	{
+		float minVolume = this->m_pGameSettings->m_fVolumeBossChainExplosionMin;
+		float maxVolume = this->m_pGameSettings->m_fVolumeBossChainExplosionMax;
+		float fRandSoundVolume = this->m_pTheApp->RandFloat(minVolume, maxVolume);
+
+		float fVolume = fRandSoundVolume * (float)iConfigVolume;
+		float fExactVolume = (fVolume - 100.0f) * 50.0f;
+		iGameVolume = (int)fExactVolume;
+	}
+
+	int iRandIndex = this->m_pTheApp->RandInt(1, 5);
+	DWORD nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_1;
+
+	if (muffledSoundCount >= muffledSoundMax)
+	{
+		muffledSoundCount = 0;
+		iRandIndex = this->m_pTheApp->RandInt(1, 2);
+	}
+
+	switch(iRandIndex)
 	{
 	case 1:
-		this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+		nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_1;
 		break;
-
 	case 2:
-		this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_2).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+		nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_2;
+		break;
+	case 3:
+		nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_3;
+		muffledSoundCount++;
+		break;
+	case 4:
+		nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_4;
+		muffledSoundCount++;
+		break;
+	case 5:
+		nextSoundIndex = SOUND_EXPLOSION_BOSS_CHAIN_5;
+		muffledSoundCount++;
 		break;
 	}
+
+	this->m_pTheApp->GetWave(nextSoundIndex).Play(FALSE, NEXT_FREE_DUPLICATE, iGameVolume);
 }
 
 void CTheGame::PlaySoundExplosionBossPart()
 {
-	this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_PART).Play(	FALSE, 0,
-																this->m_iVolumeSoundEffect);
+	this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_PART).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 }
 
 void CTheGame::ResetSoundExplosionEnemy(float fFrametime)
@@ -7669,7 +7684,6 @@ void CTheGame::IncreaseSpeedObstacle()
 	}
 }
 
-
 void CTheGame::BossFrameChainExplosion()
 {
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
@@ -7677,63 +7691,18 @@ void CTheGame::BossFrameChainExplosion()
 
 	int iRandChainExplosion = this->m_pTheApp->RandInt(1,3);
 
-	switch(this->m_pLevel->GetLevelNumber())
+	switch (iRandChainExplosion)
 	{
 	case 1:
-
-		switch(iRandChainExplosion)
-		{
-		case 1:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1;
-			break;
-
-		case 2:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2;
-			break;
-
-		case 3:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3;
-			break;
-		}
-
+		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1;
 		break;
 
 	case 2:
-
-		switch(iRandChainExplosion)
-		{
-		case 1:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1;
-			break;
-
-		case 2:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2;
-			break;
-
-		case 3:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3;
-			break;
-		}
-
+		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2;
 		break;
 
 	case 3:
-
-		switch(iRandChainExplosion)
-		{
-		case 1:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1;
-			break;
-
-		case 2:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2;
-			break;
-
-		case 3:
-			explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3;
-			break;
-		}
-
+		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3;
 		break;
 	}
 

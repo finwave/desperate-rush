@@ -321,7 +321,7 @@ private:
 	void PlaySoundHitEnemy(IEnemy* pEnemy);
 	void PlaySoundHitBoss(IEnemy* pEnemy);
 	void PlaySoundExplosionEnemy(IEnemy* pEnemy);
-	void PlaySoundExplosionBossChain(int iWave);
+	void PlaySoundExplosionBossChain();
 	void PlaySoundExplosionBossPart();
 	void ResetSoundExplosionEnemy(float fFrametime);
 

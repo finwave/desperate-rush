@@ -25,6 +25,9 @@ CGameSettings::CGameSettings(void)
 	this->m_fVolumeBossLaser = 0.0f;
 	this->m_fVolumeBossCannon = 0.0f;
 
+	this->m_fVolumeBossChainExplosionMin = 0.0f;
+	this->m_fVolumeBossChainExplosionMax = 0.0f;
+
 	// PLAYER
 
 	this->m_iPlayerLives = 0;
@@ -196,6 +199,9 @@ void CGameSettings::Create()
 	this->m_fVolumeBossScatter = 0.88f;
 	this->m_fVolumeBossLaser = 0.94f;
 	this->m_fVolumeBossCannon = 0.9f;
+
+	this->m_fVolumeBossChainExplosionMin = 0.8f;
+	this->m_fVolumeBossChainExplosionMax = 1.0f;
 
 	// PLAYER
 

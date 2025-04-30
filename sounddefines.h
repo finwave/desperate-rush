@@ -8,8 +8,9 @@
 #include <tchar.h>
 
 // NUM_WAVES defines total number of wave files to load
-#define NUM_WAVES							64
+#define NUM_WAVES							67
 #define FIRST_DUPLICATE_SOUND				17
+#define DUPLICATE_SOUND_BUFFER				10
 
 // single sound
 
@@ -80,6 +81,9 @@
 #define SOUND_EXPLOSION_ROLLER_4			61
 #define SOUND_EXPLOSION_BOSS_CHAIN_1		62
 #define SOUND_EXPLOSION_BOSS_CHAIN_2		63
+#define SOUND_EXPLOSION_BOSS_CHAIN_3		64
+#define SOUND_EXPLOSION_BOSS_CHAIN_4		65
+#define SOUND_EXPLOSION_BOSS_CHAIN_5		66
 
 // define sound filenames
 //const std::string waveFilenames[NUM_WAVES][MAX_PATH] =
@@ -153,5 +157,8 @@ const std::string waveFilenames[NUM_WAVES] =
 	"sound/explosion_roller_3.wav",
 	"sound/explosion_roller_4.wav",
 	"sound/explosion_boss_chain_1.wav",
-	"sound/explosion_boss_chain_2.wav"
+	"sound/explosion_boss_chain_2.wav",
+	"sound/explosion_boss_chain_3.wav",
+	"sound/explosion_boss_chain_4.wav",
+	"sound/explosion_boss_chain_5.wav"
 };

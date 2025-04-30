@@ -2,6 +2,8 @@
 
 CExplosions::CExplosions()
 {
+	this->m_pTheApp = NULL;
+
 	this->m_iMaxPlayer = 1;
 	this->m_iMaxDrone = 5;
 	this->m_iMaxSniper = 5;
@@ -9,9 +11,6 @@ CExplosions::CExplosions()
 	//this->m_iMaxGuard = 5;
 	this->m_iMaxBoss1Big = 1;
 	this->m_iMaxBoss1Part = 4;
-	this->m_iMaxBoss1Chain1 = 5;
-	this->m_iMaxBoss1Chain2 = 5;
-	this->m_iMaxBoss1Chain3 = 5;
 
 	this->m_pExplosionPlayer = NULL;
 	this->m_pExplosionDrone = NULL;
@@ -180,13 +179,13 @@ HRESULT CExplosions::Create(CTheApp* pTheApp,
 											fScreenHeight);
 	}
 
-	this->m_pExplosionBoss1Chain1 = new CExplosion[this->m_iMaxBoss1Chain1];
+	this->m_pExplosionBoss1Chain1 = new CExplosion[EXPLOSION_COUNT_BOSS_CHAIN];
 	if( !m_pExplosionBoss1Chain1 )
 	{
 		return E_OUTOFMEMORY;
 	}
 
-	for( int i = 0; i < this->m_iMaxBoss1Chain1; i++ )
+	for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 	{
 		(m_pExplosionBoss1Chain1 + i)->Create(	pTheApp,
 												pSpriteExplosionBoss1Chain1,
@@ -197,13 +196,13 @@ HRESULT CExplosions::Create(CTheApp* pTheApp,
 												fScreenHeight);
 	}
 
-	this->m_pExplosionBoss1Chain2 = new CExplosion[this->m_iMaxBoss1Chain2];
+	this->m_pExplosionBoss1Chain2 = new CExplosion[EXPLOSION_COUNT_BOSS_CHAIN];
 	if( !m_pExplosionBoss1Chain2 )
 	{
 		return E_OUTOFMEMORY;
 	}
 	
-	for( int i = 0; i < this->m_iMaxBoss1Chain1; i++ )
+	for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 	{
 		(m_pExplosionBoss1Chain2 + i)->Create(	pTheApp,
 												pSpriteExplosionBoss1Chain2,
@@ -214,13 +213,13 @@ HRESULT CExplosions::Create(CTheApp* pTheApp,
 												fScreenHeight);
 	}
 
-	this->m_pExplosionBoss1Chain3 = new CExplosion[this->m_iMaxBoss1Chain3];
+	this->m_pExplosionBoss1Chain3 = new CExplosion[EXPLOSION_COUNT_BOSS_CHAIN];
 	if( !m_pExplosionBoss1Chain3 )
 	{
 		return E_OUTOFMEMORY;
 	}
 
-	for( int i = 0; i < this->m_iMaxBoss1Chain3; i++ )
+	for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 	{
 		(m_pExplosionBoss1Chain3 + i)->Create(	pTheApp,
 												pSpriteExplosionBoss1Chain3,
@@ -399,7 +398,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1:
 
-		for( int i = 0; i < this->m_iMaxBoss1Chain1; i++ )
+		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 		{
 			if ( !(m_pExplosionBoss1Chain1 + i)->IsActive() )
 			{
@@ -413,7 +412,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2:
 
-		for( int i = 0; i < this->m_iMaxBoss1Chain2; i++ )
+		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 		{
 			if ( !(m_pExplosionBoss1Chain2 + i)->IsActive() )
 			{
@@ -427,7 +426,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3:
 
-		for( int i = 0; i < this->m_iMaxBoss1Chain3; i++ )
+		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
 		{
 			if ( !(m_pExplosionBoss1Chain3 + i)->IsActive() )
 			{
@@ -473,16 +472,11 @@ void CExplosions::Clear()
 	{
 		(m_pExplosionBoss1Part + i)->Disable();
 	}
-	for( int i = 0; i < this->m_iMaxBoss1Chain1; i++)
+
+	for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 	{
 		(m_pExplosionBoss1Chain1 + i)->Disable();
-	}
-	for( int i = 0; i < this->m_iMaxBoss1Chain2; i++)
-	{
 		(m_pExplosionBoss1Chain2 + i)->Disable();
-	}
-	for( int i = 0; i < this->m_iMaxBoss1Chain3; i++)
-	{
 		(m_pExplosionBoss1Chain3 + i)->Disable();
 	}
 }
@@ -524,20 +518,16 @@ void CExplosions::Update(float fFrametime, int gameState)
 		{
 			(m_pExplosionBoss1Big + i)->Update(fFrametime);
 		}
+
 		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
 		{
 			(m_pExplosionBoss1Part + i)->Update(fFrametime);
 		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain1; i++)
+
+		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
 			(m_pExplosionBoss1Chain1 + i)->Update(fFrametime);
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain2; i++)
-		{
 			(m_pExplosionBoss1Chain2 + i)->Update(fFrametime);
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain3; i++)
-		{
 			(m_pExplosionBoss1Chain3 + i)->Update(fFrametime);
 		}
 	}
@@ -585,20 +575,16 @@ void CExplosions::Render(int gameState)
 		{
 			(m_pExplosionBoss1Big + i)->Render();
 		}
+
 		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
 		{
 			(m_pExplosionBoss1Part + i)->Render();
 		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain1; i++)
+
+		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
 			(m_pExplosionBoss1Chain1 + i)->Render();
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain2; i++)
-		{
 			(m_pExplosionBoss1Chain2 + i)->Render();
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain3; i++)
-		{
 			(m_pExplosionBoss1Chain3 + i)->Render();
 		}
 	}
@@ -667,6 +653,7 @@ void CExplosions::UpdateVelocity(int iVelocityPixels, int gameState)
 				(m_pExplosionBoss1Big + i)->SetSpeed(speed);
 			}
 		}
+
 		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
 		{
 			if( (m_pExplosionBoss1Part + i)->IsActive() )
@@ -675,25 +662,22 @@ void CExplosions::UpdateVelocity(int iVelocityPixels, int gameState)
 				(m_pExplosionBoss1Part + i)->SetSpeed(speed);
 			}
 		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain1; i++)
+
+		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
 			if( (m_pExplosionBoss1Chain1 + i)->IsActive() )
 			{
 				speed = (m_pExplosionBoss1Chain1 + i)->GetDefaultSpeed() + iVelocityPixels;
 				(m_pExplosionBoss1Chain1 + i)->SetSpeed(speed);
 			}
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain2; i++)
-		{
-			if( (m_pExplosionBoss1Chain2 + i)->IsActive() )
+
+			if ((m_pExplosionBoss1Chain2 + i)->IsActive())
 			{
 				speed = (m_pExplosionBoss1Chain2 + i)->GetDefaultSpeed() + iVelocityPixels;
 				(m_pExplosionBoss1Chain2 + i)->SetSpeed(speed);
 			}
-		}
-		for( int i = 0; i < this->m_iMaxBoss1Chain3; i++)
-		{
-			if( (m_pExplosionBoss1Chain3 + i)->IsActive() )
+
+			if ((m_pExplosionBoss1Chain3 + i)->IsActive())
 			{
 				speed = (m_pExplosionBoss1Chain3 + i)->GetDefaultSpeed() + iVelocityPixels;
 				(m_pExplosionBoss1Chain3 + i)->SetSpeed(speed);

@@ -5,6 +5,8 @@
 #define STATE_BLAST_ACTIVE			14
 #define STATE_QUIT					15
 
+#define EXPLOSION_COUNT_BOSS_CHAIN	8
+
 #include "TheApp.h"
 #include "Explosion.h"
 
@@ -66,9 +68,6 @@ private:
 	//int			m_iMaxGuard;
 	int				m_iMaxBoss1Big;
 	int				m_iMaxBoss1Part;
-	int				m_iMaxBoss1Chain1;
-	int				m_iMaxBoss1Chain2;
-	int				m_iMaxBoss1Chain3;
 
 	CExplosion*		m_pExplosionPlayer;
 	CExplosion*		m_pExplosionDrone;
