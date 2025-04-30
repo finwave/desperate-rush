@@ -4124,8 +4124,6 @@ void CTheGame::InitVolumeSoundEffect()
 
 void CTheGame::LoadMusicLevel()
 {
-	//START*********** LOAD LEVEL MUSIC *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
@@ -4160,14 +4158,10 @@ void CTheGame::LoadMusicLevel()
 			this->m_pTheApp->GetMP3Player1().SetVolume(this->m_pTheApp->GetVolumeMusic());
 		}
 	}
-
-	//END************* LOAD LEVEL MUSIC *****************//
 }
 
 void CTheGame::LoadMusicBoss()
 {
-	//START*********** LOAD BOSS MUSIC *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
@@ -4202,8 +4196,6 @@ void CTheGame::LoadMusicBoss()
 			this->m_pTheApp->GetMP3Player2().SetVolume(this->m_pTheApp->GetVolumeMusic());
 		}
 	}
-
-	//END************* LOAD BOSS MUSIC *****************//
 }
 
 void CTheGame::CheckMusicEnd()
@@ -4304,56 +4296,40 @@ void CTheGame::RestartMusic()
 
 void CTheGame::PlayMusicLevel()
 {
-	//START************ PLAY MUSIC LEVEL *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
 		this->m_pTheApp->GetMP3Player1().Play();
 	}
-
-	//END************** PLAY MUSIC LEVEL *****************//
 }
 
 void CTheGame::PlayMusicBoss()
 {
-	//START************ PLAY MUSIC LEVEL *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
 		this->m_pTheApp->GetMP3Player2().Play();
 	}
-
-	//END************** PLAY MUSIC LEVEL *****************//
 }
 
 void CTheGame::PlayMusicGameOutro()
 {
-	//START************ PLAY ENDING MUSIC *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
 		//this->m_pTheApp->GetMP3Player().Create(_T("music\\outro.mp3"));
 		//this->m_pTheApp->GetMP3Player().Play();
 	}
-
-	//END************** PLAY ENDING MUSIC *****************//
 }
 
 void CTheGame::PlayMusicGameOver()
 {
-	//START************** PLAY GAME OVER MUSIC *******************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
 		//this->m_pTheApp->GetMP3Player().Create(_T("music\\game_over.mp3"));
 		//this->m_pTheApp->GetMP3Player().Play();
 	}
-
-	//END**************** PLAY GAME OVER MUSIC *******************//
 }
 
 bool CTheGame::FadeOutMusicLevel(float fFrametime)
@@ -4404,8 +4380,6 @@ bool CTheGame::FadeOutMusicBoss(float fFrametime)
 
 void CTheGame::StopMusicLevel()
 {
-	//START*********** STOP MUSIC LEVEL *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
@@ -4418,14 +4392,10 @@ void CTheGame::StopMusicLevel()
 			this->m_pTheApp->GetMP3Player1().SetVolume( this->m_pTheApp->GetVolumeMusic() );
 		}
 	}
-
-	//END************* STOP MUSIC LEVEL *****************//
 }
 
 void CTheGame::StopMusicBoss()
 {
-	//START*********** STOP MUSIC BOSS *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
@@ -4438,14 +4408,10 @@ void CTheGame::StopMusicBoss()
 			this->m_pTheApp->GetMP3Player2().SetVolume( this->m_pTheApp->GetVolumeMusic() );
 		}
 	}
-
-	//END************* STOP MUSIC BOSS *****************//
 }
 
 void CTheGame::StopMusicAll()
 {
-	//START*********** STOP MUSIC ALL *****************//
-
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
@@ -4462,8 +4428,6 @@ void CTheGame::StopMusicAll()
 			this->m_pTheApp->GetMP3Player2().Stop();
 		}
 	}
-
-	//END************* STOP MUSIC ALL *****************//
 }
 
 void CTheGame::PlaySoundPlayerAfterburn()
@@ -4484,28 +4448,18 @@ void CTheGame::PlaySoundPlayerAfterburn()
 
 void CTheGame::PlaySoundPlayerCannonCharge()
 {
-	//START******** PLAY SOUND PLAYER CANNON CHARGE ********//
-
 	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_CHARGE).Play(
 		FALSE, 0, this->m_iVolumePlayerCannon);
-
-	//END********** PLAY SOUND PLAYER CANNON CHARGE ********//
 }
 
 void CTheGame::PlaySoundPlayerCannonBeam()
 {
-	//START******** PLAY SOUND PLAYER CANNON BEAM ********//
-
 	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_BEAM).Play(
 		FALSE, 0, this->m_iVolumePlayerCannon);
-
-	//END********** PLAY SOUND PLAYER CANNON BEAM ********//
 }
 
 void CTheGame::PlaySoundFirePlayerMinigun()
 {
-	//START********** PLAY SOUND PLAYER MINIGUN **********//
-
 	DWORD soundId = SOUND_SHOOT_PLAYER_MINIGUN_1;
 
 	switch (this->m_pPlayer->GetMinigunSound())
@@ -4522,14 +4476,10 @@ void CTheGame::PlaySoundFirePlayerMinigun()
 
 	this->m_pTheApp->GetWave(soundId).Play(FALSE, NEXT_FREE_DUPLICATE, m_iVolumePlayerMinigunShoot);
 	this->m_pPlayer->ChangeMinigunSound();
-
-	//END************ PLAY SOUND PLAYER MINIGUN **********//
 }
 
 void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 {
-	//START********** PLAY SOUND FIRE ENEMY **********//
-
 	switch( pEnemy->GetType() )
 	{
 	case IEnemy::eTYPE_DRONE:
@@ -4615,14 +4565,10 @@ void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 	}
 
 	pEnemy->ChangeFiringSound();
-
-	//END************ PLAY SOUND FIRE ENEMY **********//
 }
 
 void CTheGame::PlaySoundHitPlayer()
 {
-	//START********** PLAY SOUND HIT PLAYER **********//
-
 	switch( this->m_pPlayer->GetHitSound() )
 	{
 	case CPlayer::eHIT_SOUND_NORMAL:
@@ -4641,14 +4587,10 @@ void CTheGame::PlaySoundHitPlayer()
 	}
 
 	this->m_pPlayer->ChangeHitSound();
-
-	//END************ PLAY SOUND HIT PLAYER **********//
 }
 
 void CTheGame::PlaySoundHitEnemy(IEnemy* pEnemy)
 {
-	//START********** PLAY SOUND HIT ENEMY **********//
-
 	switch( pEnemy->GetHitSound() )
 	{
 	case IEnemy::eSOUND_HIT_NORMAL:
@@ -4667,14 +4609,10 @@ void CTheGame::PlaySoundHitEnemy(IEnemy* pEnemy)
 	}
 
 	pEnemy->ChangeHitSound();
-
-	//END************ PLAY SOUND HIT ENEMY **********//
 }
 
 void CTheGame::PlaySoundHitBoss(IEnemy* pEnemy)
 {
-	//START********** PLAY SOUND HIT BOSS **********//
-
 	switch( pEnemy->GetHitSound() )
 	{
 	case IEnemy::eSOUND_HIT_NORMAL:
@@ -4693,14 +4631,10 @@ void CTheGame::PlaySoundHitBoss(IEnemy* pEnemy)
 	}
 
 	pEnemy->ChangeHitSound();
-
-	//END************ PLAY SOUND HIT BOSS **********//
 }
 
 void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 {
-	//START********** PLAY SOUND EXPLOSION ENEMY **********//
-
 	switch(pEnemy->GetType())
 	{
 	case IEnemy::eTYPE_DRONE:
@@ -4878,8 +4812,6 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 		break;
 	*/
 	}
-
-	//END************ PLAY SOUND EXPLOSION ENEMY **********//
 }
 
 void CTheGame::PlaySoundExplosionBossChain(int iWave)
@@ -4908,8 +4840,6 @@ void CTheGame::PlaySoundExplosionBossPart()
 
 void CTheGame::ResetSoundExplosionEnemy(float fFrametime)
 {
-	//START********** RESET SOUND EXPLOSION ENEMY **********//
-
 	if(this->m_eExplosionEnemy != eEXPLOSION_ENEMY_NORMAL_1)
 	{
 		if(this->m_fEnemyExplosionSoundTimer <= 0.0f)
@@ -4923,8 +4853,6 @@ void CTheGame::ResetSoundExplosionEnemy(float fFrametime)
 			this->m_fEnemyExplosionSoundTimer -= fFrametime;
 		}
 	}
-
-	//END************ RESET SOUND EXPLOSION ENEMY **********//
 }
 
 
@@ -5041,15 +4969,11 @@ void CTheGame::CheckQuitGame(float fFrametime)
 
 void CTheGame::CheckGameOver()
 {
-	//START********* CHECK GAME OVER *******************//
-
 	if( this->m_pPlayer->GameOver() )
 	{
 		this->m_iGameStateEnd = GAME_STATE_END_FAILED;
 		SwitchGameState(GAME_STATE_END_FAILED);
 	}
-
-	//END********* CHECK GAME OVER *******************//
 }
 
 bool CTheGame::CheckBossEnter()
@@ -5107,8 +5031,6 @@ bool CTheGame::CheckBossEnter()
 
 void CTheGame::CheckExtraLife()
 {
-	//START********* CHECK EXTRA LIFE ****************//
-
 	bool extraLife = false;
 
 	switch(this->m_iExtraLives)
@@ -5159,8 +5081,6 @@ void CTheGame::CheckExtraLife()
 		// play sound effect
 		this->m_pTheApp->GetWave(SOUND_GAIN_LIFE).Play(FALSE, 0);
 	}
-
-	//END*********** CHECK EXTRA LIFE ****************//
 }
 
 
@@ -5489,8 +5409,6 @@ void CTheGame::PlayerBlastDeactive()
 
 void CTheGame::PlayerShooting(float fFrametime)
 {
-	//START********** PLAYER SHOOTING ********************
-
 	bool bInputMinigun = false;
 	bool bInputFireMode = false;
 	bool bInputCannon = false;
@@ -5818,14 +5736,10 @@ void CTheGame::PlayerShooting(float fFrametime)
 			this->m_fMinigunFireTime = this->m_pPlayer->GetMinigunFirerate();
 		}
 	}
-
-	//END************ PLAYER SHOOTING ********************
 }
 
 bool CTheGame::PlayerShootPossible()
 {
-	//START******** PLAYER SHOOT POSSIBLE ****************
-
 	if (this->m_pPlayer->IsDestroyed() || this->m_bPlayerEnter ||
 		(this->m_iGameState == GAME_STATE_LEVEL_INTRO) ||
 		(this->m_iGameState == GAME_STATE_LEVEL_OUTRO )||
@@ -5835,14 +5749,10 @@ bool CTheGame::PlayerShootPossible()
 	}
 
 	return true;
-
-	//END********** PLAYER SHOOT POSSIBLE ****************
 }
 
 bool CTheGame::PlayerCannonLineOfFireEnemies(IEnemy* pEnemy)
 {
-	//START********* PLAYER CANNON LINE OF FIRE ENEMIES *********
-
 	bool bHit = false;
 	bool bBossCore = false;
 
@@ -5944,14 +5854,10 @@ bool CTheGame::PlayerCannonLineOfFireEnemies(IEnemy* pEnemy)
 	}
 
 	return bHit;
-
-	//END*********** PLAYER CANNON LINE OF FIRE ENEMIES *********
 }
 
 bool CTheGame::PlayerCannonLineOfFireBullets(CWeapon* bullet)
 {
-	//START********* PLAYER CANNON LINE OF FIRE BULLETS *********
-
 	D3DXVECTOR3 posA = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posB = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -5987,14 +5893,10 @@ bool CTheGame::PlayerCannonLineOfFireBullets(CWeapon* bullet)
 	}
 
 	return bHit;
-
-	//END*********** PLAYER CANNON LINE OF FIRE BULLETS *********
 }
 
 bool CTheGame::PlayerResetMiniguns()
 {
-	//START*********** PLAYER RESET MINIGUNS *****************
-
 	bool bRotation = false;
 
 	if(this->m_pPlayer->GetMinigunMode() == 1)
@@ -6011,14 +5913,10 @@ bool CTheGame::PlayerResetMiniguns()
 	}
 
 	return bRotation;
-
-	//END************* PLAYER RESET MINIGUNS *****************
 }
 
 void CTheGame::PlayerResetCannon()
 {
-	//START*********** PLAYER RESET CANNON *****************
-
 	// Player cannon charge //
 
 	// reset active cannon charge texture
@@ -6031,28 +5929,20 @@ void CTheGame::PlayerResetCannon()
 	this->m_ePlayerCannonCharge = ePLAYER_CANNON_CHARGE_SMALL;
 	// cannon can hurt bosses
 	this->m_bCannonDamageBoss = true;
-
-	//END************* PLAYER RESET CANNON *****************
 }
 
 void CTheGame::PlayerExplosion()
 {
-	//START************ PLAYER EXPLOSION **************
-
 	this->m_pExplosions->AddExplosion(	CExplosion::eEXPLOSION_TYPE_PLAYER,
 										this->m_iExplosionMoveSpeed,
 										this->m_fExplosionMovePause,
 										this->m_pPlayer->GetPosition());
-
-	//END************** PLAYER EXPLOSION **************
 }
 
 
 IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 									CLevel::eSHIP_TYPE eShipType)
 {
-	//START************ GENERATE ENEMIES *************
-
 	IEnemy* pEnemy = NULL;
 
 	float fStrikeSpeedModifier = this->m_pTheApp->RandFloat(
@@ -6300,8 +6190,6 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 	}
 
 	return pEnemy;
-
-	//END************** GENERATE ENEMIES *************
 }
 
 
@@ -6582,8 +6470,6 @@ void CTheGame::PrepareObstacles()
 
 CObstacle* CTheGame::GenerateObstacle(float fPosY, int iDepth)
 {
-	//START******* GENERATE OBSTACLE **********
-
 	// creates a new obstacle and checks that it 
 	// doesn't collide with existing obstacles or enemies
 	int maxTryOuts = 10;
@@ -6663,14 +6549,10 @@ CObstacle* CTheGame::GenerateObstacle(float fPosY, int iDepth)
 	}
 
 	return NULL;
-
-	//END********* GENERATE OBSTACLE ************
 }
 
 CObstacle* CTheGame::GenerateObstacleType(int iDepth)
 {
-	//START***** GENERATE OBSTACLE TYPE *********
-
 	CObstacle* obstacle = new CObstacle();
 
 	LPD3DXMESH mesh = this->m_vTemplateAsteroidBig[0]->GetMesh();
@@ -6736,8 +6618,6 @@ CObstacle* CTheGame::GenerateObstacleType(int iDepth)
 	obstacle->SetType(obstacleType);
 
 	return obstacle;
-
-	//END******* GENERATE OBSTACLE TYPE ***********
 }
 
 bool CTheGame::IsGenerateObstacleEnemy()
@@ -7014,8 +6894,6 @@ bool CTheGame::IsBoxCollisionObstacleVsObstacle(CObstacle* pObstacle, int iDepth
 
 IEnemy* CTheGame::GenerateObstacleEnemy(float fPosY)
 {
-	//START************ OBSTACLE ENEMY **************
-
 	IEnemy* pEnemy = this->GenerateEnemies(	CLevel::eFLEET_TYPE_LAUNCH, this->m_pLevel->GetObstacleShip());
 
 	if (pEnemy)
@@ -7086,14 +6964,10 @@ IEnemy* CTheGame::GenerateObstacleEnemy(float fPosY)
 	}
 
 	return NULL;
-
-	//END************** OBSTACLE ENEMY **************
 }
 
 void CTheGame::EnemyLaunch(float fFrametime)
 {
-	//START************ ENEMY LAUNCH **************
-
 	static float s_fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.3f);
 
 	static bool s_bFirstEnemy = true;
@@ -7354,14 +7228,10 @@ void CTheGame::EnemyLaunch(float fFrametime)
 	{
 		this->m_fEnemyLaunchCounter += fFrametime;
 	}
-
-	//END************** ENEMY LAUNCH **************
 }
 
 void CTheGame::EnemyStrike(float fFrametime)
 {
-	//START************ ENEMY STRIKE **************
-
 	static float s_fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.2f);
 
 	static bool s_bFirstEnemy = true;
@@ -7586,14 +7456,10 @@ void CTheGame::EnemyStrike(float fFrametime)
 	{
 		this->m_fEnemyStrikeCounter += fFrametime;
 	}
-
-	//END************** ENEMY STRIKE **************
 }
 
 void CTheGame::EnemyExplosion(IEnemy* pEnemy)
 {
-	//START************ ENEMY EXPLOSION **************
-
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
 
 	switch (pEnemy->GetType())
@@ -7622,8 +7488,6 @@ void CTheGame::EnemyExplosion(IEnemy* pEnemy)
 									this->m_fExplosionMovePause,
 									pEnemy->GetPosition());
 	}
-
-	//END************** ENEMY EXPLOSION **************
 }
 
 HRESULT CTheGame::GenerateParticlesBullet(CWeapon* pWeapon, D3DXVECTOR3 vPosition)
@@ -7808,8 +7672,6 @@ void CTheGame::IncreaseSpeedObstacle()
 
 void CTheGame::BossFrameChainExplosion()
 {
-	//START************ BOSS CORE CHAIN EXPLOSION **************
-
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
 	D3DXVECTOR3 pos = this->m_pEnemyBoss1Frame->GetPosition();
 
@@ -7882,14 +7744,10 @@ void CTheGame::BossFrameChainExplosion()
 									this->m_fExplosionMovePause,
 									pos);
 	}
-
-	//END************** BOSS CORE CHAIN EXPLOSION **************
 }
 
 void CTheGame::BossFrameBigExplosion()
 {
-	//START************ BOSS FRAME BIG EXPLOSION **************
-
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
 	D3DXVECTOR3 pos = this->m_pEnemyBoss1Frame->GetPosition();
 
@@ -8022,14 +7880,10 @@ void CTheGame::BossFrameBigExplosion()
 
 		break;
 	}
-
-	//END************** BOSS FRAME BIG EXPLOSION **************
 }
 
 void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 {
-	//START************ BOSS PART EXPLOSION **************
-
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
 	D3DXVECTOR3 pos = pEnemy->GetPosition();
 
@@ -8055,8 +7909,6 @@ void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 	{
 		pEnemy->SetActive(FALSE);
 	}
-
-	//END************** BOSS PART EXPLOSION **************
 }
 
 bool CTheGame::CheckBossPartExplosion(int iCountBossChainExplosions)
@@ -8203,8 +8055,6 @@ bool CTheGame::CheckBossPartExplosion(int iCountBossChainExplosions)
 
 void CTheGame::EnemyShooting()
 {
-	//START**************** ENEMY SHOOTING ************************
-
 	if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
 	{
 		// active enemies
@@ -8257,14 +8107,10 @@ void CTheGame::EnemyShooting()
 			this->m_pObstacleEnemies.SetNext();
 		}
 	}
-
-	//END****************** ENEMY SHOOTING ************************
 }
 
 void CTheGame::EnemyShoots(IEnemy* pEnemy)
 {
-	//START***************** ENEMY SHOOTS *****************
-
 	CWeapon* weapon = NULL;
 
 	switch( pEnemy->GetType() )
@@ -8322,14 +8168,10 @@ void CTheGame::EnemyShoots(IEnemy* pEnemy)
 		/* COLLISION MODEL */
 		this->CreateCollisionMeshWeapons(weapon);
 	}
-
-	//END******************* ENEMY SHOOTS *****************
 }
 
 bool CTheGame::ActiveEnemyLineOfFire(IEnemy* pEnemy, bool bInverse)
 {
-	//START*********** ACTIVE ENEMY LINE OF FIRE *******************
-
 	D3DXVECTOR3 posA = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posB = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -8379,14 +8221,10 @@ bool CTheGame::ActiveEnemyLineOfFire(IEnemy* pEnemy, bool bInverse)
 	}
 
 	return true;
-
-	//END************* ACTIVE ENEMY LINE OF FIRE *******************
 }
 
 bool CTheGame::ReinforcementLineOfFire(IEnemy* pEnemy, IEnemy* pOther,  bool bInverse)
 {
-	//START*********** REINFORCEMENT LINE OF FIRE *******************
-
 	D3DXVECTOR3 posA = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posB = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -8435,14 +8273,10 @@ bool CTheGame::ReinforcementLineOfFire(IEnemy* pEnemy, IEnemy* pOther,  bool bIn
 	}
 
 	return true;
-
-	//END************* REINFORCEMENT LINE OF FIRE *******************
 }
 
 bool CTheGame::ObstacleEnemyLineOfFire(IEnemy* pEnemy, bool bInverse)
 {
-	//START*********** OBSTACLE ENEMY LINE OF FIRE *******************
-
 	D3DXVECTOR3 posA = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posB = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -8492,8 +8326,6 @@ bool CTheGame::ObstacleEnemyLineOfFire(IEnemy* pEnemy, bool bInverse)
 	}
 
 	return true;
-
-	//END************* OBSTACLE ENEMY LINE OF FIRE *******************
 }
 
 void CTheGame::EnemyCopyBullets(IEnemy* pEnemy)
@@ -8536,8 +8368,6 @@ float CTheGame::GetCollisionDamagePlayerVsEnemy(IEnemy* pEnemy)
 
 void CTheGame::CollisionPlayerVsBoss()
 {
-	//START************* PLAYER VS BOSS ***************
-
 	if(	!this->m_pPlayer->IsDestroyed() && 
 		!this->m_pPlayer->IsUntouchable() )
 	{
@@ -8577,14 +8407,10 @@ void CTheGame::CollisionPlayerVsBoss()
 			this->PlayerExplosion();
 		}
 	}
-
-	//END*************** PLAYER VS BOSS ***************
 }
 
 void CTheGame::CollisionPlayerVsEnemy()
 {
-	//START************* PLAYER VS ENEMY ***************
-
 	IEnemy* pEnemy = NULL;
 
 	if(	!this->m_pPlayer->IsDestroyed() && 
@@ -8701,14 +8527,10 @@ void CTheGame::CollisionPlayerVsEnemy()
 			}
 		}
 	}
-
-	//END*************** PLAYER VS ENEMY ***************
 }
 
 void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 {
-	//START*********** PLAYER CANNON VS BOSS **************
-
 	if(this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
 		// Boss scenario
@@ -8861,14 +8683,10 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 			}
 		}
 	}
-
-	//END************* PLAYER CANNON VS BOSS **************
 }
 
 void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 {
-	//START*********** PLAYER CANNON VS ENEMY **************
-
 	if(this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
 		if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
@@ -8970,14 +8788,10 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 			}
 		}
 	}
-
-	//END************* PLAYER CANNON VS ENEMY **************
 }
 
 void CTheGame::CollisionPlayerCannonVsBossBullet()
 {
-	//START********* PLAYER CANNON VS BOSS BULLET ************
-
 	if(this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
 		if( (this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
@@ -9010,14 +8824,10 @@ void CTheGame::CollisionPlayerCannonVsBossBullet()
 			}
 		}
 	}
-
-	//END*********** PLAYER CANNON VS BOSS BULLET ************
 }
 
 void CTheGame::CollisionPlayerCannonVsEnemyBullet()
 {
-	//START********* PLAYER CANNON VS ENEMY BULLET ************
-
 	if(this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
 		if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
@@ -9066,14 +8876,10 @@ void CTheGame::CollisionPlayerCannonVsEnemyBullet()
 			this->m_pBullets.SetNext();
 		}
 	}
-
-	//END*********** PLAYER CANNON VS ENEMY BULLET ************
 }
 
 void CTheGame::CollisionPlayerVsObstacle()
 {
-	//START*********** PLAYER VS OBSTACLE ***************
-
 	if(	!this->m_pPlayer->IsDestroyed() && 
 		!this->m_pPlayer->IsUntouchable() )
 	{
@@ -9112,14 +8918,10 @@ void CTheGame::CollisionPlayerVsObstacle()
 			this->m_pObstaclesDepth1.SetNext();
 		}
 	}
-
-	//END************* PLAYER VS OBSTACLE ***************
 }
 
 void CTheGame::CollisionEnemyVsObstacle()
 {
-	//START*********** ENEMY VS OBSTACLE *************
-
 	bool bInverseMatrix = false;
 	float fCheckBorder = this->m_fScreenHeight + CGameSettings::BIG_ASTEROID_HEIGHT / 2.0f;
 
@@ -9169,14 +8971,10 @@ void CTheGame::CollisionEnemyVsObstacle()
 
 		this->m_pObstaclesDepth1.SetNext();
 	}
-
-	//END************* ENEMY VS OBSTACLE *************
 }
 
 void CTheGame::CollisionEnemyVsEnemy()
 {
-	//START*********** ENEMY VS ENEMY *************
-
 	bool bCollision;
 	bool bInverseMatrix = false;
 
@@ -9327,14 +9125,10 @@ void CTheGame::CollisionEnemyVsEnemy()
 			this->m_pObstacleEnemies.SetNext();
 		}
 	}
-
-	//END************* ENEMY VS ENEMY *************
 }
 
 void CTheGame::CollisionBulletVsBoss()
 {
-	//START********** BULLET VS BOSS **************
-
 	if ((this->m_iGameState != GAME_STATE_BOSS_INTRO) && (this->m_iGameState != GAME_STATE_BOSS_ACTION) &&
 		(this->m_iGameState != GAME_STATE_BOSS_CHAIN_EXPLOSION) && (this->m_iGameState != GAME_STATE_QUIT))
 	{
@@ -9642,14 +9436,10 @@ void CTheGame::CollisionBulletVsBoss()
 
 		this->m_pBullets.SetNext();
 	}
-
-	//END************ BULLET VS BOSS **************
 }
 
 void CTheGame::CollisionBulletVsEnemy()
 {
-	//START********** BULLET VS ENEMY **************
-
 	D3DXVECTOR3* pPos = NULL;
 	CWeapon* pBullet = NULL;
 	IEnemy* pEnemy = NULL;
@@ -9696,14 +9486,10 @@ void CTheGame::CollisionBulletVsEnemy()
 
 		this->m_pBullets.SetNext();
 	}
-
-	//END************ BULLET VS ENEMY **************
 }
 
 void CTheGame::CollisionBulletVsPlayer()
 {
-	//START********** BULLET VS PLAYER **************
-
 	if(	!this->m_pPlayer->IsDestroyed() && 
 		!this->m_pPlayer->IsUntouchable())
 	{
@@ -9828,14 +9614,10 @@ void CTheGame::CollisionBulletVsPlayer()
 			}
 		}
 	}
-
-	//END************ BULLET VS PLAYER **************
 }
 
 void CTheGame::CollisionBulletVsObstacle()
 {
-	//START************ BULLET VS OBSTACLE ***************
-
 	D3DXVECTOR3* pPos = NULL;
 	CWeapon* pBullet = NULL;
 	CObstacle* pObstacle = NULL;
@@ -9979,14 +9761,10 @@ void CTheGame::CollisionBulletVsObstacle()
 		}
 		this->m_pObstaclesDepth1.SetNext();
 	}
-
-	//END************** BULLET VS OBSTACLE ***************
 }
 
 void CTheGame::CollisionBulletVsBorder()
 {
-	//START*********** BULLET VS BORDER *************
-
 	// Boss bullets
 	if( (this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
 		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
@@ -10180,8 +9958,6 @@ void CTheGame::CollisionBulletVsBorder()
 
 		this->m_pBullets.SetNext();
 	}
-
-	//END************* BULLET VS BORDER *************
 }
 
 void CTheGame::CheckCollisionBulletVsEnemy(
@@ -10397,8 +10173,6 @@ void CTheGame::CheckCollisionBulletVsPlayer(
 
 void CTheGame::ClearEnemies()
 {
-	//START********* CLEAR ENEMIES ************
-
 	if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
 	{
 		// active enemies
@@ -10469,14 +10243,10 @@ void CTheGame::ClearEnemies()
 			}
 		}
 	}
-
-	//END*********** CLEAR ENEMIES ************
 }
 
 void CTheGame::ClearObstacles()
 {
-	//START******** CLEAR OBSTACLES ***********
-
 	if (m_iGameState != GAME_STATE_PLAY_OBSTACLES &&
 		m_iGameState != GAME_STATE_WAIT_OBSTACLES)
 	{
@@ -10557,14 +10327,10 @@ void CTheGame::ClearObstacles()
 			this->m_pObstaclesDepth5.SetNext();
 		}
 	}
-
-	//END********** CLEAR OBSTACLES ***********
 }
 
 void CTheGame::ClearBullets(bool bForced)
 {
-	//START********* CLEAR BULLETS ************
-
 	// boss bullets
 
 	if( (this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
@@ -10715,13 +10481,10 @@ void CTheGame::ClearBullets(bool bForced)
 			}
 		}
 	}
-
-	//END*********** CLEAR BULLETS ************
 }
 
 void CTheGame::ClearParticles()
 {
-	//START********* CLEAR PARTICLES ************
 	/*
 	this->m_pParticles.SetFirst();
 	while( this->m_pParticles.GetCurrent() )
@@ -10736,13 +10499,10 @@ void CTheGame::ClearParticles()
 		}
 	}
 	*/
-	//END*********** CLEAR PARTICLES ************
 }
 
 void CTheGame::UpdatePlayer(float fFrametime)
 {
-	//START************ UPDATE PLAYER ******************
-
 	if(this->m_iGameState != GAME_STATE_BLAST_ACTIVE)
 	{
 		if(this->m_bPlayerEnter)
@@ -10797,14 +10557,10 @@ void CTheGame::UpdatePlayer(float fFrametime)
 	{
 		this->m_pPlayer->Update(true, fFrametime);
 	}
-
-	//END************** UPDATE PLAYER ******************
 }
 
 void CTheGame::UpdateBoss(float fFrametime)
 {
-	//START************ UPDATE BOSS ******************
-
 	switch(this->m_pLevel->GetLevelNumber())
 	{
 	case 1:
@@ -10958,14 +10714,10 @@ void CTheGame::UpdateBoss(float fFrametime)
 
 		break;
 	}
-
-	//END************** UPDATE BOSS ******************
 }
 
 void CTheGame::UpdateBossShake(bool bBlast, float fFrametime)
 {
-	//START********* UPDATE BOSS SHAKE *********
-
 	D3DXVECTOR3 posBefore = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posAfter = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posObject = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -11122,14 +10874,10 @@ void CTheGame::UpdateBossShake(bool bBlast, float fFrametime)
 
 		break;
 	}
-
-	//END*********** UPDATE BOSS SHAKE *********
 }
 
 void CTheGame::UpdateEnemies()
 {
-	//START********* UPDATE ENEMIES *********
-
 	if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
 	{
 		this->m_pActiveEnemies.SetFirst();
@@ -11233,14 +10981,10 @@ void CTheGame::UpdateEnemies()
 			this->m_pObstacleEnemies.SetNext();
 		}
 	}
-
-	//END*********** UPDATE ENEMIES *********
 }
 
 void CTheGame::UpdateEnemiesShake(bool bBlast, float fFrametime)
 {
-	//START********* UPDATE ENEMIES SHAKE *********
-
 	// active enemies
 	this->m_pActiveEnemies.SetFirst();
 	while( this->m_pActiveEnemies.GetCurrent() )
@@ -11261,14 +11005,10 @@ void CTheGame::UpdateEnemiesShake(bool bBlast, float fFrametime)
 		}
 		this->m_pActiveEnemies.SetNext();
 	}
-
-	//END*********** UPDATE ENEMIES SHAKE *********
 }
 
 void CTheGame::UpdateEnemiesShake(IEnemy* pEnemy, bool bBlast, float fFrametime)
 {
-	//START********* UPDATE ENEMIES SHAKE *********
-
 	if(bBlast)
 	{
 		pEnemy->UpdateEnemyBlastShake(fFrametime);
@@ -11278,14 +11018,10 @@ void CTheGame::UpdateEnemiesShake(IEnemy* pEnemy, bool bBlast, float fFrametime)
 	{
 		pEnemy->UpdateEnemyCannonShake(fFrametime);
 	}
-
-	//END*********** UPDATE ENEMIES SHAKE *********
 }
 
 void CTheGame::UpdateReinforcements(float fFrametime)
 {
-	//START******* UPDATE FLEET ENEMIES *******
-
 	/* ENEMY FLEET SENDING */
 
 	float fReinforcementSendCounter = 0.0f;
@@ -11561,14 +11297,10 @@ void CTheGame::UpdateReinforcements(float fFrametime)
 		}
 		this->m_pReinforcements.SetNext();
 	}
-
-	//END********* UPDATE FLEET ENEMIES *******
 }
 
 void CTheGame::UpdateBullets(float fFrametime)
 {
-	//START*************** UPDATE BULLETS *********************
-
 	int velocity = this->m_pPlayer->GetVelocity();
 
 	this->m_pBullets.SetFirst();
@@ -11580,23 +11312,15 @@ void CTheGame::UpdateBullets(float fFrametime)
 		}
 		this->m_pBullets.SetNext();
 	}
-
-	//END***************** UPDATE BULLETS *********************
 }
 
 void CTheGame::UpdateExplosions(float fFrametime)
 {
-	//START************* UPDATE EXPLOSIONS *************
-
 	this->m_pExplosions->Update(fFrametime, this->m_iGameState);
-
-	//END*************** UPDATE EXPLOSIONS *************
 }
 
 void CTheGame::UpdateTime(float fFrametime)
 {
-	//START*********** UPDATE TIMER *****************
-
 	if(	(this->m_iGameState != GAME_STATE_LOAD_LEVEL) && 
 		(this->m_iGameState != GAME_STATE_LEVEL_INTRO) && 
 		(this->m_iGameState != GAME_STATE_BOSS_BIG_EXPLOSION) && 
@@ -11607,8 +11331,6 @@ void CTheGame::UpdateTime(float fFrametime)
 	{
 		this->m_fGameTime += fFrametime;
 	}
-
-	//END************* UPDATE TIMER *****************
 }
 
 void CTheGame::UpdateVelocityTimeMargin(float fFrametime)
@@ -11675,8 +11397,6 @@ void CTheGame::UpdateExplosionVelocity()
 
 void CTheGame::RenderPlayer(float fFrametime)
 {
-	//START************* RENDER PLAYER *******************
-
 	// player is destroyed
 	if( this->m_pPlayer->IsDestroyed() )
 	{
@@ -11762,8 +11482,6 @@ void CTheGame::RenderPlayer(float fFrametime)
 			this->RenderPlayerAfterburn(false);
 		}
 	}
-
-	//END*************** RENDER PLAYER *******************
 }
 
 void CTheGame::RenderBoss(float fFrametime, bool bFreeze)
@@ -11806,8 +11524,6 @@ void CTheGame::RenderBoss(float fFrametime, bool bFreeze)
 
 void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
 {
-	//START************ RENDER ACTIVE ENEMIES ******************
-
 	this->m_pActiveEnemies.SetFirst();
 	while( this->m_pActiveEnemies.GetCurrent() )
 	{
@@ -11887,14 +11603,10 @@ void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
 		}
 		this->m_pActiveEnemies.SetNext();
 	}
-
-	//END************** RENDER ACTIVE ENEMIES ******************
 }
 
 void CTheGame::RenderReinforcements(float fFrametime, bool bFreeze)
 {
-	//START********* RENDER FLEET ENEMIES ***************
-
 	this->m_pReinforcements.SetFirst();
 	while( this->m_pReinforcements.GetCurrent() )
 	{
@@ -11933,14 +11645,10 @@ void CTheGame::RenderReinforcements(float fFrametime, bool bFreeze)
 		}
 		this->m_pReinforcements.SetNext();
 	}
-
-	//END*********** RENDER REINFORCEMENT ENEMIES ***************
 }
 
 void CTheGame::RenderObstacleEnemies(float fFrametime, bool bFreeze)
 {
-	//START************ RENDER OBSTACLE ENEMIES ******************
-
 	this->m_pObstacleEnemies.SetFirst();
 	while( this->m_pObstacleEnemies.GetCurrent() )
 	{
@@ -11982,14 +11690,10 @@ void CTheGame::RenderObstacleEnemies(float fFrametime, bool bFreeze)
 		}
 		this->m_pObstacleEnemies.SetNext();
 	}
-
-	//END************** RENDER OBSTACLE ENEMIES ******************
 }
 
 void CTheGame::RenderObstacles(float fFrametime, bool bFreeze)
 {
-	//START************* RENDER OBSTACLES *******************
-
 	float verticalBorderMargin = 60.0f;
 
 	/* depth 1 obstacles */
@@ -12172,14 +11876,10 @@ void CTheGame::RenderObstacles(float fFrametime, bool bFreeze)
 		}
 		this->m_pObstaclesDepth5.SetNext();
 	}
-
-	//END*************** RENDER OBSTACLES *******************
 }
 
 void CTheGame::RenderBullets(float fFrametime, bool bFreeze)
 {
-	//START*************** RENDER BULLETS *********************
-
 	int velocity = this->m_pPlayer->GetVelocity();
 
 	// boss bullets
@@ -12288,22 +11988,15 @@ void CTheGame::RenderBullets(float fFrametime, bool bFreeze)
 		}
 		this->m_pBullets.SetNext();
 	}
-
-	//END***************** RENDER BULLETS *********************
 }
 
 void CTheGame::RenderExplosions()
 {
-	//START************* RENDER EXPLOSIONS *************
-
 	this->m_pExplosions->Render(this->m_iGameState);
-
-	//END*************** RENDER EXPLOSIONS *************
 }
 
 void CTheGame::RenderParticles(float fFrametime, bool bFreeze)
 {
-	//START************* RENDER PARTICLES *************
 	/*
 	this->m_pParticles.SetFirst();
 	while( this->m_pParticles.GetCurrent() )
@@ -12328,7 +12021,6 @@ void CTheGame::RenderParticles(float fFrametime, bool bFreeze)
 		this->m_pParticles.SetNext();
 	}
 	*/
-	//END*************** RENDER PARTICLES *************
 }
 
 void CTheGame::RenderPlayerAfterburn(bool bFreeze)
@@ -12372,8 +12064,6 @@ void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)
 
 	static float fRechargePause = 0.0f;
 	static float fRechargePauseMax = 0.05f;
-
-	//START************ UPDATE PLAYER CANNON ********************
 
 	switch( this->m_ePlayerCannonState )
 	{
@@ -12474,14 +12164,10 @@ void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)
 		}
 		break;
 	}
-
-	//END************** UPDATE PLAYER CANNON ********************
 }
 
 void CTheGame::RenderPlayerCannonCharge(float fFrametime, bool bFreeze)
 {
-	//START************ RENDER PLAYER CANNON CHARGE ************
-
 	const float fPixelMultiplier = 2.5f;
 
 	// cannon charging has ended
@@ -12706,14 +12392,10 @@ void CTheGame::RenderPlayerCannonCharge(float fFrametime, bool bFreeze)
 			this->m_fCannonChargeCounter -= fFrametime;
 		}
 	}
-
-	//END************* RENDER PLAYER CANNON CHARGE *************
 }
 
 void CTheGame::RenderPlayerCannonBeam(float fFrametime, bool bFreeze)
 {
-	//START************ RENDER PLAYER CANNON BEAM ************
-
 	const float fPixelMultiplier = 2.5f;
 	static bool bBeamToWide = true;
 
@@ -12922,8 +12604,6 @@ void CTheGame::RenderPlayerCannonBeam(float fFrametime, bool bFreeze)
 			this->m_fSpriteShowCannonBeamCounter -= fFrametime;
 		}
 	}
-
-	//END************* RENDER PLAYER CANNON BEAM *************
 }
 
 void CTheGame::RenderStatistics(float fFrametime)
@@ -12956,8 +12636,6 @@ void CTheGame::RenderStatistics(float fFrametime)
 
 void CTheGame::RenderPlayerLives()
 {
-	//START******* RENDER PLAYER LIVES ************
-
 	int iLives = this->m_pPlayer->GetLives();
 
 	if (iLives < 0)
@@ -12972,14 +12650,10 @@ void CTheGame::RenderPlayerLives()
 	(this->m_pSpriteInfoPlayerLives + 10)->Draw(iBaseX,iBaseY);
 	// number of lives
 	(this->m_pSpriteInfoPlayerLives + iLives)->Draw(iNumberX,iNumberY);
-
-	//END********* RENDER PLAYER LIVES ************
 }
 
 void CTheGame::RenderPlayerBlasts()
 {
-	//START******* RENDER PLAYER BLASTS ************
-
 	int iBlasts = this->m_pPlayer->GetBlasts();
 
 	int iBaseX = this->m_pGameSettings->m_iPlayerBlastsBasePositionX;
@@ -12991,14 +12665,10 @@ void CTheGame::RenderPlayerBlasts()
 	(this->m_pSpriteInfoPlayerBlasts + 10)->Draw(iBaseX,iBaseY);
 	// number of blasts
 	(this->m_pSpriteInfoPlayerBlasts + iBlasts)->Draw(iNumberX,iNumberY);
-
-	//END********* RENDER PLAYER BLASTS ************
 }
 
 void CTheGame::RenderPlayerHealthBar()
 {
-	//START******* RENDER PLAYER HEALTH BAR **********
-
 	int iHealth = this->m_pPlayer->GetHealth();
 
 	int iBarX = this->m_pGameSettings->m_iPlayerHealthBarPositionX;
@@ -13067,14 +12737,10 @@ void CTheGame::RenderPlayerHealthBar()
 
 	// health bar
 	(this->m_pSpriteInfoPlayerHealth + 9)->Draw(iBarX,iBarY);
-
-	//END********* RENDER PLAYER HEALTH BAR **********
 }
 
 void CTheGame::RenderPlayerCannonBar()
 {
-	//START******* RENDER PLAYER CANNON BAR **********
-
 	int iCannonEnergy = this->m_pPlayer->GetCannonEnergy();
 
 	int iBarX = this->m_pGameSettings->m_iPlayerCannonBarPositionX;
@@ -13173,14 +12839,10 @@ void CTheGame::RenderPlayerCannonBar()
 
 	// cannon bar
 	(this->m_pSpriteInfoPlayerCannon + 15)->Draw(iBarX,iBarY);
-
-	//END********* RENDER PLAYER CANNON BAR **********
 }
 
 void CTheGame::RenderScore(float fFrametime)
 {
-	//START******* RENDER PLAYER SCORE **********
-
 	char* pPointer;
 	char* sScore = NULL;
 	sScore = this->m_pPlayer->GetScoreString();
@@ -13212,14 +12874,10 @@ void CTheGame::RenderScore(float fFrametime)
 
 	delete []sScore;
 	sScore = NULL;
-
-	//END********* RENDER PLAYER SCORE **********
 }
 
 void CTheGame::RenderTime(float fFrametime)
 {
-	//START********* RENDER TIME ************
-
 	char* pPointer;
 	char* sTime = NULL;
 	sTime = this->GetTimeString();
@@ -13276,8 +12934,6 @@ void CTheGame::RenderTime(float fFrametime)
 
 	this->m_pTheApp->EndText();
 	*/
-
-	//END*********** RENDER TIME ************
 }
 
 void CTheGame::RenderLevelTitle()
