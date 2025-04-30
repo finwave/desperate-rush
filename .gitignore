@@ -34,3 +34,6 @@
 /DesperateRush
 /Debug
 /Release
+
+# Single Files
+config.cfg
