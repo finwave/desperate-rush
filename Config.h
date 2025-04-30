@@ -70,6 +70,8 @@ public:
 	inline void SetStrCannon(char* strCannon) { this->m_strCannon = strCannon; }
 	inline void SetStrBlast(char* strBlast) { this->m_strBlast = strBlast; }
 
+	inline void SetMaxAntialiasing(DWORD value) { this->m_dwMaxAntialiasing = value; }
+
 	void Load();
 	void Save();
 	void DefaultControls();
@@ -149,4 +151,9 @@ private:
 	long int			m_iMinigun;
 	long int			m_iCannon;
 	long int			m_iBlast;
+
+	// variable to represent max antialiasing
+	// current hardware can support
+	// 0 = 0x, 1 = 2x, 2 = 4x, 3 = 6x, 4 = 8x
+	DWORD m_dwMaxAntialiasing;
 };

@@ -103,7 +103,6 @@
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)data_1" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)data_2" "$(SolutionDir)$(Configuration)\" /F /Y
-xcopy "$(SolutionDir)config.cfg" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)coldet\lib\coldet.dll" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Debug\libzip.dll" "$(SolutionDir)$(Configuration)\" /F /Y</Command>
     </PostBuildEvent>
@@ -129,7 +128,6 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)data_1" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)data_2" "$(SolutionDir)$(Configuration)\" /F /Y
-xcopy "$(SolutionDir)config.cfg" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)coldet\lib\coldet.dll" "$(SolutionDir)$(Configuration)\" /F /Y
 xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\Release\libzip.dll" "$(SolutionDir)$(Configuration)\" /F /Y</Command>
     </PostBuildEvent>

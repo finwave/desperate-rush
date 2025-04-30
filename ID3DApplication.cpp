@@ -57,7 +57,6 @@ HRESULT ID3DApplication::Create(int iBPP,
 		return E_FAIL;
 	}
 
-
 	// initialise the present parameters
 	HRESULT hres;
 	this->m_Present.hDeviceWindow = GetWindow();
@@ -174,13 +173,15 @@ HRESULT ID3DApplication::Create(int iBPP,
 
 #endif
 
-
 	D3DCAPS9 caps;
 	this->m_pD3D->GetDeviceCaps( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps );
 
 	// sets antialiasing before creating Direct3D device
+	SetAntialiasingMax();
+	this->m_Config.SetMaxAntialiasing(m_dwMaxAntialiasing);
+	this->m_Config.Load();
 
-	if(!this->SetAntialiasing())
+	if(!this->SetCurrentAntialiasing())
 	{
 		if(IsWindowed())
 		{
@@ -214,6 +215,7 @@ HRESULT ID3DApplication::Create(int iBPP,
 											&this->m_Present,
 											&this->m_pDevice);
 	}
+
 	if(FAILED(hres))
 	{
 		hres = this->m_pD3D->CreateDevice(	D3DADAPTER_DEFAULT,
@@ -223,6 +225,7 @@ HRESULT ID3DApplication::Create(int iBPP,
 											&this->m_Present,
 											&this->m_pDevice);
 	}
+
 	if(FAILED(hres))
 	{
 		// failed to create any kind of device...
@@ -387,35 +390,34 @@ BOOL ID3DApplication::OnMessage(	UINT iMessage,
 	return ret;
 }
 
-
-bool ID3DApplication::SetAntialiasing(void)
+void ID3DApplication::SetAntialiasingMax(void)
 {
-	bool bAntialiasing = false;
-	BOOL bWindowed;
+	BOOL bWindowed = FALSE;
 
-	if(IsWindowed())
+	if (IsWindowed())
 	{
 		bWindowed = TRUE;
-	}
-	else
-	{
-		bWindowed = FALSE;
 	}
 
 	// get the desktop display mode
 	D3DDISPLAYMODE dm;
-	this->m_pD3D->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &dm);
+	this->m_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dm);
 
 	// get the max supported antialiasing
-	this->m_pD3D->CheckDeviceMultiSampleType(	D3DADAPTER_DEFAULT,
-												D3DDEVTYPE_HAL,
-												dm.Format,
-												bWindowed,
-												D3DMULTISAMPLE_NONMASKABLE,
-												&this->m_dwMaxAntialiasing);
+	this->m_pD3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		dm.Format,
+		bWindowed,
+		D3DMULTISAMPLE_NONMASKABLE,
+		&this->m_dwMaxAntialiasing);
+}
+
+bool ID3DApplication::SetCurrentAntialiasing(void)
+{
+	bool bAntialiasing = false;
 
 	// sets antialiasing to what it says in the config file
-	// but checks checks first if it's supported
+	// but checks first that it's supported
 
 	// doesn't set antialiasing if config file's value is not supported
 	// this may be due to corrupted config file or hardware change

@@ -175,7 +175,8 @@ private:
 	 */
 	void HandleWindowSizeChange(void);
 
-	bool SetAntialiasing(void);
+	void SetAntialiasingMax(void);
+	bool SetCurrentAntialiasing(void);
 
 	/**
 	 * SetDeviceDefaults
@@ -205,5 +206,5 @@ private:
 	// variable to represent max antialiasing
 	// current hardware can support
 	// 0 = 0x, 1 = 2x, 2 = 4x, 3 = 6x, 4 = 8x
-	DWORD					m_dwMaxAntialiasing;
+	DWORD m_dwMaxAntialiasing;
 };

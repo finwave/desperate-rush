@@ -27,8 +27,6 @@ CConfig::CConfig(void)
 	this->m_iMinigun = 0;
 	this->m_iCannon = 0;
 	this->m_iBlast = 0;
-
-	this->Load();
 }
 
 CConfig::~CConfig(void)
@@ -542,6 +540,25 @@ void CConfig::DefaultAudio()
 
 void CConfig::DefaultAntialiasing()
 {
+	this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_0X;
+
+	if (this->m_dwMaxAntialiasing >= 8)
+	{
+		this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_8X;
+	}
+	else if (this->m_dwMaxAntialiasing >= 6)
+	{
+		this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_6X;
+	}
+	else if (this->m_dwMaxAntialiasing >= 4)
+	{
+		this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_4X;
+	}
+	else if (this->m_dwMaxAntialiasing >= 2)
+	{
+		this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_2X;
+	}
+
 	std::ofstream fileOut;
 	fileOut.open("config.cfg");
 
@@ -570,7 +587,8 @@ void CConfig::DefaultAntialiasing()
 		fileOut<<"\n";
 		fileOut<<"-----";
 		fileOut<<"\n\n";
-		fileOut<<"antialiasing=0";
+		fileOut << "antialiasing=";
+		fileOut << this->m_eAntialiasing;
 		fileOut<<"\n";
 		fileOut<<"specular lighting=";
 		fileOut<<this->m_eSpecularLighting;
@@ -605,9 +623,6 @@ void CConfig::DefaultAntialiasing()
 		fileOut<<"\n";
 
 		fileOut.close();
-
-		// sets default values to member variables
-		this->m_eAntialiasing = eANTIALIASING_0X;
 
 		m_bSuccess = true;
 	}
@@ -651,7 +666,7 @@ void CConfig::DefaultSpecularLighting()
 		fileOut<<"antialiasing=";
 		fileOut<<this->m_eAntialiasing;
 		fileOut<<"\n";
-		fileOut<<"specular lighting=0";
+		fileOut<<"specular lighting=1";
 		fileOut<<"\n\n";
 		fileOut<<"CONTROLS";
 		fileOut<<"\n";
@@ -685,7 +700,7 @@ void CConfig::DefaultSpecularLighting()
 		fileOut.close();
 
 		// sets default values to member variables
-		this->m_eAntialiasing = eANTIALIASING_0X;
+		this->m_eSpecularLighting = eSPECULAR_LIGHTING_ON;
 
 		m_bSuccess = true;
 	}

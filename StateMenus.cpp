@@ -1630,6 +1630,10 @@ void CStateMenus::RenderDisplay()
 		{
 			bShowRightAntialiasingArrow = true;
 		}
+		else if ((currentAntialiasing == CConfig::eANTIALIASING_4X) && (maxAntialiasing >= 6))
+		{
+			bShowRightAntialiasingArrow = true;
+		}
 		else if ((currentAntialiasing == CConfig::eANTIALIASING_6X) && (maxAntialiasing >= 8))
 		{
 			bShowRightAntialiasingArrow = true;
