@@ -873,6 +873,15 @@ void CStateMenus::Render()
 	// render game version
 	RenderGameVersion();
 
+	// draw fade-out
+	switch (m_eMenus)
+	{
+	case New_Game:
+	case Exit:
+		this->GetFading()->RenderFading();
+		break;
+	}
+
 	// render mouse cursor
 	if((m_eInputDevice != Keyboard) && (m_eMenus != New_Game) && (m_eMenus != Exit))
 	{
@@ -921,10 +930,6 @@ void CStateMenus::RenderNewGame(float fFrametime)
 
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
-	// draw game version
-	this->RenderGameVersion();
-	// draw fade-out
-	this->GetFading()->RenderFading();
 
 	if(!bScreenFading && !this->m_bFadeOutMusic)
 	{
@@ -991,8 +996,6 @@ void CStateMenus::RenderMain()
 		// select button is pressed
 		if(IsValidSelectClick())
 		{
-			// change font
-			this->GetApp()->SetTextFontParam(-17, 1000, 0);
 			// play menu "select" sound
 			this->GetApp()->GetWave(SOUND_MENU_SELECT).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
 			// change menu
@@ -1048,8 +1051,6 @@ void CStateMenus::RenderOptions()
 		// select button is pressed
 		if(IsValidSelectClick())
 		{
-			// change font
-			this->GetApp()->SetTextFontParam(-17, 700, 0);
 			// play menu "select" sound
 			this->GetApp()->GetWave(SOUND_MENU_SELECT).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
 			// change menu
@@ -2012,10 +2013,6 @@ void CStateMenus::RenderExit(float fFrametime)
 
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
-	// draw game version
-	this->RenderGameVersion();
-	// draw fade-out
-	this->GetFading()->RenderFading();
 
 	if(!bScreenFading && !this->m_bFadeOutMusic)
 	{
@@ -2966,9 +2963,9 @@ void CStateMenus::ShowControls()
 		blastAscii = HexToAscii(blast[2], blast[3]);
 	}
 
-
 	/* display current game controls on screen */
 
+	this->GetApp()->SetTextFontParam(-17, 700, 0);
 	this->GetApp()->BeginText();
 
 	// display up key
