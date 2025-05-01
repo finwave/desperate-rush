@@ -2453,7 +2453,7 @@ void CStateMenus::RenderScores(float fFrametime)
 
 void CStateMenus::RenderGameVersion()
 {
-	this->m_pResourceMenus->m_pSpriteVersion->Draw(957,736);
+	this->m_pResourceMenus->m_pSpriteVersion->Draw(955,735);
 }
 
 #ifdef MENUS_PLANET
