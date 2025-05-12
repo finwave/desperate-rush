@@ -13,6 +13,8 @@ CGameSettings::CGameSettings(void)
 {
 	// SOUND VOLUME
 	
+	this->m_fVolumeMusicGameOver = 0.0f;
+
 	this->m_fVolumePlayerMinigunShoot = 0.0f;
 	this->m_fVolumePlayerMinigunTurn = 0.0f;
 	this->m_fVolumePlayerCannon = 0.0f;
@@ -187,6 +189,8 @@ CGameSettings::~CGameSettings(void)
 void CGameSettings::Create()
 {
 	// SOUND VOLUME (0.0f - 1.0f)
+
+	this->m_fVolumeMusicGameOver = 0.85f;
 
 	this->m_fVolumePlayerMinigunShoot = 0.9f;
 	this->m_fVolumePlayerMinigunTurn = 0.9f;

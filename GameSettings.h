@@ -11,6 +11,8 @@ public:
 
 	// SOUND VOLUME
 	
+	float					m_fVolumeMusicGameOver;
+
 	float					m_fVolumePlayerMinigunShoot;
 	float					m_fVolumePlayerMinigunTurn;
 	float					m_fVolumePlayerCannon;

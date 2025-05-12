@@ -348,11 +348,11 @@ HRESULT CStateHighScore::InitState(DWORD dwState)
 		{
 			// load highscore music
 			LPCTSTR resourceFilePath = this->m_pResourceHighScores->GetUnpackedResourceFilePath("music/highscore.mp3");
-			this->GetApp()->GetMP3Player1().Create(resourceFilePath);
+			this->GetApp()->GetMusicPlayerGeneral().Create(resourceFilePath);
 
 			// play highscore music
-			this->GetApp()->GetMP3Player1().SetVolume(this->GetApp()->GetVolumeMusic());
-			this->GetApp()->GetMP3Player1().Play();
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
+			this->GetApp()->GetMusicPlayerGeneral().Play();
 		}
 
 		this->SetStateLoaded(true);
@@ -461,11 +461,11 @@ DWORD CStateHighScore::Update(float fFrametime)
 	if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 	{
 		// music has reached it's end, reset position 
-		if(this->GetApp()->GetMP3Player1().IsAtEnd())
+		if(this->GetApp()->GetMusicPlayerGeneral().IsAtEnd())
 		{
-			this->GetApp()->GetMP3Player1().Stop();
-			GetApp()->GetMP3Player1().SetPosition(0);
-			GetApp()->GetMP3Player1().Play();
+			this->GetApp()->GetMusicPlayerGeneral().Stop();
+			GetApp()->GetMusicPlayerGeneral().SetPosition(0);
+			GetApp()->GetMusicPlayerGeneral().Play();
 		}
 	}
 	// next state to take
@@ -630,26 +630,26 @@ void CStateHighScore::RenderExit(float fFrametime)
 		if(this->GetApp()->VolumeMusicFadeOut(fFrametime))
 		{
 			// set music volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
 		}
 		// music fade out finished
 		else
 		{
 			// set music volume, it's now back to original volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
-			this->GetApp()->GetMP3Player2().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
 
 			// music has volume
 			if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 			{
 				// music player is active
-				if(this->GetApp()->GetMP3Player1().GetState() == 1)
+				if(this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 				{
 					// stop music play
-					this->GetApp()->GetMP3Player1().Stop();
+					this->GetApp()->GetMusicPlayerGeneral().Stop();
 				}
+
 				// release music
-				this->GetApp()->GetMP3Player1().Release();
+				this->GetApp()->GetMusicPlayerGeneral().Release();
 			}
 
 			this->m_bFadeOutMusic = false;

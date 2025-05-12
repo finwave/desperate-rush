@@ -114,16 +114,28 @@ public:
 	inline CSoundWave& GetWave(DWORD dwIndex) { return m_Waves[dwIndex]; }
 
 	/**
-	 * GetMP3Player
+	 * GetMusicPlayerGeneral
 	 * @return reference to mp3 player
 	 */
-	inline CSoundMP3Player& GetMP3Player1() { return m_MP3_1; }
+	inline CSoundMP3Player& GetMusicPlayerGeneral() { return m_MusicPlayerGeneral; }
 
 	/**
-	 * GetMP3Player2
+	 * GetMusicPlayerGameBoss
 	 * @return reference to mp3 player
 	 */
-	inline CSoundMP3Player& GetMP3Player2() { return m_MP3_2; }
+	inline CSoundMP3Player& GetMusicPlayerGameBoss() { return m_MusicPlayerGameBoss; }
+
+	/**
+	 * GetMusicPlayerGameOver
+	 * @return reference to mp3 player
+	 */
+	inline CSoundMP3Player& GetMusicPlayerGameOver() { return m_MusicPlayerGameOver; }
+
+	/**
+	 * GetMusicPlayerGameOutro
+	 * @return reference to mp3 player
+	 */
+	inline CSoundMP3Player& GetMusicPlayerGameOutro() { return m_MusicPlayerGameOutro; }
 
 	/**
 	 * GetKeyboard
@@ -316,8 +328,11 @@ private:
 	// sound playback objects
 	CSoundEngine					m_SoundEngine;
 	CSoundWave						m_Waves[NUM_WAVES];
-	CSoundMP3Player					m_MP3_1;
-	CSoundMP3Player					m_MP3_2;
+
+	CSoundMP3Player					m_MusicPlayerGeneral;
+	CSoundMP3Player					m_MusicPlayerGameBoss;
+	CSoundMP3Player					m_MusicPlayerGameOver;
+	CSoundMP3Player					m_MusicPlayerGameOutro;
 
 	CInputEngine					m_InputEngine;
 	std::vector<CInputEngine::DEVICE> m_arrInputDevices;

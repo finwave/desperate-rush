@@ -596,14 +596,14 @@ HRESULT CStateMenus::InitState(DWORD dwState)
 	{
 		// load menu music
 		LPCTSTR resourceFilePath = this->m_pResourceMenus->GetUnpackedResourceFilePath("music/title.mp3");
-		this->GetApp()->GetMP3Player1().Create(resourceFilePath);
+		this->GetApp()->GetMusicPlayerGeneral().Create(resourceFilePath);
 
 		// current music configuration has volume set up
 		if (this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 		{
 			// play menu music
-			this->GetApp()->GetMP3Player1().SetVolume(this->GetApp()->GetVolumeMusic());
-			this->GetApp()->GetMP3Player1().Play();
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
+			this->GetApp()->GetMusicPlayerGeneral().Play();
 		}
 
 		// updates mouse device clearing the movement
@@ -757,11 +757,11 @@ DWORD CStateMenus::Update(float fFrametime)
 	if (this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 	{
 		// music has reached it's end, reset position 
-		if (this->GetApp()->GetMP3Player1().IsAtEnd())
+		if (this->GetApp()->GetMusicPlayerGeneral().IsAtEnd())
 		{
-			this->GetApp()->GetMP3Player1().Stop();
-			this->GetApp()->GetMP3Player1().SetPosition(67.829);
-			this->GetApp()->GetMP3Player1().Play();
+			this->GetApp()->GetMusicPlayerGeneral().Stop();
+			this->GetApp()->GetMusicPlayerGeneral().SetPosition(67.829);
+			this->GetApp()->GetMusicPlayerGeneral().Play();
 		}
 	}
 
@@ -901,27 +901,26 @@ void CStateMenus::RenderNewGame(float fFrametime)
 		if(this->GetApp()->VolumeMusicFadeOut(fFrametime))
 		{
 			// set music volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
 		}
 		// music fade out finished
 		else
 		{
 			// set music volume, it's now back to original volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
-			this->GetApp()->GetMP3Player2().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
 
 			// music has volume
 			if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 			{
 				// music player is active
-				if(this->GetApp()->GetMP3Player1().GetState() == 1)
+				if(this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 				{
 					// stop music play
-					this->GetApp()->GetMP3Player1().Stop();
+					this->GetApp()->GetMusicPlayerGeneral().Stop();
 				}
 
 				// release music
-				this->GetApp()->GetMP3Player1().Release();
+				this->GetApp()->GetMusicPlayerGeneral().Release();
 			}
 
 			this->m_bFadeOutMusic = false;
@@ -1432,26 +1431,25 @@ void CStateMenus::RenderAudio(float fFrametime)
 			this->GetApp()->GetConfig().SetVolumeMusic(newValue);
 
 			// set music volume
-			this->GetApp()->GetMP3Player1().SetVolume(this->GetApp()->GetVolumeMusic());
-			this->GetApp()->GetMP3Player2().SetVolume(this->GetApp()->GetVolumeMusic());
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
 
 			// music is stopped or paused
-			if ((this->GetApp()->GetMP3Player1().GetState() == 0) ||
-				(this->GetApp()->GetMP3Player1().GetState() == 2))
+			if ((this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_STOPPED) ||
+				(this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PAUSE))
 			{
 				if (newValue > 0)
 				{
 					// play music
-					this->GetApp()->GetMP3Player1().Play();
+					this->GetApp()->GetMusicPlayerGeneral().Play();
 				}
 			}
 			// music is playing
-			else if (this->GetApp()->GetMP3Player1().GetState() == 1)
+			else if (this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 			{
 				if (newValue == 0)
 				{
 					// pause music
-					this->GetApp()->GetMP3Player1().Pause();
+					this->GetApp()->GetMusicPlayerGeneral().Pause();
 				}
 			}
 		}
@@ -1985,26 +1983,16 @@ void CStateMenus::RenderExit(float fFrametime)
 		if(this->GetApp()->VolumeMusicFadeOut(fFrametime))
 		{
 			// set music volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
+			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
 		}
 		// music fade out finished
 		else
 		{
-			// set music volume, it's now back to original volume
-			this->GetApp()->GetMP3Player1().SetVolume( this->GetApp()->GetVolumeMusic() );
-			this->GetApp()->GetMP3Player2().SetVolume( this->GetApp()->GetVolumeMusic() );
-
-			// music has volume
-			if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
+			// music player is active
+			if (this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 			{
-				// music player is active
-				if(this->GetApp()->GetMP3Player1().GetState() == 1)
-				{
-					// stop music play
-					this->GetApp()->GetMP3Player1().Stop();
-				}
-				// release music
-				this->GetApp()->GetMP3Player1().Release();
+				// stop music play
+				this->GetApp()->GetMusicPlayerGeneral().Stop();
 			}
 
 			this->m_bFadeOutMusic = false;

@@ -297,16 +297,19 @@ private:
 	HRESULT InitLevelObstacles();
 	CObstacle* CreateTemplateObstacle(int mapKey, float objectWidth, float objectHeight);
 
+	void InitVolumeMusic();
 	void InitVolumeSoundEffect();
 
 	void LoadMusicLevel();
 	void LoadMusicBoss();
+	void LoadMusicGameOver();
+	void LoadMusicGameOutro();
 	void CheckMusicEnd();
 	void RestartMusic();
 	void PlayMusicLevel();
 	void PlayMusicBoss();
-	void PlayMusicGameOutro();
 	void PlayMusicGameOver();
+	void PlayMusicGameOutro();
 	bool FadeOutMusicLevel(float fFrametime);
 	bool FadeOutMusicBoss(float fFrametime);
 	void StopMusicLevel();
@@ -512,6 +515,7 @@ private:
 	CPlayerMinigun*				m_pPlayerMinigunRight;
 	CPlayerController*			m_pPlayerController;
 
+	int							m_iVolumeMusicGameOver;
 	int							m_iVolumePlayerMinigunShoot;
 	int							m_iVolumePlayerMinigunTurn;
 	int							m_iVolumePlayerCannon;

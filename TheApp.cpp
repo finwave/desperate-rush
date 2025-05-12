@@ -211,8 +211,10 @@ void CTheApp::OnRelease(void)
 #endif
 
 	// release mp3 players
-	this->m_MP3_1.Release();
-	this->m_MP3_2.Release();
+	this->m_MusicPlayerGeneral.Release();
+	this->m_MusicPlayerGameBoss.Release();
+	this->m_MusicPlayerGameOver.Release();
+	this->m_MusicPlayerGameOutro.Release();
 
 	// release all wave files
 	for (int i = 0; i < NUM_WAVES; i++)

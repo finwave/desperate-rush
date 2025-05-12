@@ -68,11 +68,11 @@ HRESULT CStateIntro::InitState(DWORD dwState)
 	{
 		// load main music
 		LPCTSTR resourceFilePath = resourceMenus->GetUnpackedResourceFilePath("music/intro.mp3");
-		this->GetApp()->GetMP3Player1().Create(resourceFilePath);
+		this->GetApp()->GetMusicPlayerGeneral().Create(resourceFilePath);
 
 		// set music volume
-		this->GetApp()->GetMP3Player1().SetVolume(this->GetApp()->GetVolumeMusic());
-		this->GetApp()->GetMP3Player1().Play();
+		this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
+		this->GetApp()->GetMusicPlayerGeneral().Play();
 	}
 
 	this->SetStateLoaded(true);
@@ -111,9 +111,9 @@ DWORD CStateIntro::Update(float fFrametime)
 		if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 		{
 			// stop music playback
-			GetApp()->GetMP3Player1().Stop();
+			GetApp()->GetMusicPlayerGeneral().Stop();
 			// release music
-			GetApp()->GetMP3Player1().Release();
+			GetApp()->GetMusicPlayerGeneral().Release();
 		}
 	}
 

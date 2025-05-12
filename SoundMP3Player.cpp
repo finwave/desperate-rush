@@ -8,6 +8,7 @@ CSoundMP3Player::CSoundMP3Player(void)
 {
 	// init the members
 	m_eState = eSTATE_STOPPED;
+	m_bIsCreated = false;
 	m_pGraph = NULL;
 	m_pPosition = NULL;
 }
@@ -71,6 +72,7 @@ HRESULT CSoundMP3Player::Create(LPCTSTR strFilePath)
 	}
 
 	m_eState = eSTATE_STOPPED;
+	m_bIsCreated = true;
 	return S_OK;
 }
 
@@ -88,7 +90,9 @@ void CSoundMP3Player::Release(void)
 		m_pGraph->Release();
 		m_pGraph = NULL;
 	}
+
 	m_eState = eSTATE_STOPPED;
+	m_bIsCreated = false;
 }
 
 

@@ -86,8 +86,13 @@ public:
 	// returns current state of the player
 	inline eSTATE GetState() const { return m_eState; }
 
+	// IsCreated
+	// returns current state of the whether the player has been created (ready to be used)
+	inline bool IsCreated() const { return m_bIsCreated; }
+
 private:
 	IGraphBuilder*		m_pGraph;
 	IMediaPosition*		m_pPosition;
 	eSTATE				m_eState;
+	bool				m_bIsCreated;
 };

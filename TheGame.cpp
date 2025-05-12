@@ -17,6 +17,8 @@ CTheGame::CTheGame(void)
 	this->m_pPlayerMinigunLeft = NULL;
 	this->m_pPlayerMinigunRight = NULL;
 	this->m_pPlayerController = NULL;
+
+	this->m_iVolumeMusicGameOver = 0;
 	this->m_iVolumePlayerMinigunShoot = 0;
 	this->m_iVolumePlayerMinigunTurn = 0;
 	this->m_iVolumePlayerCannon = 0;
@@ -275,8 +277,9 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 
 		this->m_pGameSettings->Create();
 
-		// initialize sound effect volume
-		this->InitVolumeSoundEffect();
+		// initialize music and sound effect volume
+		InitVolumeMusic();
+		InitVolumeSoundEffect();
 
 		/** LEVELS **/
 
@@ -1477,15 +1480,42 @@ void CTheGame::Render(void)
 			break;
 
 		case LOAD_LEVEL_MUSIC:
-			
+		{
 			this->LoadMusicLevel();
-
+			this->LoadMusicGameOver();
+			this->LoadMusicGameOutro();
+		}
 			break;
 
 		case LOAD_LEVEL_MUSIC_BOSS:
-			
+		{
+			int iVolumeMusic = this->m_pTheApp->GetVolumeMusic();
+
 			this->LoadMusicBoss();
 
+			// set music volume of each music player
+
+			if (this->m_pTheApp->GetMusicPlayerGeneral().IsCreated())
+			{
+				this->m_pTheApp->GetMusicPlayerGeneral().SetVolume(iVolumeMusic);
+			}
+
+			if (this->m_pTheApp->GetMusicPlayerGameBoss().IsCreated())
+			{
+				this->m_pTheApp->GetMusicPlayerGameBoss().SetVolume(iVolumeMusic);
+			}
+
+			if (this->m_pTheApp->GetMusicPlayerGameOver().IsCreated())
+			{
+				this->m_pTheApp->GetMusicPlayerGameOver().SetVolume(this->m_iVolumeMusicGameOver);
+			}
+
+			if (this->m_pTheApp->GetMusicPlayerGameOutro().IsCreated())
+			{
+				this->m_pTheApp->GetMusicPlayerGameOutro().SetVolume(iVolumeMusic);
+			}
+			
+		}
 			break;
 
 		case LOAD_LEVEL_INTRO:
@@ -2624,6 +2654,12 @@ void CTheGame::Render(void)
 					}
 				}
 			}
+			else
+			{
+				this->m_bFadeOutMusic = false;
+				// stop and free all music
+				this->StopMusicAll();
+			}
 		}
 
 		this->QuitGameAction(fFrametime);
@@ -2792,6 +2828,9 @@ void CTheGame::SwitchGameState(int iNextGameState)
 
 	case GAME_STATE_QUIT:
 
+		// fade out music
+		this->m_bFadeOutMusic = true;
+
 		// fade out screen
 		this->m_pState->GetFading()->SetFadeOut();
 		this->m_pState->GetFading()->SetDefaultFadeStep();
@@ -2803,11 +2842,11 @@ void CTheGame::SwitchGameState(int iNextGameState)
 
 		this->m_pPlayer->SetActive(FALSE);
 
-		// stop and free music
+		// stop all music
 		this->StopMusicAll();
-
-		// play music and sound effect
+		// play "game over" music
 		this->PlayMusicGameOver();
+		// play "game over" sound effect
 		this->m_pTheApp->GetWave(SOUND_GAME_OVER).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 
 		this->m_bFadeOutMusic = false;
@@ -2817,6 +2856,9 @@ void CTheGame::SwitchGameState(int iNextGameState)
 
 	case GAME_STATE_END_SUCCESS:
 
+		// stop all music
+		this->StopMusicAll();
+		// play "game outro" music
 		this->PlayMusicGameOutro();
 
 		this->m_bFadeOutMusic = false;
@@ -4054,6 +4096,26 @@ HRESULT CTheGame::InitLevelObstacles()
 	return hres;
 }
 
+void CTheGame::InitVolumeMusic()
+{
+	// master music volume
+
+	int iVolume = this->m_pTheApp->GetConfig().GetVolumeMusic();
+
+	// specific music volumes
+
+	if (iVolume == 0)
+	{
+		this->m_iVolumeMusicGameOver = -10000;
+	}
+	else
+	{
+		float fVolume = this->m_pGameSettings->m_fVolumeMusicGameOver * (float)iVolume;
+		float fExactVolume = (fVolume - 100.0f) * 50.0f;
+		this->m_iVolumeMusicGameOver = (int)fExactVolume;
+	}
+}
+
 void CTheGame::InitVolumeSoundEffect()
 {
 	// master sound effect volume
@@ -4108,15 +4170,14 @@ void CTheGame::LoadMusicLevel()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		// music player is active
-		if(this->m_pTheApp->GetMP3Player1().GetState() == 1)
+		// music player is playing
+		if(this->m_pTheApp->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
 			// stop current music
-			this->m_pTheApp->GetMP3Player1().Stop();
+			this->m_pTheApp->GetMusicPlayerGeneral().Stop();
 		}
 
-		this->m_pTheApp->GetMP3Player1().Release();
-
+		this->m_pTheApp->GetMusicPlayerGeneral().Release();
 		LPCTSTR resourceFilePath = NULL;
 
 		switch(this->m_pLevel->GetLevelNumber())
@@ -4135,8 +4196,7 @@ void CTheGame::LoadMusicLevel()
 		// load level music
 		if (resourceFilePath != NULL)
 		{
-			this->m_pTheApp->GetMP3Player1().Create(resourceFilePath);
-			this->m_pTheApp->GetMP3Player1().SetVolume(this->m_pTheApp->GetVolumeMusic());
+			this->m_pTheApp->GetMusicPlayerGeneral().Create(resourceFilePath);
 		}
 	}
 }
@@ -4147,14 +4207,13 @@ void CTheGame::LoadMusicBoss()
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
 		// music player is active
-		if(this->m_pTheApp->GetMP3Player2().GetState() == 1)
+		if(this->m_pTheApp->GetMusicPlayerGameBoss().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
 			// stop current music
-			this->m_pTheApp->GetMP3Player2().Stop();
+			this->m_pTheApp->GetMusicPlayerGameBoss().Stop();
 		}
 
-		this->m_pTheApp->GetMP3Player2().Release();
-
+		this->m_pTheApp->GetMusicPlayerGameBoss().Release();
 		LPCTSTR resourceFilePath = NULL;
 
 		switch(this->m_pLevel->GetLevelNumber())
@@ -4173,37 +4232,82 @@ void CTheGame::LoadMusicBoss()
 		// load boss music
 		if (resourceFilePath != NULL)
 		{
-			this->m_pTheApp->GetMP3Player2().Create(resourceFilePath);
-			this->m_pTheApp->GetMP3Player2().SetVolume(this->m_pTheApp->GetVolumeMusic());
+			this->m_pTheApp->GetMusicPlayerGameBoss().Create(resourceFilePath);
+		}
+	}
+}
+
+void CTheGame::LoadMusicGameOver()
+{
+	// music has volume
+	if (this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
+	{
+		// music player has not been created yet
+		if (!this->m_pTheApp->GetMusicPlayerGameOver().IsCreated())
+		{
+			// load game over music
+			LPCTSTR resourceFilePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/game_over.mp3");
+			this->m_pTheApp->GetMusicPlayerGameOver().Create(resourceFilePath);
+		}
+	}
+}
+
+void CTheGame::LoadMusicGameOutro()
+{
+	// music has volume
+	if (this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
+	{
+		// music player has not been created yet
+		if (!this->m_pTheApp->GetMusicPlayerGameOutro().IsCreated())
+		{
+			// load game over music
+			LPCTSTR resourceFilePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/game_outro.mp3");
+			this->m_pTheApp->GetMusicPlayerGameOutro().Create(resourceFilePath);
 		}
 	}
 }
 
 void CTheGame::CheckMusicEnd()
 {
-	bool bChangePosition = false;
+	bool bRestartMusic = false;
 
 	if(	(this->m_iGameState == GAME_STATE_BOSS_INTRO) || 
 		(this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
 		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
 		(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
 	{
-		if( this->m_pTheApp->GetMP3Player2().IsAtEnd() )
+		if( this->m_pTheApp->GetMusicPlayerGameBoss().IsAtEnd() )
 		{
-			this->m_pTheApp->GetMP3Player2().Stop();
-			bChangePosition = true;
+			this->m_pTheApp->GetMusicPlayerGameBoss().Stop();
+			bRestartMusic = true;
+		}
+	}
+	else if (this->m_iGameState == GAME_STATE_END_FAILED)
+	{
+		if (this->m_pTheApp->GetMusicPlayerGameOver().IsAtEnd())
+		{
+			this->m_pTheApp->GetMusicPlayerGameOver().Stop();
+			bRestartMusic = true;
+		}
+	}
+	else if (this->m_iGameState == GAME_STATE_END_SUCCESS)
+	{
+		if (this->m_pTheApp->GetMusicPlayerGameOutro().IsAtEnd())
+		{
+			this->m_pTheApp->GetMusicPlayerGameOutro().Stop();
+			bRestartMusic = true;
 		}
 	}
 	else
 	{
-		if( this->m_pTheApp->GetMP3Player1().IsAtEnd() )
+		if( this->m_pTheApp->GetMusicPlayerGeneral().IsAtEnd() )
 		{
-			this->m_pTheApp->GetMP3Player1().Stop();
-			bChangePosition = true;
+			this->m_pTheApp->GetMusicPlayerGeneral().Stop();
+			bRestartMusic = true;
 		}
 	}
 
-	if(bChangePosition)
+	if(bRestartMusic)
 	{
 		this->RestartMusic();
 	}
@@ -4211,67 +4315,32 @@ void CTheGame::CheckMusicEnd()
 
 void CTheGame::RestartMusic()
 {
-	switch(this->m_pLevel->GetLevelNumber())
+	// restart boss music
+	if ((this->m_iGameState == GAME_STATE_BOSS_INTRO) ||
+		(this->m_iGameState == GAME_STATE_BOSS_ACTION) ||
+		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
+		(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
 	{
-	case 1:
-
-		// restart boss music
-		if(	(this->m_iGameState == GAME_STATE_BOSS_INTRO) || 
-			(this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			this->m_pTheApp->GetMP3Player2().SetPosition(12.450);
-			this->m_pTheApp->GetMP3Player2().Play();
-		}
-		// restart level music
-		else
-		{
-			this->m_pTheApp->GetMP3Player1().SetPosition(16.1270);
-			this->m_pTheApp->GetMP3Player1().Play();
-		}
-
-		break;
-
-	case 2:
-
-		// restart boss music
-		if(	(this->m_iGameState == GAME_STATE_BOSS_INTRO) || 
-			(this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			this->m_pTheApp->GetMP3Player2().SetPosition(92.990);
-			this->m_pTheApp->GetMP3Player2().Play();
-		}
-		// restart level music
-		else
-		{
-			this->m_pTheApp->GetMP3Player1().SetPosition(41.1410);
-			this->m_pTheApp->GetMP3Player1().Play();
-		}
-
-		break;
-
-	case 3:
-
-		// restart boss music
-		if(	(this->m_iGameState == GAME_STATE_BOSS_INTRO) || 
-			(this->m_iGameState == GAME_STATE_BOSS_ACTION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
-			(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			this->m_pTheApp->GetMP3Player2().SetPosition(95.935);
-			this->m_pTheApp->GetMP3Player2().Play();
-		}
-		// restart level music
-		else
-		{
-			this->m_pTheApp->GetMP3Player1().SetPosition(47.290);
-			this->m_pTheApp->GetMP3Player1().Play();
-		}
-
-		break;
+		this->m_pTheApp->GetMusicPlayerGameBoss().SetPosition(0);
+		this->m_pTheApp->GetMusicPlayerGameBoss().Play();
+	}
+	// restart game over music
+	else if (this->m_iGameState == GAME_STATE_END_FAILED)
+	{
+		this->m_pTheApp->GetMusicPlayerGameOver().SetPosition(0);
+		this->m_pTheApp->GetMusicPlayerGameOver().Play();
+	}
+	// restart game outro music
+	else if (this->m_iGameState == GAME_STATE_END_SUCCESS)
+	{
+		this->m_pTheApp->GetMusicPlayerGameOutro().SetPosition(0);
+		this->m_pTheApp->GetMusicPlayerGameOutro().Play();
+	}
+	// restart level music
+	else
+	{
+		this->m_pTheApp->GetMusicPlayerGeneral().SetPosition(0);
+		this->m_pTheApp->GetMusicPlayerGeneral().Play();
 	}
 }
 
@@ -4280,7 +4349,7 @@ void CTheGame::PlayMusicLevel()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		this->m_pTheApp->GetMP3Player1().Play();
+		this->m_pTheApp->GetMusicPlayerGeneral().Play();
 	}
 }
 
@@ -4289,7 +4358,16 @@ void CTheGame::PlayMusicBoss()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		this->m_pTheApp->GetMP3Player2().Play();
+		this->m_pTheApp->GetMusicPlayerGameBoss().Play();
+	}
+}
+
+void CTheGame::PlayMusicGameOver()
+{
+	// music has volume
+	if (this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
+	{
+		this->m_pTheApp->GetMusicPlayerGameOver().Play();
 	}
 }
 
@@ -4298,18 +4376,7 @@ void CTheGame::PlayMusicGameOutro()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		//this->m_pTheApp->GetMP3Player().Create(_T("music\\outro.mp3"));
-		//this->m_pTheApp->GetMP3Player().Play();
-	}
-}
-
-void CTheGame::PlayMusicGameOver()
-{
-	// music has volume
-	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
-	{
-		//this->m_pTheApp->GetMP3Player().Create(_T("music\\game_over.mp3"));
-		//this->m_pTheApp->GetMP3Player().Play();
+		this->m_pTheApp->GetMusicPlayerGameOutro().Play();
 	}
 }
 
@@ -4321,15 +4388,11 @@ bool CTheGame::FadeOutMusicLevel(float fFrametime)
 	if(this->m_pTheApp->VolumeMusicFadeOut(fFrametime))
 	{
 		// set music volume
-		this->m_pTheApp->GetMP3Player1().SetVolume( this->m_pTheApp->GetVolumeMusic() );
+		this->m_pTheApp->GetMusicPlayerGeneral().SetVolume( this->m_pTheApp->GetVolumeMusic() );
 	}
 	// fade out finished
 	else
 	{
-		// set music volume, it's now back to original volume
-		this->m_pTheApp->GetMP3Player1().SetVolume( this->m_pTheApp->GetVolumeMusic() );
-		this->m_pTheApp->GetMP3Player2().SetVolume( this->m_pTheApp->GetVolumeMusic() );
-
 		bFadeOutMusic = false;
 	}
 
@@ -4344,15 +4407,11 @@ bool CTheGame::FadeOutMusicBoss(float fFrametime)
 	if(this->m_pTheApp->VolumeMusicFadeOut(fFrametime))
 	{
 		// set music volume
-		this->m_pTheApp->GetMP3Player2().SetVolume( this->m_pTheApp->GetVolumeMusic() );
+		this->m_pTheApp->GetMusicPlayerGameBoss().SetVolume( this->m_pTheApp->GetVolumeMusic() );
 	}
 	// fade out finished
 	else
 	{
-		// set music volume, it's now back to original volume
-		this->m_pTheApp->GetMP3Player1().SetVolume( this->m_pTheApp->GetVolumeMusic() );
-		this->m_pTheApp->GetMP3Player2().SetVolume( this->m_pTheApp->GetVolumeMusic() );
-
 		bFadeOutMusic = false;
 	}
 
@@ -4364,13 +4423,11 @@ void CTheGame::StopMusicLevel()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		// music player 1 is active
-		if(this->m_pTheApp->GetMP3Player1().GetState() == 1)
+		// music player is active
+		if(this->m_pTheApp->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
 			// stop current music
-			this->m_pTheApp->GetMP3Player1().Stop();
-			// set music volume, to make sure it's back in original volume (after fade-out)
-			this->m_pTheApp->GetMP3Player1().SetVolume( this->m_pTheApp->GetVolumeMusic() );
+			this->m_pTheApp->GetMusicPlayerGeneral().Stop();
 		}
 	}
 }
@@ -4380,13 +4437,11 @@ void CTheGame::StopMusicBoss()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		// music player 2 is active
-		if(this->m_pTheApp->GetMP3Player2().GetState() == 1)
+		// music player is active
+		if(this->m_pTheApp->GetMusicPlayerGameBoss().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
 			// stop current music
-			this->m_pTheApp->GetMP3Player2().Stop();
-			// set music volume, to make sure it's back in original volume (after fade-out)
-			this->m_pTheApp->GetMP3Player2().SetVolume( this->m_pTheApp->GetVolumeMusic() );
+			this->m_pTheApp->GetMusicPlayerGameBoss().Stop();
 		}
 	}
 }
@@ -4396,17 +4451,30 @@ void CTheGame::StopMusicAll()
 	// music has volume
 	if(this->m_pTheApp->GetConfig().GetVolumeMusic() > 0)
 	{
-		// music player 1 is active
-		if(this->m_pTheApp->GetMP3Player1().GetState() == 1)
+		// game level music player is active
+		if(this->m_pTheApp->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
-			// stop current music
-			this->m_pTheApp->GetMP3Player1().Stop();
+			this->m_pTheApp->GetMusicPlayerGeneral().Stop();
 		}
-		// music player 2 is active
-		if(this->m_pTheApp->GetMP3Player2().GetState() == 1)
+
+		// game boss music player is active
+		if(this->m_pTheApp->GetMusicPlayerGameBoss().GetState() == CSoundMP3Player::eSTATE_PLAYING)
+		{
+			this->m_pTheApp->GetMusicPlayerGameBoss().Stop();
+		}
+
+		// game over music player is active
+		if (this->m_pTheApp->GetMusicPlayerGameOver().GetState() == CSoundMP3Player::eSTATE_PLAYING)
 		{
 			// stop current music
-			this->m_pTheApp->GetMP3Player2().Stop();
+			this->m_pTheApp->GetMusicPlayerGameOver().Stop();
+		}
+
+		// game outro music player is active
+		if (this->m_pTheApp->GetMusicPlayerGameOutro().GetState() == CSoundMP3Player::eSTATE_PLAYING)
+		{
+			// stop current music
+			this->m_pTheApp->GetMusicPlayerGameOutro().Stop();
 		}
 	}
 }
