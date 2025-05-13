@@ -90,42 +90,42 @@ public:
 	int						m_iEnemyDroneHealth;
 	float					m_fEnemyDroneWidth;
 	float					m_fEnemyDroneHeight;
-	float					m_fEnemyDroneEnterDuration;
-	float					m_fEnemyDroneFleeDuration;
 	float					m_fEnemyDroneLaunchSpeed;
 	float					m_fEnemyDroneLaunchShootTime;
 	float					m_fEnemyDroneStrikeSpeed;
 	float					m_fEnemyDroneStrikeShootTime;
+	float					m_fEnemyDroneEnterDuration;
+	float					m_fEnemyDroneFleeDuration;
 
 	int						m_iEnemySniperHealth;
 	float					m_fEnemySniperWidth;
 	float					m_fEnemySniperHeight;
-	float					m_fEnemySniperEnterDuration;
-	float					m_fEnemySniperFleeDuration;
 	float					m_fEnemySniperLaunchSpeed;
 	float					m_fEnemySniperLaunchShootTime;
 	float					m_fEnemySniperStrikeSpeed;
 	float					m_fEnemySniperStrikeShootTime;
+	float					m_fEnemySniperEnterDuration;
+	float					m_fEnemySniperFleeDuration;
 
 	int						m_iEnemyRollerHealth;
 	float					m_fEnemyRollerWidth;
 	float					m_fEnemyRollerHeight;
-	float					m_fEnemyRollerEnterDuration;
-	float					m_fEnemyRollerFleeDuration;
 	float					m_fEnemyRollerLaunchSpeed;
 	float					m_fEnemyRollerLaunchShootTime;
 	float					m_fEnemyRollerStrikeSpeed;
 	float					m_fEnemyRollerStrikeShootTime;
+	float					m_fEnemyRollerEnterDuration;
+	float					m_fEnemyRollerFleeDuration;
 
 	int						m_iEnemyGuardHealth;
 	float					m_fEnemyGuardWidth;
 	float					m_fEnemyGuardHeight;
-	float					m_fEnemyGuardEnterDuration;
-	float					m_fEnemyGuardFleeDuration;
 	float					m_fEnemyGuardLaunchSpeed;
 	float					m_fEnemyGuardLaunchShootTime;
 	float					m_fEnemyGuardStrikeSpeed;
 	float					m_fEnemyGuardStrikeShootTime;
+	float					m_fEnemyGuardEnterDuration;
+	float					m_fEnemyGuardFleeDuration;
 
 	float					m_fEnemyStrikeSpeedMultiplierMin;
 	float					m_fEnemyStrikeSpeedMultiplierMax;

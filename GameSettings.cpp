@@ -92,42 +92,42 @@ CGameSettings::CGameSettings(void)
 	this->m_iEnemyDroneHealth = 0;
 	this->m_fEnemyDroneWidth = 0.0f;
 	this->m_fEnemyDroneHeight = 0.0f;
-	this->m_fEnemyDroneEnterDuration = 0.0f;
-	this->m_fEnemyDroneFleeDuration = 0.0f;
 	this->m_fEnemyDroneLaunchSpeed = 0.0f;
 	this->m_fEnemyDroneLaunchShootTime = 0.0f;
 	this->m_fEnemyDroneStrikeSpeed = 0.0f;
 	this->m_fEnemyDroneStrikeShootTime = 0.0f;
+	this->m_fEnemyDroneEnterDuration = 0.0f;
+	this->m_fEnemyDroneFleeDuration = 0.0f;
 
 	this->m_iEnemySniperHealth = 0;
 	this->m_fEnemySniperWidth = 0.0f;
 	this->m_fEnemySniperHeight = 0.0f;
-	this->m_fEnemySniperEnterDuration = 0.0f;
-	this->m_fEnemySniperFleeDuration = 0.0f;
 	this->m_fEnemySniperLaunchSpeed = 0.0f;
 	this->m_fEnemySniperLaunchShootTime = 0.0f;
 	this->m_fEnemySniperStrikeSpeed = 0.0f;
 	this->m_fEnemySniperStrikeShootTime = 0.0f;
+	this->m_fEnemySniperEnterDuration = 0.0f;
+	this->m_fEnemySniperFleeDuration = 0.0f;
 
 	this->m_iEnemyRollerHealth = 0;
 	this->m_fEnemyRollerWidth = 0.0f;
 	this->m_fEnemyRollerHeight = 0.0f;
-	this->m_fEnemyRollerEnterDuration = 0.0f;
-	this->m_fEnemyRollerFleeDuration = 0.0f;
 	this->m_fEnemyRollerLaunchSpeed = 0.0f;
 	this->m_fEnemyRollerLaunchShootTime = 0.0f;
 	this->m_fEnemyRollerStrikeSpeed = 0.0f;
 	this->m_fEnemyRollerStrikeShootTime = 0.0f;
+	this->m_fEnemyRollerEnterDuration = 0.0f;
+	this->m_fEnemyRollerFleeDuration = 0.0f;
 
 	this->m_iEnemyGuardHealth = 0;
 	this->m_fEnemyGuardWidth = 0.0f;
 	this->m_fEnemyGuardHeight = 0.0f;
-	this->m_fEnemyGuardEnterDuration = 0.0f;
-	this->m_fEnemyGuardFleeDuration = 0.0f;
 	this->m_fEnemyGuardLaunchSpeed = 0.0f;
 	this->m_fEnemyGuardLaunchShootTime = 0.0f;
 	this->m_fEnemyGuardStrikeSpeed = 0.0f;
 	this->m_fEnemyGuardStrikeShootTime = 0.0f;
+	this->m_fEnemyGuardEnterDuration = 0.0f;
+	this->m_fEnemyGuardFleeDuration = 0.0f;
 
 	this->m_fEnemyStrikeSpeedMultiplierMin = 0.0f;
 	this->m_fEnemyStrikeSpeedMultiplierMax = 0.0f;
@@ -274,42 +274,42 @@ void CGameSettings::Create()
 	this->m_iEnemyDroneHealth = 15;
 	this->m_fEnemyDroneWidth = 21.0f;
 	this->m_fEnemyDroneHeight = 28.0f;
-	this->m_fEnemyDroneEnterDuration = 0.005625f;
-	this->m_fEnemyDroneFleeDuration = 0.00375f;
 	this->m_fEnemyDroneLaunchSpeed = 95.0f;
 	this->m_fEnemyDroneLaunchShootTime = 0.2f;
 	this->m_fEnemyDroneStrikeSpeed = 260.0f;
 	this->m_fEnemyDroneStrikeShootTime = 0.35f;
+	this->m_fEnemyDroneEnterDuration = 0.005625f;
+	this->m_fEnemyDroneFleeDuration = 0.67f * this->m_fEnemyDroneEnterDuration;
 
 	this->m_iEnemySniperHealth = 25;
 	this->m_fEnemySniperWidth = 26.0f;
 	this->m_fEnemySniperHeight = 35.0f;
-	this->m_fEnemySniperEnterDuration = 0.00525f;
-	this->m_fEnemySniperFleeDuration = 0.0035f;
 	this->m_fEnemySniperLaunchSpeed = 90.0f;
 	this->m_fEnemySniperLaunchShootTime = 0.25f;
 	this->m_fEnemySniperStrikeSpeed = 200.0f;
 	this->m_fEnemySniperStrikeShootTime = 0.45f;
+	this->m_fEnemySniperEnterDuration = 0.00525f;
+	this->m_fEnemySniperFleeDuration = 0.67f * this->m_fEnemySniperEnterDuration;
 
 	this->m_iEnemyRollerHealth = 50;
 	this->m_fEnemyRollerWidth = 50.0f;
 	this->m_fEnemyRollerHeight = 50.0f;
-	this->m_fEnemyRollerEnterDuration = 0.0065625f;
-	this->m_fEnemyRollerFleeDuration = 0.004375f;
 	this->m_fEnemyRollerLaunchSpeed = 70.0f;
 	this->m_fEnemyRollerLaunchShootTime = 0.4f;
 	this->m_fEnemyRollerStrikeSpeed = 150.0f;
 	this->m_fEnemyRollerStrikeShootTime = 0.8f;
+	this->m_fEnemyRollerEnterDuration = 0.0065625f;
+	this->m_fEnemyRollerFleeDuration = 0.67f * this->m_fEnemyRollerEnterDuration;
 
 	this->m_iEnemyGuardHealth = 70;
 	this->m_fEnemyGuardWidth = 10.0f;
 	this->m_fEnemyGuardHeight = 10.0f;
-	this->m_fEnemyGuardEnterDuration = 0.0065625f;
-	this->m_fEnemyGuardFleeDuration = 0.004375f;
 	this->m_fEnemyGuardLaunchSpeed = 60.0f;
 	this->m_fEnemyGuardLaunchShootTime = 0.4f;
 	this->m_fEnemyGuardStrikeSpeed = 120.0f;
 	this->m_fEnemyGuardStrikeShootTime = 1.2f;
+	this->m_fEnemyGuardEnterDuration = 0.0065625f;
+	this->m_fEnemyGuardFleeDuration = 0.67f * this->m_fEnemyGuardEnterDuration;
 
 	this->m_fEnemyStrikeSpeedMultiplierMin = 0.95f;
 	this->m_fEnemyStrikeSpeedMultiplierMax = 1.0f;
