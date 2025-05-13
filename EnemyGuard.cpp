@@ -35,6 +35,9 @@ void CEnemyGuard::Init(	CTheApp* pTheApp,
 		break;
 	}
 
+	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyGuardEnterDuration;
+	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyGuardFleeDuration;
+
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 

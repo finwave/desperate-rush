@@ -36,6 +36,9 @@ void CEnemyDrone::Init(	CTheApp* pTheApp,
 		break;
 	}
 
+	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyDroneEnterDuration;
+	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyDroneFleeDuration;
+
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 

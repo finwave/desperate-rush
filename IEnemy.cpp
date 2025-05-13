@@ -28,10 +28,10 @@ IEnemy::IEnemy(void)
 	this->m_fScreenWidth = 0.0f;
 	this->m_fScreenHeight = 0.0f;
 
-	this->m_fShipEnterMoveDuration = 0.0f;
-	this->m_fShipEnterMoveTimer = 0.0f;
-	this->m_fShipEnterStartPosY = 0.0f;
-	this->m_fShipEnterEndPosY = 0.0f;
+	this->m_fShipLerpMoveDuration = 0.0f;
+	this->m_fShipLerpMoveTimer = 0.0f;
+	this->m_fShipLerpMoveStartY = 0.0f;
+	this->m_fShipLerpMoveEndY = 0.0f;
 	this->m_fMovementBorderY = 0.0f;
 
 	this->m_fSpeed = 0.0f;
@@ -140,7 +140,7 @@ HRESULT IEnemy::Create(	CTheApp* pTheApp,
 	return S_OK;
 }
 
-void IEnemy::Init(CTheApp* pTheApp,
+void IEnemy::Init(	CTheApp* pTheApp,
 					CGameSettings* pGameSettings,
 					CSprite* pSpriteAfterburn,
 					int iVolumeSoundEffect)
@@ -178,32 +178,15 @@ void IEnemy::Init(CTheApp* pTheApp,
 	switch(this->m_eBehaviour)
 	{
 	case eBEHAVIOUR_LAUNCH:
-
-		this->m_bEnter = true;
-		this->m_bAfterburn = true;
-		this->m_bSetShipEnterDuration = true;
-
-		this->m_fShootCounter = this->m_fShootTime;
-
-		this->GenerateRandomEnterSpeed();
-		this->GenerateRandomFleeTime();
-		this->GenerateRandomMoveTime();
-
-		this->SetMoveState();
-
+		SetLaunchEnemyEnter();
 		break;
 
 	case eBEHAVIOUR_STRIKE:
-			
-		this->m_bAfterburn = true;
-		this->m_bSoundStrikeAfterburn = true;
-		this->m_eMove = eMOVE_DOWN;
-			
+		SetStrikeEnemyEnter();
 		break;
 
 	case eBEHAVIOUR_BOSS:
-
-		this->m_bEnter = true;
+		SetBossEnemyEnter();
 		break;
 	}
 
@@ -1157,6 +1140,16 @@ void IEnemy::ResetFleeMovement()
 	this->m_bFleeReady = false;
 	this->m_bFleeMovement = false;
 	this->m_bFleeSound = true;
+}
+
+void IEnemy::SetFleeMovement(bool bMovement)
+{
+	this->m_bFleeMovement = bMovement;
+
+	if (bMovement)
+	{
+		this->m_bShipLerpInitialized = false;
+	}
 }
 
 void IEnemy::GetRandomBonus()
@@ -2421,11 +2414,34 @@ void IEnemy::SetMovementBorders()
 	// ship enter "end" position (Y value)
 	float enterBorderMin = -0.1f * this->m_fScreenHeight;
 	float enterBorderMax = 0.5f * this->m_fScreenHeight;
-	this->m_fShipEnterEndPosY = this->m_pTheApp->RandFloat(enterBorderMin, enterBorderMax);
+	this->m_fShipLerpMoveEndY = this->m_pTheApp->RandFloat(enterBorderMin, enterBorderMax);
+}
 
-	// enter duration
-	this->m_fShipEnterMoveDuration = 1.0f;
-	this->m_fShipEnterMoveTimer = 0.0f;
+void IEnemy::SetLaunchEnemyEnter()
+{
+	this->m_bEnter = true;
+	this->m_bAfterburn = true;
+	this->m_bShipLerpInitialized = false;
+
+	this->m_fShootCounter = this->m_fShootTime;
+
+	this->GenerateRandomEnterSpeed();
+	this->GenerateRandomFleeTime();
+	this->GenerateRandomMoveTime();
+
+	this->SetMoveState();
+}
+
+void IEnemy::SetStrikeEnemyEnter()
+{
+	this->m_bAfterburn = true;
+	this->m_bSoundStrikeAfterburn = true;
+	this->m_eMove = eMOVE_DOWN;
+}
+
+void IEnemy::SetBossEnemyEnter()
+{
+	this->m_bEnter = true;
 }
 
 void IEnemy::InitFiringSound()
@@ -3034,23 +3050,23 @@ void IEnemy::MoveEnter(float fFrametime, float fPlayerVelocity)
 
 	D3DXVECTOR3 pos = this->GetPosition();
 
-	if (this->m_bSetShipEnterDuration)
+	if (!this->m_bShipLerpInitialized)
 	{
-		this->m_bSetShipEnterDuration = false;
-		this->m_fShipEnterStartPosY = pos.y;
+		this->m_bShipLerpInitialized = true;
+		this->m_fShipLerpMoveStartY = pos.y;
 
-		float enterSpeed = this->m_pGameSettings->m_fEnemyDroneEnterSpeed;
-		this->m_fShipEnterMoveDuration = enterSpeed * (this->m_fShipEnterStartPosY - this->m_fShipEnterEndPosY);
+		this->m_fShipLerpMoveDuration = this->m_fShipEnterSpeed * (this->m_fShipLerpMoveStartY - this->m_fShipLerpMoveEndY);
+		this->m_fShipLerpMoveTimer = 0.0f;
 	}
 
-	this->m_fShipEnterMoveTimer += fFrametime;
-	this->m_fShipEnterMoveTimer = min(this->m_fShipEnterMoveTimer, this->m_fShipEnterMoveDuration);
+	this->m_fShipLerpMoveTimer += fFrametime;
+	this->m_fShipLerpMoveTimer = min(this->m_fShipLerpMoveTimer, this->m_fShipLerpMoveDuration);
 
-	float delta = m_fShipEnterMoveTimer / this->m_fShipEnterMoveDuration;
+	float delta = m_fShipLerpMoveTimer / this->m_fShipLerpMoveDuration;
 
 	float currentPosY = LerpUtils::CalculateEasingPosition(
-		LerpUtils::eEASING_LOGIC::EaseOutSine, this->m_fShipEnterStartPosY, this->m_fShipEnterEndPosY,
-		this->m_fShipEnterMoveTimer, this->m_fShipEnterMoveDuration);
+		LerpUtils::eEASING_LOGIC::EaseOutSine, this->m_fShipLerpMoveStartY, this->m_fShipLerpMoveEndY,
+		this->m_fShipLerpMoveTimer, this->m_fShipLerpMoveDuration);
 
 	pos.y = currentPosY;
 	this->SetPosition(pos);
@@ -3062,7 +3078,7 @@ void IEnemy::MoveEnter(float fFrametime, float fPlayerVelocity)
 	}
 
 	// finished the "ship enter" movement
-	if (this->m_fShipEnterMoveTimer == this->m_fShipEnterMoveDuration)
+	if (this->m_fShipLerpMoveTimer == this->m_fShipLerpMoveDuration)
 	{
 		this->m_bEnter = false;
 
@@ -3092,10 +3108,24 @@ void IEnemy::MoveFlee(float fFrametime, float fPlayerVelocity)
 
 	D3DXVECTOR3 pos = this->GetPosition();
 
-	float fFrameSpeed = fFrametime * (this->m_fSpeed / 2.0f) + this->m_fFleeSpeedIncrease;
-	this->m_fFleeSpeedIncrease += (fFrametime * 2.0f) + (this->m_fFleeSpeedMultiplier / 2.0f);
+	if (!this->m_bShipLerpInitialized)
+	{
+		this->m_bShipLerpInitialized = true;
+		this->m_fShipLerpMoveStartY = pos.y;
+		this->m_fShipLerpMoveEndY = pos.y - 2.25f * this->m_fScreenHeight;
 
-	pos.y -= fFrameSpeed;
+		this->m_fShipLerpMoveDuration = this->m_fShipFleeSpeed * (this->m_fShipLerpMoveStartY - this->m_fShipLerpMoveEndY);
+		this->m_fShipLerpMoveTimer = 0.0f;
+	}
+
+	this->m_fShipLerpMoveTimer += fFrametime;
+	this->m_fShipLerpMoveTimer = min(this->m_fShipLerpMoveTimer, this->m_fShipLerpMoveDuration);
+
+	float currentPosY = LerpUtils::CalculateEasingPosition(
+		LerpUtils::eEASING_LOGIC::EaseInQuad, this->m_fShipLerpMoveStartY, this->m_fShipLerpMoveEndY,
+		this->m_fShipLerpMoveTimer, this->m_fShipLerpMoveDuration);
+
+	pos.y = currentPosY;
 	this->SetPosition(pos);
 }
 

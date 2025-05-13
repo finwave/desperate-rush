@@ -45,6 +45,9 @@ void CEnemyRoller::Init(CTheApp* pTheApp,
 		break;
 	}
 
+	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyRollerEnterDuration;
+	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyRollerFleeDuration;
+
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 

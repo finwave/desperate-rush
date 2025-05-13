@@ -185,6 +185,7 @@ public:
 	void SetTimedExplosion();
 	void ResetTimedExplosion();
 	void ResetFleeMovement();
+	void SetFleeMovement(bool bMovement);
 
 	void GetRandomBonus();
 
@@ -208,7 +209,6 @@ public:
 
 	inline bool IsFleeReady() { return this->m_bFleeReady; }
 	inline void SetFleeReady(bool bReady) { this->m_bFleeReady = bReady; }
-	inline void SetFleeMovement(bool bMovement) { this->m_bFleeMovement = bMovement; }
 
 	inline eSOUND_FIRING GetFiringSound() { return this->m_eSoundFiring; }
 	inline eSOUND_HIT GetHitSound() { return this->m_eSoundHit; }
@@ -356,11 +356,13 @@ protected:
 
 	const float				SHIP_ENTER_AFTERBURN_END_DELTA = 0.45f;
 
-	float					m_fShipEnterMoveDuration;
-	float					m_fShipEnterMoveTimer;
-	float					m_fShipEnterStartPosY;
-	float					m_fShipEnterEndPosY;
-	bool					m_bSetShipEnterDuration;
+	float					m_fShipEnterSpeed;
+	float					m_fShipFleeSpeed;
+	float					m_fShipLerpMoveDuration;
+	float					m_fShipLerpMoveTimer;
+	float					m_fShipLerpMoveStartY;
+	float					m_fShipLerpMoveEndY;
+	bool					m_bShipLerpInitialized;
 
 	float					m_fMovementBorderY;
 
@@ -395,6 +397,9 @@ protected:
 private:
 
 	void SetMovementBorders();
+	void SetLaunchEnemyEnter();
+	void SetStrikeEnemyEnter();
+	void SetBossEnemyEnter();
 
 	void MoveAvoidEnemy(bool bCollisionTop, bool bCollisionBottom, 
 						bool bCollisionLeft, bool bCollisionRight);

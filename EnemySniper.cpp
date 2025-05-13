@@ -36,6 +36,9 @@ void CEnemySniper::Init(CTheApp* pTheApp,
 		break;
 	}
 
+	this->m_fShipEnterSpeed = pGameSettings->m_fEnemySniperEnterDuration;
+	this->m_fShipFleeSpeed = pGameSettings->m_fEnemySniperFleeDuration;
+
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 

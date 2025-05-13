@@ -4,7 +4,7 @@
 CHighscorePlayerShip::CHighscorePlayerShip()
 {
 	this->m_fShipPosY = 0.0f;
-	this->m_fShipMoveTimer = 0.0f;
+	this->m_fShipLerpMoveTimer = 0.0f;
 	this->m_fShipEnterStartPosX = 0.0f;
 	this->m_fShipEnterEndPosX = 0.0f;
 	this->m_fShipLeaveEndPosX = 0.0f;
@@ -34,17 +34,17 @@ void CHighscorePlayerShip::Update(float fFrametime)
 	{
 	case eACTION_MODE_ENTER:
 	{
-		this->m_fShipMoveTimer += fFrametime;
-		this->m_fShipMoveTimer = min(this->m_fShipMoveTimer, SHIP_ENTER_DURATION);
+		this->m_fShipLerpMoveTimer += fFrametime;
+		this->m_fShipLerpMoveTimer = min(this->m_fShipLerpMoveTimer, SHIP_ENTER_DURATION);
 
 		float currentPosX = LerpUtils::CalculateEasingPosition(
 			LerpUtils::eEASING_LOGIC::EaseOutBack, this->m_fShipEnterStartPosX, this->m_fShipEnterEndPosX,
-			this->m_fShipMoveTimer, SHIP_ENTER_DURATION);
+			this->m_fShipLerpMoveTimer, SHIP_ENTER_DURATION);
 
 		pos.x = currentPosX;
 		this->SetPosition(pos);
 
-		if (this->m_fShipMoveTimer == SHIP_ENTER_DURATION)
+		if (this->m_fShipLerpMoveTimer == SHIP_ENTER_DURATION)
 		{
 			this->m_eActionMode = eACTION_MODE_RESPOND;
 		}
@@ -61,17 +61,17 @@ void CHighscorePlayerShip::Update(float fFrametime)
 
 	case eACTION_MODE_LEAVE:
 	{
-		this->m_fShipMoveTimer += fFrametime;
-		this->m_fShipMoveTimer = min(this->m_fShipMoveTimer, SHIP_LEAVE_DURATION);
+		this->m_fShipLerpMoveTimer += fFrametime;
+		this->m_fShipLerpMoveTimer = min(this->m_fShipLerpMoveTimer, SHIP_LEAVE_DURATION);
 
 		float currentPosX = LerpUtils::CalculateEasingPosition(
 			LerpUtils::eEASING_LOGIC::EaseInQuad, this->m_fShipEnterEndPosX, this->m_fShipLeaveEndPosX,
-			this->m_fShipMoveTimer, SHIP_LEAVE_DURATION);
+			this->m_fShipLerpMoveTimer, SHIP_LEAVE_DURATION);
 
 		pos.x = currentPosX;
 		this->SetPosition(pos);
 
-		if (this->m_fShipMoveTimer == SHIP_LEAVE_DURATION)
+		if (this->m_fShipLerpMoveTimer == SHIP_LEAVE_DURATION)
 		{
 			this->m_eActionMode = eACTION_MODE_EXIT;
 		}
@@ -112,7 +112,7 @@ bool CHighscorePlayerShip::IsAfterburnEnabled()
 	{
 	case eACTION_MODE_ENTER:
 	{
-		float delta = m_fShipMoveTimer / SHIP_ENTER_DURATION;
+		float delta = m_fShipLerpMoveTimer / SHIP_ENTER_DURATION;
 		return (delta <= SHIP_ENTER_AFTERBURN_END_DELTA);
 	}
 	break;
@@ -139,7 +139,7 @@ void CHighscorePlayerShip::SetActionMode(eACTION_MODE eActionMode)
 	}
 
 	this->m_eActionMode = eActionMode;
-	this->m_fShipMoveTimer = 0.0f;
+	this->m_fShipLerpMoveTimer = 0.0f;
 }
 
 D3DMATERIAL9* CHighscorePlayerShip::InitMaterial(D3DMATERIAL9* material)

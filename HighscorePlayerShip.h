@@ -46,7 +46,7 @@ private:
 
 	float			m_fShipPosY;
 
-	float			m_fShipMoveTimer;
+	float			m_fShipLerpMoveTimer;
 	float			m_fShipEnterStartPosX;
 	float			m_fShipEnterEndPosX;
 	float			m_fShipLeaveEndPosX;
