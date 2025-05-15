@@ -506,9 +506,7 @@ private:
 
 	CResourceGame*				m_pResourceGame;
 	CInputJoystick*				m_pJoystick;
-
 	CLevel*						m_pLevel;
-	CGameSettings*				m_pGameSettings;
 
 	CPlayer*					m_pPlayer;
 	CPlayerMinigun*				m_pPlayerMinigunLeft;

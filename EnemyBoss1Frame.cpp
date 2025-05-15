@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "EnemyBoss1Frame.h"
 
 CEnemyBoss1Frame::CEnemyBoss1Frame(	eTYPE eType,
@@ -15,7 +16,6 @@ CEnemyBoss1Frame::~CEnemyBoss1Frame(void)
 }
 
 HRESULT CEnemyBoss1Frame::Create(	CTheApp* pTheApp,
-									CGameSettings* pGameSettings,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
 									std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -26,7 +26,6 @@ HRESULT CEnemyBoss1Frame::Create(	CTheApp* pTheApp,
 	/** CREATE SHIP **/
 
 	hres = IEnemy::Create(	pTheApp,
-							pGameSettings,
 							mesh,
 							materials,
 							textures,
@@ -43,27 +42,26 @@ HRESULT CEnemyBoss1Frame::Create(	CTheApp* pTheApp,
 }
 
 void CEnemyBoss1Frame::Init(CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							CSprite* pSpriteAfterburn,
 							int iVolumeSoundEffect)
 {
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyBoss1FrameWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyBoss1FrameHeight;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_BOSS_FRAME_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_BOSS_FRAME_HEIGHT;
 
-	this->m_iHealth = pGameSettings->m_iEnemyBoss1FrameHealth;
+	this->m_iHealth = CGameSettings::ENEMY_BOSS_FRAME_HEALTH;
 	this->m_iHealthMax = this->m_iHealth;
 
-	this->m_fSpeed = pGameSettings->m_fEnemyBoss1FrameSpeed;
+	this->m_fSpeed = CGameSettings::ENEMY_BOSS_FRAME_SPEED;
 	this->m_fSpeedDefault = this->m_fSpeed;
 
-	this->m_fShootTime = pGameSettings->m_fEnemyBoss1FrameShootTime;
+	this->m_fShootTime = CGameSettings::ENEMY_BOSS_FRAME_SHOOT_TIME;
 
 	// fire as soon as possible
 	this->m_fShootCounter = this->m_fShootTime + this->m_fRandShootTime;
 
 	this->m_bBoss = true;
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 void CEnemyBoss1Frame::Release()

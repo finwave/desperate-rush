@@ -10,9 +10,6 @@ CTheGame::CTheGame(void)
 	this->m_pJoystick = NULL;
 
 	this->m_pLevel = NULL;
-
-	this->m_pGameSettings = NULL;
-
 	this->m_pPlayer = NULL;
 	this->m_pPlayerMinigunLeft = NULL;
 	this->m_pPlayerMinigunRight = NULL;
@@ -268,15 +265,6 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 
 		/** SETTINGS **/
 
-		this->m_pGameSettings = new CGameSettings();
-
-		if( !this->m_pGameSettings )
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		this->m_pGameSettings->Create();
-
 		// initialize music and sound effect volume
 		InitVolumeMusic();
 		InitVolumeSoundEffect();
@@ -394,8 +382,8 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 			hres = (this->m_pNumbersScore + this->m_iContainerNumberScoreStep)->Create(
 				this->m_pXFile[LOAD_MESH_GAME_0 + this->m_iContainerNumberScoreStep].GetMesh(),
 				this->m_pXFile[LOAD_MESH_GAME_0 + this->m_iContainerNumberScoreStep],
-				this->m_pGameSettings->m_fGameNumberWidth,
-				this->m_pGameSettings->m_fGameNumberHeight,
+				CGameSettings::UI_NUMBER_WIDTH,
+				CGameSettings::UI_NUMBER_HEIGHT,
 				true,
 				CNumber::eNUMBER_TYPE_GAME);
 
@@ -430,8 +418,8 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 			hres = (this->m_pNumbersTime + this->m_iContainerNumberTimeStep)->Create(
 				this->m_pXFile[LOAD_MESH_GAME_0 + this->m_iContainerNumberTimeStep].GetMesh(),
 				this->m_pXFile[LOAD_MESH_GAME_0 + this->m_iContainerNumberTimeStep],
-				this->m_pGameSettings->m_fGameNumberWidth,
-				this->m_pGameSettings->m_fGameNumberHeight,
+				CGameSettings::UI_NUMBER_WIDTH,
+				CGameSettings::UI_NUMBER_HEIGHT,
 				true,
 				CNumber::eNUMBER_TYPE_GAME);
 
@@ -510,14 +498,14 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_PLAYER_FRAME),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_PLAYER_FRAME),
 					this->m_pSpritePlayerBlast,
-					this->m_pGameSettings->m_fPlayerWidth,
-					this->m_pGameSettings->m_fPlayerHeight,
-					this->m_pGameSettings->m_fPlayerSpeed,
-					this->m_pGameSettings->m_fPlayerMaxVelocity,
-					this->m_pGameSettings->m_iPlayerHealth,
-					this->m_pGameSettings->m_iPlayerCannonEnergyMax,
-					this->m_pGameSettings->m_iPlayerBlastDamage,
-					this->m_pGameSettings->m_iPlayerBlasts);
+					CGameSettings::PLAYER_WIDTH,
+					CGameSettings::PLAYER_HEIGHT,
+					CGameSettings::PLAYER_SPEED,
+					CGameSettings::PLAYER_MAX_VELOCITY,
+					CGameSettings::PLAYER_HEALTH,
+					CGameSettings::PLAYER_CANNON_ENERGY_MAX,
+					CGameSettings::PLAYER_BLAST_DAMAGE,
+					CGameSettings::PLAYER_BLAST_AMOUNT);
 
 				if (FAILED(hres))
 				{
@@ -525,7 +513,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 				}
 
 				// set player's lives count
-				this->m_pPlayer->SetLives(this->m_pGameSettings->m_iPlayerLives);
+				this->m_pPlayer->SetLives(CGameSettings::PLAYER_LIVES);
 
 				this->m_pPlayer->SetObjectDepth(0.0f);
 
@@ -577,9 +565,9 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pTheApp->GetJoystick(),
 					this->m_fScreenWidth,
 					this->m_fScreenHeight,
-					this->m_pGameSettings->m_fPlayerWidth,
-					this->m_pGameSettings->m_fPlayerHeight,
-					this->m_pGameSettings->m_fPlayerSpeed);
+					CGameSettings::PLAYER_WIDTH,
+					CGameSettings::PLAYER_HEIGHT,
+					CGameSettings::PLAYER_SPEED);
 
 				if (!this->m_pPlayerController)
 				{
@@ -629,7 +617,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					templateObject->SetDepth(eDepth);
 
 					hres = templateObject->Create(
-						this->m_pTheApp, this->m_pGameSettings,
+						this->m_pTheApp,
 						this->m_pResourceGame->GetMesh(mapKey),
 						this->m_pResourceGame->GetMaterial(mapKey),
 						this->m_pResourceGame->GetTexture(mapKey),
@@ -685,7 +673,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					templateObject->SetDepth(eDepth);
 
 					hres = templateObject->Create(
-						this->m_pTheApp, this->m_pGameSettings,
+						this->m_pTheApp,
 						this->m_pResourceGame->GetMesh(mapKey),
 						this->m_pResourceGame->GetMaterial(mapKey),
 						this->m_pResourceGame->GetTexture(mapKey),
@@ -741,7 +729,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					templateObject->SetDepth(eDepth);
 
 					hres = templateObject->Create(
-						this->m_pTheApp, this->m_pGameSettings,
+						this->m_pTheApp,
 						this->m_pResourceGame->GetMesh(mapKey),
 						this->m_pResourceGame->GetMaterial(mapKey),
 						this->m_pResourceGame->GetTexture(mapKey),
@@ -798,7 +786,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					templateObject->SetDepth(eDepth);
 
 					hres = templateObject->Create(
-						this->m_pTheApp, this->m_pGameSettings,
+						this->m_pTheApp,
 						this->m_pResourceGame->GetMesh(mapKey),
 						this->m_pResourceGame->GetMaterial(mapKey),
 						this->m_pResourceGame->GetTexture(mapKey),
@@ -830,7 +818,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 				this->m_pEnemyDroneStrike->SetDepth(IEnemy::eENEMY_DEPTH_1);
 
 				hres = this->m_pEnemyDroneStrike->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_ENEMY_DRONE_1),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_ENEMY_DRONE_1),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_ENEMY_DRONE_1),
@@ -858,7 +846,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 				this->m_pEnemySniperStrike->SetDepth(IEnemy::eENEMY_DEPTH_1);
 
 				hres = this->m_pEnemySniperStrike->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_ENEMY_SNIPER_1),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_ENEMY_SNIPER_1),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_ENEMY_SNIPER_1),
@@ -886,7 +874,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 				this->m_pEnemyRollerStrike->SetDepth(IEnemy::eENEMY_DEPTH_1);
 
 				hres = this->m_pEnemyRollerStrike->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_ENEMY_ROLLER_1),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_ENEMY_ROLLER_1),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_ENEMY_ROLLER_1),
@@ -1004,8 +992,8 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
-					this->m_pGameSettings->m_fPlayerBulletMinigunWidth,
-					this->m_pGameSettings->m_fPlayerBulletMinigunHeight,
+					CGameSettings::PLAYER_BULLET_WIDTH,
+					CGameSettings::PLAYER_BULLET_HEIGHT,
 					this->m_pPlayer->GetMinigunSpeed(),
 					this->m_pPlayer->GetMinigunDamage(),
 					CWeapon::eBULLET_TYPE_PLAYER_FRONT);
@@ -1030,8 +1018,8 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_PLAYER_MINIGUN),
-					this->m_pGameSettings->m_fPlayerBulletMinigunWidth,
-					this->m_pGameSettings->m_fPlayerBulletMinigunHeight,
+					CGameSettings::PLAYER_BULLET_WIDTH,
+					CGameSettings::PLAYER_BULLET_HEIGHT,
 					this->m_pPlayer->GetMinigunSpeed(),
 					this->m_pPlayer->GetMinigunDamage(),
 					CWeapon::eBULLET_TYPE_PLAYER_DIAGONAL);
@@ -1058,10 +1046,10 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_DRONE),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_DRONE),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_DRONE),
-					this->m_pGameSettings->m_fEnemyDroneBulletWidth,
-					this->m_pGameSettings->m_fEnemyDroneBulletHeight,
-					this->m_pGameSettings->m_fEnemyDroneBulletSpeed,
-					this->m_pGameSettings->m_iEnemyDroneBulletDamage,
+					CGameSettings::ENEMY_DRONE_BULLET_WIDTH,
+					CGameSettings::ENEMY_DRONE_BULLET_HEIGHT,
+					CGameSettings::ENEMY_DRONE_BULLET_SPEED,
+					CGameSettings::ENEMY_DRONE_BULLET_DAMAGE,
 					CWeapon::eBULLET_TYPE_ENEMY_DRONE);
 
 				if (FAILED(hres))
@@ -1087,10 +1075,10 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_SNIPER),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_SNIPER),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_SNIPER),
-					this->m_pGameSettings->m_fEnemySniperBulletWidth,
-					this->m_pGameSettings->m_fEnemySniperBulletHeight,
-					this->m_pGameSettings->m_fEnemySniperBulletSpeed,
-					this->m_pGameSettings->m_iEnemySniperBulletDamage,
+					CGameSettings::ENEMY_SNIPER_BULLET_WIDTH,
+					CGameSettings::ENEMY_SNIPER_BULLET_HEIGHT,
+					CGameSettings::ENEMY_SNIPER_BULLET_SPEED,
+					CGameSettings::ENEMY_SNIPER_BULLET_DAMAGE,
 					CWeapon::eBULLET_TYPE_ENEMY_SNIPER);
 
 				if (FAILED(hres))
@@ -1116,10 +1104,10 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_ROLLER),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_ROLLER),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_ROLLER),
-					this->m_pGameSettings->m_fEnemyRollerBulletWidth,
-					this->m_pGameSettings->m_fEnemyRollerBulletHeight,
-					this->m_pGameSettings->m_fEnemyRollerBulletSpeed,
-					this->m_pGameSettings->m_iEnemyRollerBulletDamage,
+					CGameSettings::ENEMY_ROLLER_BULLET_WIDTH,
+					CGameSettings::ENEMY_ROLLER_BULLET_HEIGHT,
+					CGameSettings::ENEMY_ROLLER_BULLET_SPEED,
+					CGameSettings::ENEMY_ROLLER_BULLET_DAMAGE,
 					CWeapon::eBULLET_TYPE_ENEMY_ROLLER);
 
 				if (FAILED(hres))
@@ -3365,12 +3353,6 @@ void CTheGame::Release()
 		this->m_pLevel = NULL;
 	}
 
-	if (this->m_pGameSettings)
-	{
-		delete this->m_pGameSettings;
-		this->m_pGameSettings = NULL;
-	}
-
 	// stop and free all the music
 	this->StopMusicAll();
 
@@ -3629,30 +3611,33 @@ HRESULT CTheGame::InitLevelBoss()
 
 	/* RELEASE BOSS */
 
-	switch(this->m_pLevel->GetLevelNumber())
+	switch (this->m_pLevel->GetLevelNumber())
 	{
 	case 2:
 	case 3:
 
-		if( this->m_pEnemyBoss1Frame )
+		if (this->m_pEnemyBoss1Frame)
 		{
 			this->m_pEnemyBoss1Frame->Release();
 			delete this->m_pEnemyBoss1Frame;
 			this->m_pEnemyBoss1Frame = NULL;
 		}
-		if( this->m_pEnemyBoss1ScatterLeft )
+
+		if (this->m_pEnemyBoss1ScatterLeft)
 		{
 			this->m_pEnemyBoss1ScatterLeft->Release();
 			delete this->m_pEnemyBoss1ScatterLeft;
 			this->m_pEnemyBoss1ScatterLeft = NULL;
 		}
-		if( this->m_pEnemyBoss1ScatterRight )
+
+		if (this->m_pEnemyBoss1ScatterRight)
 		{
 			this->m_pEnemyBoss1ScatterRight->Release();
 			delete this->m_pEnemyBoss1ScatterRight;
 			this->m_pEnemyBoss1ScatterRight = NULL;
 		}
-		if( this->m_pEnemyBoss1Cannon )
+
+		if (this->m_pEnemyBoss1Cannon)
 		{
 			this->m_pEnemyBoss1Cannon->Release();
 			delete this->m_pEnemyBoss1Cannon;
@@ -3664,7 +3649,7 @@ HRESULT CTheGame::InitLevelBoss()
 
 	/* CREATE LEVEL BOSS */
 
-	switch(this->m_pLevel->GetLevelNumber())
+	switch (this->m_pLevel->GetLevelNumber())
 	{
 	case 1:
 	case 2:
@@ -3673,19 +3658,23 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 FRAME //
 
 		// create object
-		this->m_pEnemyBoss1Frame = new CEnemyBoss1Frame(IEnemy::eTYPE_BOSS_1_FRAME,
-														IEnemy::eBEHAVIOUR_BOSS);
-		if( !this->m_pEnemyBoss1Frame )
+		this->m_pEnemyBoss1Frame = new CEnemyBoss1Frame(
+			IEnemy::eTYPE_BOSS_1_FRAME,
+			IEnemy::eBEHAVIOUR_BOSS);
+
+		if (!this->m_pEnemyBoss1Frame)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1Frame->Create(this->m_pTheApp, this->m_pGameSettings,
-												this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_FRAME),
-												this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_FRAME),
-												this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_FRAME),
-												this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1Frame->Create(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_FRAME),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_FRAME),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_FRAME),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3697,10 +3686,10 @@ HRESULT CTheGame::InitLevelBoss()
 		this->m_pEnemyBoss1Frame->InitRotationValues();
 
 		// set starting position
-		this->m_pEnemyBoss1Frame->SetPosition(D3DXVECTOR3
-			(	0.0f,
-				this->m_fScreenHeight + (this->m_pEnemyBoss1Frame->GetHeight() / 2.0f) + 25.0f,
-				this->m_pEnemyBoss1Frame->GetDepthValue(5)));
+		this->m_pEnemyBoss1Frame->SetPosition(D3DXVECTOR3(
+			0.0f,
+			this->m_fScreenHeight + (this->m_pEnemyBoss1Frame->GetHeight() / 2.0f) + 25.0f,
+			this->m_pEnemyBoss1Frame->GetDepthValue(5)));
 
 		// set activity
 		this->m_pEnemyBoss1Frame->SetActive(TRUE);
@@ -3708,20 +3697,24 @@ HRESULT CTheGame::InitLevelBoss()
 
 		// BOSS 1 CORE //
 
-		this->m_pEnemyBoss1Core = new CEnemyBoss1Core(	IEnemy::eTYPE_BOSS_1_CORE,
-														IEnemy::eBEHAVIOUR_BOSS);
-		if( !this->m_pEnemyBoss1Core )
+		this->m_pEnemyBoss1Core = new CEnemyBoss1Core(
+			IEnemy::eTYPE_BOSS_1_CORE,
+			IEnemy::eBEHAVIOUR_BOSS);
+
+		if (!this->m_pEnemyBoss1Core)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1Core->Create(	this->m_pTheApp, this->m_pGameSettings,
-												this->m_pTheApp->GetDevice(),
-												this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_CORE),
-												this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_CORE),
-												this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_CORE),
-												this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1Core->Create(
+			this->m_pTheApp,
+			this->m_pTheApp->GetDevice(),
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_CORE),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_CORE),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_CORE),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3734,34 +3727,40 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 LASER LEFT //
 
 		// create object
-		this->m_pEnemyBoss1LaserLeft = new CEnemyBoss1Laser(IEnemy::eTYPE_BOSS_1_LASER_LEFT,
-															IEnemy::eBEHAVIOUR_BOSS,
-															CEnemyBoss1Laser::eSIDE_LEFT);
-		if( !this->m_pEnemyBoss1LaserLeft )
+		this->m_pEnemyBoss1LaserLeft = new CEnemyBoss1Laser(
+			IEnemy::eTYPE_BOSS_1_LASER_LEFT,
+			IEnemy::eBEHAVIOUR_BOSS,
+			CEnemyBoss1Laser::eSIDE_LEFT);
+
+		if (!this->m_pEnemyBoss1LaserLeft)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1LaserLeft->Create(this->m_pTheApp, this->m_pGameSettings,
-													this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
-													this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
-													this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
-													this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1LaserLeft->Create(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
 
 		// initialize weapons
-		hres = this->m_pEnemyBoss1LaserLeft->InitWeapons(	this->m_pTheApp,
-															this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletWidth,
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletHeight,
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletSpeed,
-															this->m_pGameSettings->m_iEnemyBoss1LaserBulletDamage);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1LaserLeft->InitWeapons(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_WIDTH,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_HEIGHT,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_SPEED,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_DAMAGE);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3776,34 +3775,40 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 LASER RIGHT //
 
 		// create object
-		this->m_pEnemyBoss1LaserRight = new CEnemyBoss1Laser(	IEnemy::eTYPE_BOSS_1_LASER_RIGHT,
-																IEnemy::eBEHAVIOUR_BOSS,
-																CEnemyBoss1Laser::eSIDE_RIGHT);
-		if( !this->m_pEnemyBoss1LaserRight )
+		this->m_pEnemyBoss1LaserRight = new CEnemyBoss1Laser(
+			IEnemy::eTYPE_BOSS_1_LASER_RIGHT,
+			IEnemy::eBEHAVIOUR_BOSS,
+			CEnemyBoss1Laser::eSIDE_RIGHT);
+
+		if (!this->m_pEnemyBoss1LaserRight)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1LaserRight->Create(	this->m_pTheApp, this->m_pGameSettings,
-														this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
-														this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
-														this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
-														this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1LaserRight->Create(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
 
 		// initialize weapons
-		hres = this->m_pEnemyBoss1LaserRight->InitWeapons(	this->m_pTheApp,
-															this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletWidth,
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletHeight,
-															this->m_pGameSettings->m_fEnemyBoss1LaserBulletSpeed,
-															this->m_pGameSettings->m_iEnemyBoss1LaserBulletDamage);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1LaserRight->InitWeapons(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_LASER),
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_WIDTH,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_HEIGHT,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_SPEED,
+			CGameSettings::ENEMY_BOSS_LASER_BULLET_DAMAGE);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3818,35 +3823,41 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 SCATTER LEFT //
 
 		// create object
-		this->m_pEnemyBoss1ScatterLeft = new CEnemyBoss1Scatter(IEnemy::eTYPE_BOSS_1_SCATTER_LEFT,
-																IEnemy::eBEHAVIOUR_BOSS,
-																CEnemyBoss1Scatter::eSIDE_LEFT);
-		if( !this->m_pEnemyBoss1ScatterLeft )
+		this->m_pEnemyBoss1ScatterLeft = new CEnemyBoss1Scatter(
+			IEnemy::eTYPE_BOSS_1_SCATTER_LEFT,
+			IEnemy::eBEHAVIOUR_BOSS,
+			CEnemyBoss1Scatter::eSIDE_LEFT);
+
+		if (!this->m_pEnemyBoss1ScatterLeft)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1ScatterLeft->Create(	this->m_pTheApp, this->m_pGameSettings,
-														this->m_pEnemyBoss1Frame,
-														this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1ScatterLeft->Create(
+			this->m_pTheApp,
+			this->m_pEnemyBoss1Frame,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
 
 		// initialize weapons
-		hres = this->m_pEnemyBoss1ScatterLeft->InitWeapons(	this->m_pTheApp,
-															this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletWidth,
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletHeight,
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletSpeed,
-															this->m_pGameSettings->m_iEnemyBoss1ScatterBulletDamage);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1ScatterLeft->InitWeapons(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_WIDTH,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_HEIGHT,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_SPEED,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_DAMAGE);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3859,35 +3870,41 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 SCATTER RIGHT //
 
 		// create object
-		this->m_pEnemyBoss1ScatterRight = new CEnemyBoss1Scatter(	IEnemy::eTYPE_BOSS_1_SCATTER_RIGHT,
-																	IEnemy::eBEHAVIOUR_BOSS,
-																	CEnemyBoss1Scatter::eSIDE_RIGHT);
-		if( !this->m_pEnemyBoss1ScatterRight )
+		this->m_pEnemyBoss1ScatterRight = new CEnemyBoss1Scatter(
+			IEnemy::eTYPE_BOSS_1_SCATTER_RIGHT,
+			IEnemy::eBEHAVIOUR_BOSS,
+			CEnemyBoss1Scatter::eSIDE_RIGHT);
+
+		if (!this->m_pEnemyBoss1ScatterRight)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		hres = this->m_pEnemyBoss1ScatterRight->Create(	this->m_pTheApp, this->m_pGameSettings,
-														this->m_pEnemyBoss1Frame,
-														this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_SCATTER),
-														this->m_iVolumeSoundEffect);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1ScatterRight->Create(
+			this->m_pTheApp,
+			this->m_pEnemyBoss1Frame,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_SCATTER),
+			this->m_iVolumeSoundEffect);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
 
 		// initialize weapons
-		hres = this->m_pEnemyBoss1ScatterRight->InitWeapons(this->m_pTheApp,
-															this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletWidth,
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletHeight,
-															this->m_pGameSettings->m_fEnemyBoss1ScatterBulletSpeed,
-															this->m_pGameSettings->m_iEnemyBoss1ScatterBulletDamage);
-		if( FAILED(hres) )
+		hres = this->m_pEnemyBoss1ScatterRight->InitWeapons(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BULLET_BOSS_1_SCATTER),
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_WIDTH,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_HEIGHT,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_SPEED,
+			CGameSettings::ENEMY_BOSS_SCATTER_BULLET_DAMAGE);
+
+		if (FAILED(hres))
 		{
 			return hres;
 		}
@@ -3900,22 +3917,26 @@ HRESULT CTheGame::InitLevelBoss()
 		// BOSS 1 CANNON //
 
 		// create object
-		this->m_pEnemyBoss1Cannon = new CEnemyBoss1Cannon(	IEnemy::eTYPE_BOSS_1_CANNON,
-															IEnemy::eBEHAVIOUR_BOSS);
-		if( !this->m_pEnemyBoss1Cannon )
+		this->m_pEnemyBoss1Cannon = new CEnemyBoss1Cannon(
+			IEnemy::eTYPE_BOSS_1_CANNON,
+			IEnemy::eBEHAVIOUR_BOSS);
+
+		if (!this->m_pEnemyBoss1Cannon)
 		{
 			return E_OUTOFMEMORY;
 		}
 
-		this->m_pEnemyBoss1Cannon->Create(	this->m_pTheApp, this->m_pGameSettings,
-											this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_CANNON),
-											this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_CANNON),
-											this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_CANNON),
-											this->m_iVolumeSoundEffect);
+		this->m_pEnemyBoss1Cannon->Create(
+			this->m_pTheApp,
+			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_CANNON),
+			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_CANNON),
+			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_CANNON),
+			this->m_iVolumeSoundEffect);
 
 		// initialize weapons
-		this->m_pEnemyBoss1Cannon->InitWeapons(	this->m_pSpriteBoss1CannonCharge,
-												this->m_pSpriteBoss1CannonShoot);
+		this->m_pEnemyBoss1Cannon->InitWeapons(
+			this->m_pSpriteBoss1CannonCharge,
+			this->m_pSpriteBoss1CannonShoot);
 
 		// set sound effect volume
 		this->m_pEnemyBoss1Cannon->SetVolumeSoundEffect(this->m_iVolumeSoundEffect);
@@ -3928,7 +3949,8 @@ HRESULT CTheGame::InitLevelBoss()
 	/* COLLISION MODELS */
 
 	hres = this->CreateCollisionMeshBoss();
-	if( FAILED(hres) )
+
+	if (FAILED(hres))
 	{
 		return hres;
 	}
@@ -4110,7 +4132,7 @@ void CTheGame::InitVolumeMusic()
 	}
 	else
 	{
-		float fVolume = this->m_pGameSettings->m_fVolumeMusicGameOver * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_MUSIC_GAME_OVER * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumeMusicGameOver = (int)fExactVolume;
 	}
@@ -4143,23 +4165,23 @@ void CTheGame::InitVolumeSoundEffect()
 	}
 	else
 	{
-		float fVolume = this->m_pGameSettings->m_fVolumePlayerMinigunShoot * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_PLAYER_MINIGUN_SHOOT * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumePlayerMinigunShoot = (int)fExactVolume;
 
-		fVolume = this->m_pGameSettings->m_fVolumePlayerMinigunTurn * (float)iVolume;
+		fVolume = CGameSettings::VOLUME_PLAYER_MINIGUN_TURN * (float)iVolume;
 		fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumePlayerMinigunTurn = (int)fExactVolume;
 
-		fVolume = this->m_pGameSettings->m_fVolumePlayerCannon * (float)iVolume;
+		fVolume = CGameSettings::VOLUME_PLAYER_CANNON * (float)iVolume;
 		fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumePlayerCannon = (int)fExactVolume;
 
-		fVolume = this->m_pGameSettings->m_fVolumePlayerBlast * (float)iVolume;
+		fVolume = CGameSettings::VOLUME_PLAYER_BLAST * (float)iVolume;
 		fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumePlayerBlast = (int)fExactVolume;
 
-		fVolume = this->m_pGameSettings->m_fVolumePlayerVelocityAfterburn * (float)iVolume;
+		fVolume = CGameSettings::VOLUME_PLAYER_VELOCITY_AFTERBURN * (float)iVolume;
 		fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumePlayerVelocityAfterburn = (int)fExactVolume;
 	}
@@ -4873,9 +4895,9 @@ void CTheGame::PlaySoundExplosionBossChain()
 
 	if (iConfigVolume > 0)
 	{
-		float minVolume = this->m_pGameSettings->m_fVolumeBossChainExplosionMin;
-		float maxVolume = this->m_pGameSettings->m_fVolumeBossChainExplosionMax;
-		float fRandSoundVolume = this->m_pTheApp->RandFloat(minVolume, maxVolume);
+		float fRandSoundVolume = this->m_pTheApp->RandFloat(
+			CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MIN,
+			CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MAX);
 
 		float fVolume = fRandSoundVolume * (float)iConfigVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
@@ -5172,7 +5194,7 @@ void CTheGame::PlayerSetEnter(int currentGameState)
 	m_fPlayerEnterMoveTimer = 0;
 
 	// player health to max
-	this->m_pPlayer->SetHealth(this->m_pGameSettings->m_iPlayerHealth);
+	this->m_pPlayer->SetHealth(CGameSettings::PLAYER_HEALTH);
 	// reset player cannon energy
 	this->m_pPlayer->ResetCannonEnergy();
 	// reset player's local matrix to default
@@ -5181,8 +5203,8 @@ void CTheGame::PlayerSetEnter(int currentGameState)
 	// set player enter starting position
 	this->m_pPlayer->SetPosition(
 		D3DXVECTOR3(
-			this->m_pGameSettings->m_fPlayerEnterPositionX,
-			this->m_pGameSettings->m_fPlayerEnterPositionY,
+			CGameSettings::PLAYER_SHIP_ENTER_POS_X,
+			CGameSettings::PLAYER_SHIP_ENTER_POS_Y,
 			0.0f));
 
 	// player enter while level intro
@@ -5221,8 +5243,8 @@ void CTheGame::PlayerMoveEnter(float fFrametime)
 	D3DXVECTOR3 pos = this->m_pPlayer->GetPosition();
 
 	float currentPosY = LerpUtils::CalculateEasingPosition(
-		LerpUtils::eEASING_LOGIC::EaseOutBack, this->m_pGameSettings->m_fPlayerEnterPositionY,
-		this->m_pGameSettings->m_fPlayerGamePositionY, this->m_fPlayerEnterMoveTimer, PLAYER_ENTER_MOVE_DURATION);
+		LerpUtils::eEASING_LOGIC::EaseOutBack, CGameSettings::PLAYER_SHIP_ENTER_POS_Y,
+		CGameSettings::PLAYER_SHIP_START_POS_Y, this->m_fPlayerEnterMoveTimer, PLAYER_ENTER_MOVE_DURATION);
 
 	pos.y = currentPosY;
 	this->m_pPlayer->SetPosition(pos);
@@ -6029,8 +6051,8 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 	IEnemy* pEnemy = NULL;
 
 	float fStrikeSpeedModifier = this->m_pTheApp->RandFloat(
-		this->m_pGameSettings->m_fEnemyStrikeSpeedMultiplierMin,
-		this->m_pGameSettings->m_fEnemyStrikeSpeedMultiplierMax);
+		CGameSettings::ENEMY_STRIKE_SPEED_MULTIPLIER_MIN,
+		CGameSettings::ENEMY_STRIKE_SPEED_MULTIPLIER_MAX);
 
 	switch (eFleetType)
 	{
@@ -6049,7 +6071,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					templateObj->GetMesh(),
 					templateObj->GetMeshDataArray(),
 					templateObj->GetSpriteAfterburn(),
@@ -6071,7 +6093,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					templateObj->GetMesh(),
 					templateObj->GetMeshDataArray(),
 					templateObj->GetSpriteAfterburn(),
@@ -6093,7 +6115,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					templateObj->GetMesh(),
 					templateObj->GetMeshDataArray(),
 					templateObj->GetSpriteAfterburn(),
@@ -6102,10 +6124,10 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 				pEnemy->InitWeapons(this->m_pTheApp,
 					this->m_pWeaponRoller->GetMesh(),
 					this->m_pWeaponRoller->GetMeshDataArray(),
-					this->m_pGameSettings->m_fEnemyRollerBulletWidth,
-					this->m_pGameSettings->m_fEnemyRollerBulletHeight,
-					this->m_pGameSettings->m_fEnemyRollerBulletSpeed,
-					this->m_pGameSettings->m_iEnemyRollerBulletDamage);
+					CGameSettings::ENEMY_ROLLER_BULLET_WIDTH,
+					CGameSettings::ENEMY_ROLLER_BULLET_HEIGHT,
+					CGameSettings::ENEMY_ROLLER_BULLET_SPEED,
+					CGameSettings::ENEMY_ROLLER_BULLET_DAMAGE);
 
 				pEnemy->SetDefaultMatrix(templateObj->GetDefaultMatrix());
 			}
@@ -6124,7 +6146,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					templateObj->GetMesh(),
 					templateObj->GetMeshDataArray(),
 					templateObj->GetSpriteAfterburn(),
@@ -6152,7 +6174,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pEnemyDroneStrike->GetMesh(),
 					this->m_pEnemyDroneStrike->GetMeshDataArray(),
 					this->m_pEnemyDroneStrike->GetSpriteAfterburn(),
@@ -6172,7 +6194,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pEnemySniperStrike->GetMesh(),
 					this->m_pEnemyDroneStrike->GetMeshDataArray(),
 					this->m_pEnemySniperStrike->GetSpriteAfterburn(),
@@ -6192,7 +6214,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pEnemyRollerStrike->GetMesh(),
 					this->m_pEnemyDroneStrike->GetMeshDataArray(),
 					this->m_pEnemyRollerStrike->GetSpriteAfterburn(),
@@ -6201,10 +6223,10 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 				pEnemy->InitWeapons(this->m_pTheApp,
 					this->m_pWeaponRoller->GetMesh(),
 					this->m_pWeaponRoller->GetMeshDataArray(),
-					this->m_pGameSettings->m_fEnemyRollerBulletWidth,
-					this->m_pGameSettings->m_fEnemyRollerBulletHeight,
-					this->m_pGameSettings->m_fEnemyRollerBulletSpeed,
-					this->m_pGameSettings->m_iEnemyRollerBulletDamage);
+					CGameSettings::ENEMY_ROLLER_BULLET_WIDTH,
+					CGameSettings::ENEMY_ROLLER_BULLET_HEIGHT,
+					CGameSettings::ENEMY_ROLLER_BULLET_SPEED,
+					CGameSettings::ENEMY_ROLLER_BULLET_DAMAGE);
 
 				pEnemy->SetSpeed(fStrikeSpeedModifier * this->m_pEnemyRollerStrike->GetSpeed());
 				pEnemy->SetDefaultMatrix(this->m_pEnemyRollerStrike->GetDefaultMatrix());
@@ -6220,7 +6242,7 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 			if (pEnemy)
 			{
 				pEnemy->Create(
-					this->m_pTheApp, this->m_pGameSettings,
+					this->m_pTheApp,
 					this->m_pEnemyGuardStrike->GetMesh(),
 					this->m_pEnemyDroneStrike->GetMeshDataArray(),
 					this->m_pEnemyGuardStrike->GetSpriteAfterburn(),
@@ -6274,7 +6296,6 @@ IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
 
 	return pEnemy;
 }
-
 
 void CTheGame::ClearLaunchEnemies()
 {
@@ -6434,6 +6455,8 @@ void CTheGame::PrepareObstacles()
 			CObstacle* obstacle = NULL;
 			IEnemy* enemy = NULL;
 
+			float speedMultiplier = CGameSettings::GetObstacleSpeed(currentDepth) / CGameSettings::GetObstacleSpeed(1);
+
 			switch (currentDepth)
 			{
 			case 1:
@@ -6480,8 +6503,6 @@ void CTheGame::PrepareObstacles()
 					fPosY += 6.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth2.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(2) / this->m_pGameSettings->GetObstacleSpeed(1);
-
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
 						generateObstacles = false;
@@ -6498,8 +6519,6 @@ void CTheGame::PrepareObstacles()
 				{
 					fPosY += 5.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth3.Push(obstacle);
-
-					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(3) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6518,8 +6537,6 @@ void CTheGame::PrepareObstacles()
 					fPosY += 4.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth4.Push(obstacle);
 
-					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(4) / this->m_pGameSettings->GetObstacleSpeed(1);
-
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
 						generateObstacles = false;
@@ -6536,8 +6553,6 @@ void CTheGame::PrepareObstacles()
 				{
 					fPosY += 3.0f * obstacle->GetHeight();
 					this->m_pObstaclesDepth5.Push(obstacle);
-
-					float speedMultiplier = this->m_pGameSettings->GetObstacleSpeed(5) / this->m_pGameSettings->GetObstacleSpeed(1);
 
 					if (fPosY >= (speedMultiplier * addedObstacleMaxPosY))
 					{
@@ -6564,25 +6579,21 @@ CObstacle* CTheGame::GenerateObstacle(float fPosY, int iDepth)
 		if (obstacle)
 		{
 			CObstacle::eOBSTACLE_DEPTH eDepth = CObstacle::eOBSTACLE_DEPTH_1;
-			float fSpeed = this->m_pGameSettings->GetObstacleSpeed(1);
+			float fSpeed = CGameSettings::GetObstacleSpeed(iDepth);
 
 			switch (iDepth)
 			{
 			case 2:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_2;
-				fSpeed = this->m_pGameSettings->GetObstacleSpeed(2);
 				break;
 			case 3:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_3;
-				fSpeed = this->m_pGameSettings->GetObstacleSpeed(3);
 				break;
 			case 4:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_4;
-				fSpeed = this->m_pGameSettings->GetObstacleSpeed(4);
 				break;
 			case 5:
 				eDepth = CObstacle::eOBSTACLE_DEPTH_5;
-				fSpeed = this->m_pGameSettings->GetObstacleSpeed(5);
 				break;
 			}
 
@@ -6981,7 +6992,8 @@ IEnemy* CTheGame::GenerateObstacleEnemy(float fPosY)
 
 	if (pEnemy)
 	{
-		pEnemy->InitObstacleEnemy(this->m_pGameSettings->GetObstacleSpeed(1));
+		float fSpeed = CGameSettings::GetObstacleSpeed(1);
+		pEnemy->InitObstacleEnemy(fSpeed);
 		pEnemy->SetActive(TRUE);
 
 		D3DXVECTOR3 pos;
@@ -8391,13 +8403,13 @@ float CTheGame::GetCollisionDamagePlayerVsEnemy(IEnemy* pEnemy)
 	switch (pEnemy->GetType())
 	{
 	case IEnemy::eTYPE_DRONE:
-		return m_pGameSettings->m_iEnemyDroneShipDamage;
+		return CGameSettings::ENEMY_DRONE_SHIP_DAMAGE;
 	case IEnemy::eTYPE_SNIPER:
-		return m_pGameSettings->m_iEnemySniperShipDamage;
+		return CGameSettings::ENEMY_SNIPER_SHIP_DAMAGE;
 	case IEnemy::eTYPE_ROLLER:
-		return m_pGameSettings->m_iEnemyRollerShipDamage;
+		return CGameSettings::ENEMY_ROLLER_SHIP_DAMAGE;
 	case IEnemy::eTYPE_GUARD:
-		return m_pGameSettings->m_iEnemyGuardShipDamage;
+		return CGameSettings::ENEMY_GUARD_SHIP_DAMAGE;
 	}
 
 	return 0;
@@ -8591,14 +8603,14 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 
 							if(this->m_pEnemyBoss1Frame->IsCannonDamage())
 							{
-								if( this->m_pEnemyBoss1Frame->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+								if( this->m_pEnemyBoss1Frame->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 								{
 									this->m_bBossDestroyed = true;
 								}
 								else
 								{
 									// increase player score (score increase equals cannon damage)
-									this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage);
+									this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 								}
 								// only one hit per cannon fire
 								this->m_pEnemyBoss1Frame->SetCannonDamage(false);
@@ -8616,7 +8628,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// only one hit per cannon fire
 								this->m_pEnemyBoss1LaserLeft->SetCannonDamage(false);
 
-								if( this->m_pEnemyBoss1LaserLeft->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+								if( this->m_pEnemyBoss1LaserLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 								{
 									this->m_pEnemyBoss1LaserLeft->SetActive(FALSE);
 									// enemy explosion
@@ -8628,7 +8640,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								else
 								{
 									// increase player score (score increase equals cannon damage)
-									this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage);
+									this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 								}
 							}
 						}
@@ -8643,7 +8655,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// only one hit per cannon fire
 								this->m_pEnemyBoss1LaserRight->SetCannonDamage(false);
 
-								if( this->m_pEnemyBoss1LaserRight->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+								if( this->m_pEnemyBoss1LaserRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 								{
 									this->m_pEnemyBoss1LaserRight->SetActive(FALSE);
 									// enemy explosion
@@ -8655,7 +8667,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								else
 								{
 									// increase player score (score increase equals cannon damage)
-									this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage);
+									this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 								}
 							}
 						}
@@ -8670,7 +8682,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// only one hit per cannon fire
 								this->m_pEnemyBoss1ScatterLeft->SetCannonDamage(false);
 
-								if( this->m_pEnemyBoss1ScatterLeft->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+								if( this->m_pEnemyBoss1ScatterLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 								{
 									this->m_pEnemyBoss1ScatterLeft->SetActive(FALSE);
 									// enemy explosion
@@ -8682,7 +8694,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								else
 								{
 									// increase player score (score increase equals cannon damage)
-									this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage);
+									this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 								}
 							}
 						}
@@ -8697,7 +8709,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// only one hit per cannon fire
 								this->m_pEnemyBoss1ScatterRight->SetCannonDamage(false);
 
-								if( this->m_pEnemyBoss1ScatterRight->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+								if( this->m_pEnemyBoss1ScatterRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 								{
 									this->m_pEnemyBoss1ScatterRight->SetActive(FALSE);
 									// enemy explosion
@@ -8709,7 +8721,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								else
 								{
 									// increase player score (score increase equals cannon damage)
-									this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage);
+									this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 								}
 							}
 						}
@@ -8743,7 +8755,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 
 						if( pEnemy->IsCannonDamage() )
 						{
-							if( pEnemy->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+							if( pEnemy->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 							{
 								// play sound effect
 								this->PlaySoundExplosionEnemy(pEnemy);
@@ -8771,7 +8783,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 							else
 							{
 								// increase player score (score increase equals 1/4 of cannon damage)
-								this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage / 4);
+								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE / 4);
 							}
 
 							pEnemy->SetCannonDamage(false);
@@ -8799,7 +8811,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 
 						if( pEnemy->IsCannonDamage() )
 						{
-							if( pEnemy->Destroyed(this->m_pGameSettings->m_iPlayerCannonDamage) )
+							if( pEnemy->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE) )
 							{
 								// play sound effect
 								this->PlaySoundExplosionEnemy(pEnemy);
@@ -8814,7 +8826,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 							else
 							{
 								// increase player score (score increase equals 1/4 of cannon damage)
-								this->m_pPlayer->IncreaseScore(this->m_pGameSettings->m_iPlayerCannonDamage / 4);
+								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE / 4);
 							}
 
 							pEnemy->SetCannonDamage(false);
@@ -12678,10 +12690,10 @@ void CTheGame::RenderPlayerLives()
 	if (iLives < 0)
 		iLives = 0;
 
-	int iBaseX = this->m_pGameSettings->m_iPlayerLivesBasePositionX;
-	int iBaseY = this->m_pGameSettings->m_iPlayerLivesBasePositionY;
-	int iNumberX = this->m_pGameSettings->m_iPlayerLivesNumberPositionX;
-	int iNumberY = this->m_pGameSettings->m_iPlayerLivesNumberPositionY;
+	int iBaseX = CGameSettings::UI_PLAYER_LIVES_BASE_POS_X;
+	int iBaseY = CGameSettings::UI_PLAYER_LIVES_BASE_POS_Y;
+	int iNumberX = CGameSettings::UI_PLAYER_LIVES_NUMBER_POS_X;
+	int iNumberY = CGameSettings::UI_PLAYER_LIVES_NUMBER_POS_Y;
 
 	// base layer
 	(this->m_pSpriteInfoPlayerLives + 10)->Draw(iBaseX,iBaseY);
@@ -12693,10 +12705,10 @@ void CTheGame::RenderPlayerBlasts()
 {
 	int iBlasts = this->m_pPlayer->GetBlasts();
 
-	int iBaseX = this->m_pGameSettings->m_iPlayerBlastsBasePositionX;
-	int iBaseY = this->m_pGameSettings->m_iPlayerBlastsBasePositionY;
-	int iNumberX = this->m_pGameSettings->m_iPlayerBlastsNumberPositionX;
-	int iNumberY = this->m_pGameSettings->m_iPlayerBlastsNumberPositionY;
+	int iBaseX = CGameSettings::UI_PLAYER_BLAST_BASE_POS_X;
+	int iBaseY = CGameSettings::UI_PLAYER_BLAST_BASE_POS_Y;
+	int iNumberX = CGameSettings::UI_PLAYER_BLAST_NUMBER_POS_X;
+	int iNumberY = CGameSettings::UI_PLAYER_BLAST_NUMBER_POS_Y;
 
 	// base layer
 	(this->m_pSpriteInfoPlayerBlasts + 10)->Draw(iBaseX,iBaseY);
@@ -12708,174 +12720,150 @@ void CTheGame::RenderPlayerHealthBar()
 {
 	int iHealth = this->m_pPlayer->GetHealth();
 
-	int iBarX = this->m_pGameSettings->m_iPlayerHealthBarPositionX;
-	int iBarY = this->m_pGameSettings->m_iPlayerHealthBarPositionY;
-	int iMeterX = this->m_pGameSettings->m_iPlayerHealthMeterPositionX;
-	int iMeterY = this->m_pGameSettings->m_iPlayerHealthMeterPositionY;
+	int iBarX = CGameSettings::UI_PLAYER_HEALTH_BAR_POS_X;
+	int iBarY = CGameSettings::UI_PLAYER_HEALTH_BAR_POS_Y;
+	int iFillX = CGameSettings::UI_PLAYER_HEALTH_FILL_POS_X;
+	int iFillY = CGameSettings::UI_PLAYER_HEALTH_FILL_POS_Y;
 
 	// health units
-	for(int i = 1; i <= iHealth; i++)
+	for (int i = 1; i <= iHealth; i++)
 	{
-		if(i == 1)
+		if (i == 1)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 0)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 0)->Draw(iFillX, iFillY);
 		}
-		else if(i == 2)
+		else if (i == 2)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 1)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 1)->Draw(iFillX, iFillY);
 		}
-		else if(i == 3)
+		else if (i == 3)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 2)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 2)->Draw(iFillX, iFillY);
 		}
-		else if(i == 4)
+		else if (i == 4)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 3)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 3)->Draw(iFillX, iFillY);
 		}
-		else if(i == 97)
+		else if (i == 97)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 5)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 5)->Draw(iFillX, iFillY);
 		}
-		else if(i == 98)
+		else if (i == 98)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 6)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 6)->Draw(iFillX, iFillY);
 		}
-		else if(i == 99)
+		else if (i == 99)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 7)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 7)->Draw(iFillX, iFillY);
 		}
-		else if(i == 100)
+		else if (i == 100)
 		{
-			(this->m_pSpriteInfoPlayerHealth + 8)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 8)->Draw(iFillX, iFillY);
 		}
 		else
 		{
-			(this->m_pSpriteInfoPlayerHealth + 4)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerHealth + 4)->Draw(iFillX, iFillY);
 		}
 
-		if(i == 1)
+		if (i == 1)
 		{
-			iMeterX = iMeterX + 4;
+			iFillX += 4;
 		}
 		else
 		{
-			iMeterX = iMeterX + 2;
+			iFillX += 2;
 		}
 	}
 
 	// health bar
-	(this->m_pSpriteInfoPlayerHealth + 9)->Draw(iBarX,iBarY);
+	(this->m_pSpriteInfoPlayerHealth + 9)->Draw(iBarX, iBarY);
 }
 
 void CTheGame::RenderPlayerCannonBar()
 {
 	int iCannonEnergy = this->m_pPlayer->GetCannonEnergy();
 
-	int iBarX = this->m_pGameSettings->m_iPlayerCannonBarPositionX;
-	int iBarY = this->m_pGameSettings->m_iPlayerCannonBarPositionY;
-	int iMeterX = this->m_pGameSettings->m_iPlayerCannonMeterPositionX;
-	int iMeterY = this->m_pGameSettings->m_iPlayerCannonMeterPositionY;
+	int iBarX = CGameSettings::UI_PLAYER_CANNON_BAR_POS_X;
+	int iBarY = CGameSettings::UI_PLAYER_CANNON_BAR_POS_Y;
+	int iFillX = CGameSettings::UI_PLAYER_CANNON_FILL_POS_X;
+	int iFillY = CGameSettings::UI_PLAYER_CANNON_FILL_POS_Y;
 
 	// cannon energy units
-	for(int i = 1; i <= iCannonEnergy; i++)
+	for (int i = 1; i <= iCannonEnergy; i++)
 	{
-		if(i == 1)
+		if (i == 1)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 0)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 0)->Draw(iFillX, iFillY);
 		}
-		else if(i == 2)
+		else if (i == 2)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 1)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 1)->Draw(iFillX, iFillY);
 		}
-		else if(i == 3)
+		else if (i == 3)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 2)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 2)->Draw(iFillX, iFillY);
 		}
-		else if(i == 4)
+		else if (i == 4)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 3)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 3)->Draw(iFillX, iFillY);
 		}
-		else if(i == 5)
+		else if (i == 5)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 4)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 4)->Draw(iFillX, iFillY);
 		}
-		else if(i == 6)
+		else if (i == 6)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 5)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 5)->Draw(iFillX, iFillY);
 		}
-		else if(i == 7)
+		else if (i == 7)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 6)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 6)->Draw(iFillX, iFillY);
 		}
-		else if(i == 194)
+		else if (i == 194)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 8)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 8)->Draw(iFillX, iFillY);
 		}
-		else if(i == 195)
+		else if (i == 195)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 9)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 9)->Draw(iFillX, iFillY);
 		}
-		else if(i == 196)
+		else if (i == 196)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 10)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 10)->Draw(iFillX, iFillY);
 		}
-		else if(i == 197)
+		else if (i == 197)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 11)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 11)->Draw(iFillX, iFillY);
 		}
-		else if(i == 198)
+		else if (i == 198)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 12)->Draw(	iMeterX,
-														iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 12)->Draw(iFillX, iFillY);
 		}
-		else if(i == 199)
+		else if (i == 199)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 13)->Draw(	iMeterX,
-														iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 13)->Draw(iFillX, iFillY);
 		}
-		else if(i == 200)
+		else if (i == 200)
 		{
-			(this->m_pSpriteInfoPlayerCannon + 14)->Draw(	iMeterX,
-														iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 14)->Draw(iFillX, iFillY);
 		}
 		else
 		{
-			(this->m_pSpriteInfoPlayerCannon + 7)->Draw(iMeterX,
-													iMeterY);
+			(this->m_pSpriteInfoPlayerCannon + 7)->Draw(iFillX, iFillY);
 		}
 
-		if(i == 1)
+		if (i == 1)
 		{
-			iMeterX = iMeterX + 3;
+			iFillX += 3;
 		}
 		else
 		{
-			iMeterX = iMeterX + 1;
+			iFillX += 1;
 		}
 	}
 
 	// cannon bar
-	(this->m_pSpriteInfoPlayerCannon + 15)->Draw(iBarX,iBarY);
+	(this->m_pSpriteInfoPlayerCannon + 15)->Draw(iBarX, iBarY);
 }
 
 void CTheGame::RenderScore(float fFrametime)
@@ -12887,29 +12875,31 @@ void CTheGame::RenderScore(float fFrametime)
 
 	D3DXVECTOR3 pos;
 
-	pos = D3DXVECTOR3(	this->m_fScreenWidth - 62.0f,
-						this->m_fScreenHeight - 19.8f,
-						-1000.0f);
+	pos = D3DXVECTOR3(
+		this->m_fScreenWidth - 62.0f,
+		this->m_fScreenHeight - 19.8f,
+		-1000.0f);
 
 	(this->m_pHudObject + LOAD_CONTAINER_HUD_SCORE_TEXT)->SetPosition(pos);
 	(this->m_pHudObject + LOAD_CONTAINER_HUD_SCORE_TEXT)->Update(fFrametime);
 	(this->m_pHudObject + LOAD_CONTAINER_HUD_SCORE_TEXT)->Render(this->m_pTheApp->GetDevice());
 
-	pos = D3DXVECTOR3(	this->m_fScreenWidth - 39.0f,
-						this->m_fScreenHeight - 20.0f,
-						-1000.0f);
+	pos = D3DXVECTOR3(
+		this->m_fScreenWidth - 39.0f,
+		this->m_fScreenHeight - 20.0f,
+		-1000.0f);
 
-	while( (*pPointer) != NULL )
+	while ((*pPointer) != NULL)
 	{
 		(this->m_pNumbersScore + ((*pPointer) - '0'))->SetPosition(pos);
 		(this->m_pNumbersScore + ((*pPointer) - '0'))->Update(fFrametime);
 		(this->m_pNumbersScore + ((*pPointer) - '0'))->Render(this->m_pTheApp->GetDevice());
 		pos.x += (this->m_pNumbersScore + ((*pPointer) - '0'))->GetWidth();
-		
+
 		pPointer++;
 	}
 
-	delete []sScore;
+	delete[]sScore;
 	sScore = NULL;
 }
 
@@ -12926,51 +12916,34 @@ void CTheGame::RenderTime(float fFrametime)
 	pos.y = this->m_fScreenHeight - 20.0f;
 	pos.z = -1000.0f;
 
-	if(	(this->m_fGameTime >= 9.5f) && 
+	if ((this->m_fGameTime >= 9.5f) &&
 		(this->m_fGameTime < 99.5f))
 	{
-		fPosX -= this->m_pGameSettings->m_fGameNumberWidth * 0.5f;
+		fPosX -= CGameSettings::UI_NUMBER_WIDTH * 0.5f;
 	}
-	else if((this->m_fGameTime >= 99.5f) && 
-			(this->m_fGameTime < 999.5f))
+	else if ((this->m_fGameTime >= 99.5f) && (this->m_fGameTime < 999.5f))
 	{
-		fPosX -= this->m_pGameSettings->m_fGameNumberWidth;
+		fPosX -= CGameSettings::UI_NUMBER_WIDTH;
 	}
-	else if((this->m_fGameTime >= 999.5f) && 
-			(this->m_fGameTime < 9999.5f))
+	else if ((this->m_fGameTime >= 999.5f) && (this->m_fGameTime < 9999.5f))
 	{
-		fPosX -= this->m_pGameSettings->m_fGameNumberWidth * 1.5f;
+		fPosX -= CGameSettings::UI_NUMBER_WIDTH * 1.5f;
 	}
 
 	pos.x = fPosX;
 
-	while( (*pPointer) != NULL )
+	while ((*pPointer) != NULL)
 	{
 		(this->m_pNumbersTime + ((*pPointer) - '0'))->SetPosition(pos);
 		(this->m_pNumbersTime + ((*pPointer) - '0'))->Update(fFrametime);
 		(this->m_pNumbersTime + ((*pPointer) - '0'))->Render(this->m_pTheApp->GetDevice());
 		pos.x += (this->m_pNumbersTime + ((*pPointer) - '0'))->GetWidth();
-		
+
 		pPointer++;
 	}
 
-	delete []sTime;
+	delete[]sTime;
 	sTime = NULL;
-
-	/*
-	this->m_pTheApp->BeginText();
-
-	TCHAR tMsg[256];
-
-	_stprintf_s(tMsg, _T("Boost: %f"), this->m_pPlayer->GetBoost());
-
-	this->m_pTheApp->DrawText(	10,
-								700,
-								tMsg,
-								D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-
-	this->m_pTheApp->EndText();
-	*/
 }
 
 void CTheGame::RenderLevelTitle()
@@ -13004,9 +12977,6 @@ bool CTheGame::RenderLevelTitleIn()
 
 	const int iMovementSpeedText = 20;
 	const int iMovementSpeedBox = 21;
-
-	//const int iMovementSpeedText = 14;
-	//const int iMovementSpeedBox = 15;
 
 	bool bMovingIn = true;
 
@@ -13072,9 +13042,6 @@ bool CTheGame::RenderLevelTitleOut()
 	const int iMovementSpeedText = 30;
 	const int iMovementSpeedBox = 31;
 
-	//const int iMovementSpeedText = 16;
-	//const int iMovementSpeedBox = 17;
-
 	bool bMovingOut = true;
 
 	// draw sprites
@@ -13114,6 +13081,7 @@ bool CTheGame::RenderLevelTitleOut()
 			iBoxPosX -= iMovementSpeedBox;
 		}
 	}
+
 	if(iTextPosX < 1025)
 	{
 		if( (iTextPosX + iMovementSpeedText) > 1025 )
@@ -13125,8 +13093,6 @@ bool CTheGame::RenderLevelTitleOut()
 			iTextPosX += iMovementSpeedText;
 		}
 	}
-
-	
 
 	return bMovingOut;
 }

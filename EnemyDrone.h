@@ -15,7 +15,6 @@ public:
 protected:
 
 	virtual void Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect);
 

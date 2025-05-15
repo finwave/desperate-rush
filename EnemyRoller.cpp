@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "EnemyRoller.h"
 
 CEnemyRoller::CEnemyRoller(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -29,32 +30,31 @@ CEnemyRoller::~CEnemyRoller(void)
 }
 
 void CEnemyRoller::Init(CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect)
 {
 	switch (this->m_eBehaviour)
 	{
 	case eBEHAVIOUR::eBEHAVIOUR_LAUNCH:
-		this->m_fSpeed = pGameSettings->m_fEnemyRollerLaunchSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyRollerLaunchShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_ROLLER_LAUNCH_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_ROLLER_LAUNCH_SHOOT_TIME;
 		break;
 	case eBEHAVIOUR::eBEHAVIOUR_STRIKE:
-		this->m_fSpeed = pGameSettings->m_fEnemyRollerStrikeSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyRollerStrikeShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_ROLLER_STRIKE_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_ROLLER_STRIKE_SHOOT_TIME;
 		break;
 	}
 
-	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyRollerEnterDuration;
-	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyRollerFleeDuration;
+	this->m_fShipEnterSpeed = CGameSettings::ENEMY_ROLLER_ENTER_DURATION;
+	this->m_fShipFleeSpeed = CGameSettings::ENEMY_ROLLER_FLEE_DURATION;
 
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyRollerWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyRollerHeight;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_ROLLER_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_ROLLER_HEIGHT;
 
-	this->m_iHealth = pGameSettings->m_iEnemyRollerHealth;
+	this->m_iHealth = CGameSettings::ENEMY_ROLLER_HEALTH;
 
 	this->m_iHealthMax = this->m_iHealth;
 	this->m_fSpeedDefault = this->m_fSpeed;
@@ -64,7 +64,7 @@ void CEnemyRoller::Init(CTheApp* pTheApp,
 	this->m_fShootMultiTime = 0.09f;
 	this->m_fShootMultiTimer = 0.0f;
 
-	this->m_iShootMultiMax = pGameSettings->m_iEnemyBoss1ScatterShootMultiMax;
+	this->m_iShootMultiMax = CGameSettings::ENEMY_BOSS_SCATTER_SHOOT_AMOUNT_MAX;
 	this->m_iShootMulti = 0;
 	this->m_iShootMultiCount = 0;
 
@@ -77,7 +77,7 @@ void CEnemyRoller::Init(CTheApp* pTheApp,
 
 	this->ChangeRotationZ();
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 
 	// sound effect volume for shooting
 	int iVolume = pTheApp->GetConfig().GetVolumeSoundEffect();
@@ -88,7 +88,7 @@ void CEnemyRoller::Init(CTheApp* pTheApp,
 	}
 	else
 	{
-		float fVolume = pGameSettings->m_fVolumeEnemyShootRoller * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_ENEMY_SHOOT_ROLLER * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumeShootRoller = (int)fExactVolume;
 	}

@@ -1,3 +1,5 @@
+#include "GameSettings.h"
+#include "WeaponBoss1Laser.h"
 #include "EnemyBoss1Laser.h"
 
 CEnemyBoss1Laser::CEnemyBoss1Laser(	eTYPE eType,
@@ -32,7 +34,6 @@ CEnemyBoss1Laser::~CEnemyBoss1Laser(void)
 }
 
 HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
-									CGameSettings* pGameSettings,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
 									std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -43,7 +44,6 @@ HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
 	/** CREATE SHIP **/
 
 	hres = IEnemy::Create(	pTheApp,
-							pGameSettings,
 							mesh,
 							materials,
 							textures,
@@ -63,7 +63,7 @@ HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
 	}
 	else
 	{
-		float fVolume = pGameSettings->m_fVolumeBossLaser * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_BOSS_LASER * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumeSoundEffect = (int)fExactVolume;
 	}
@@ -72,16 +72,15 @@ HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
 }
 
 void CEnemyBoss1Laser::Init(CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							CSprite* pSpriteAfterburn,
 							int iVolumeSoundEffect)
 {
 	this->m_bBoss = true;
 
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyBoss1LaserWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyBoss1LaserHeight;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_BOSS_LASER_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_BOSS_LASER_HEIGHT;
 
-	this->m_iHealth = pGameSettings->m_iEnemyBoss1LaserHealth;
+	this->m_iHealth = CGameSettings::ENEMY_BOSS_LASER_HEALTH;
 	this->m_iHealthMax = this->m_iHealth;
 
 	this->m_fSpeed = 0.0f;
@@ -91,7 +90,7 @@ void CEnemyBoss1Laser::Init(CTheApp* pTheApp,
 	this->m_iShootMultiMax = 35;
 	this->m_fAngleMaxZ = 0.6f;
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 void CEnemyBoss1Laser::Release()

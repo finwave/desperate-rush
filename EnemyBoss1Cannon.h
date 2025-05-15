@@ -23,7 +23,6 @@ public:
 	virtual ~CEnemyBoss1Cannon(void);
 
 	virtual HRESULT Create(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
 							std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -48,7 +47,6 @@ public:
 protected:
 
 	virtual void Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect);
 

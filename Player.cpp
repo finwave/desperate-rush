@@ -175,7 +175,7 @@ char* CPlayer::GetShipHealth(void)
 	}
 	else
 	{
-		sprintf_s(sReturn,128, "%0.0f", this->m_iHealth);
+		sprintf_s(sReturn,128, "%0.0f", (float)this->m_iHealth);
 	}
 
 	return sReturn;

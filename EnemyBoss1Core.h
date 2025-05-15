@@ -12,7 +12,6 @@ public:
 	virtual ~CEnemyBoss1Core(void);
 
 	virtual HRESULT Create(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							LPDIRECT3DDEVICE9 pDevice,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
@@ -27,7 +26,6 @@ public:
 protected:
 
 	virtual void Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect);
 

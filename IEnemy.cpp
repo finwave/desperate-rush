@@ -99,7 +99,6 @@ IEnemy::~IEnemy(void)
 }
 
 HRESULT IEnemy::Create(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						LPD3DXMESH mesh,
 						std::vector<D3DMATERIAL9*> materials,
 						std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -116,13 +115,12 @@ HRESULT IEnemy::Create(	CTheApp* pTheApp,
 		this->AddMeshData(materials[i], textures[i]);
 	}
 
-	Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 
 	return S_OK;
 }
 
 HRESULT IEnemy::Create(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						LPD3DXMESH mesh,
 						std::vector<MESHDATA>& meshData,
 						CSprite* pSpriteAfterburn,
@@ -135,18 +133,16 @@ HRESULT IEnemy::Create(	CTheApp* pTheApp,
 
 	this->m_arrMeshData = meshData;
 
-	Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 
 	return S_OK;
 }
 
 void IEnemy::Init(	CTheApp* pTheApp,
-					CGameSettings* pGameSettings,
 					CSprite* pSpriteAfterburn,
 					int iVolumeSoundEffect)
 {
 	this->m_pTheApp = pTheApp;
-	this->m_pGameSettings = pGameSettings;
 
 	this->m_fScreenWidth = pTheApp->GetScreenWidth();
 	this->m_fScreenHeight = pTheApp->GetScreenHeight();

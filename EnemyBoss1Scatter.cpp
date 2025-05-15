@@ -1,3 +1,5 @@
+#include "GameSettings.h"
+#include "WeaponBoss1Scatter.h"
 #include "EnemyBoss1Scatter.h"
 
 CEnemyBoss1Scatter::CEnemyBoss1Scatter(	eTYPE eType,
@@ -34,7 +36,6 @@ CEnemyBoss1Scatter::~CEnemyBoss1Scatter(void)
 }
 
 HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
-									CGameSettings* pGameSettings,
 									IEnemy* pBossFrame,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
@@ -46,7 +47,6 @@ HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
 	/** CREATE SHIP **/
 
 	hres = IEnemy::Create(	pTheApp,
-							pGameSettings,
 							mesh,
 							materials,
 							textures,
@@ -72,7 +72,7 @@ HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
 	}
 	else
 	{
-		float fVolume = pGameSettings->m_fVolumeBossScatter * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_BOSS_SCATTER * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumeSoundEffect = (int)fExactVolume;
 	}
@@ -81,30 +81,29 @@ HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
 }
 
 void CEnemyBoss1Scatter::Init(	CTheApp* pTheApp,
-								CGameSettings* pGameSettings,
 								CSprite* pSpriteAfterburn,
 								int iVolumeSoundEffect)
 {
 	this->m_bBoss = true;
 
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyBoss1ScatterWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyBoss1ScatterHeight;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_BOSS_SCATTER_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_BOSS_SCATTER_HEIGHT;
 
-	this->m_iHealth = pGameSettings->m_iEnemyBoss1ScatterHealth;
+	this->m_iHealth = CGameSettings::ENEMY_BOSS_SCATTER_HEALTH;
 	this->m_iHealthMax = this->m_iHealth;
 
-	this->m_fSpeed = pGameSettings->m_fEnemyBoss1ScatterSpeed;
+	this->m_fSpeed = CGameSettings::ENEMY_BOSS_SCATTER_SPEED;
 	this->m_fSpeedDefault = this->m_fSpeed;
 
-	this->m_fShootTime = pGameSettings->m_fEnemyBoss1ScatterShootTime;
-	this->m_iShootMultiMax = 40;
+	this->m_fShootTime = CGameSettings::ENEMY_BOSS_SCATTER_SHOOT_TIME;
+	this->m_iShootMultiMax = CGameSettings::ENEMY_BOSS_SCATTER_SHOOT_AMOUNT_MAX;
 
 	// firing possible as soon as boss has entered
 	this->m_fShootCounter = this->m_fShootTime + this->m_fRandShootTime;
 
 	this->m_fRotationIncrease = 0.14f;
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 void CEnemyBoss1Scatter::Release()

@@ -3,194 +3,195 @@
 class CGameSettings
 {
 public:
-	CGameSettings(void);
-	virtual ~CGameSettings(void);
 
-	void Create();
-	float GetObstacleSpeed(int depth);
+	static float GetObstacleSpeed(int depth);
 
 	// SOUND VOLUME
 	
-	float					m_fVolumeMusicGameOver;
+	static float	VOLUME_MUSIC_GAME_OVER;
+	
+	static float	VOLUME_PLAYER_MINIGUN_SHOOT;
+	static float	VOLUME_PLAYER_MINIGUN_TURN;
+	static float	VOLUME_PLAYER_CANNON;
+	static float	VOLUME_PLAYER_BLAST;
+	static float	VOLUME_PLAYER_VELOCITY_AFTERBURN;
 
-	float					m_fVolumePlayerMinigunShoot;
-	float					m_fVolumePlayerMinigunTurn;
-	float					m_fVolumePlayerCannon;
-	float					m_fVolumePlayerBlast;
-	float					m_fVolumePlayerVelocityAfterburn;
+	static float	VOLUME_ENEMY_SHOOT_ROLLER;
 
-	float					m_fVolumeEnemyShootRoller;
-
-	float					m_fVolumeBossScatter;
-	float					m_fVolumeBossLaser;
-	float					m_fVolumeBossCannon;
-
-	float					m_fVolumeBossChainExplosionMin;
-	float					m_fVolumeBossChainExplosionMax;
+	static float	VOLUME_BOSS_SCATTER;
+	static float	VOLUME_BOSS_LASER;
+	static float	VOLUME_BOSS_CANNON;
+	
+	static float	VOLUME_BOSS_CHAIN_EXPLOSION_MIN;
+	static float	VOLUME_BOSS_CHAIN_EXPLOSION_MAX;
 
 	// PLAYER
 
-	int						m_iPlayerLives;
-	int						m_iPlayerHealth;
-	float					m_fPlayerWidth;
-	float					m_fPlayerHeight;
-	float					m_fPlayerSpeed;
-	float					m_fPlayerMaxVelocity;
+	static int		PLAYER_LIVES;
+	static int		PLAYER_HEALTH;
+	static float	PLAYER_WIDTH;
+	static float	PLAYER_HEIGHT;
+	static float	PLAYER_SPEED;
+	static float	PLAYER_MAX_VELOCITY;
 
-	int						m_iPlayerCannonEnergyMax;
-	int						m_iPlayerCannonDamage;
-	float					m_fPlayerCannonSpeed;
-	float					m_fPlayerCannonTimer;
-	int						m_iPlayerBlastDamage;
-	int						m_iPlayerBlasts;
+	static int		PLAYER_CANNON_ENERGY_MAX;
+	static int		PLAYER_CANNON_DAMAGE;
+	static float	PLAYER_CANNON_SPEED;
+	static float	PLAYER_CANNON_TIMER;
+	static int		PLAYER_BLAST_DAMAGE;
+	static int		PLAYER_BLAST_AMOUNT;
+
+	static float	PLAYER_SHIP_ENTER_POS_X;
+	static float	PLAYER_SHIP_ENTER_POS_Y;
+	static float	PLAYER_SHIP_START_POS_Y;
 
 	// WEAPONS
 
-	float					m_fPlayerBulletMinigunWidth;
-	float					m_fPlayerBulletMinigunHeight;
+	static float	PLAYER_BULLET_WIDTH;
+	static float	PLAYER_BULLET_HEIGHT;
+	
+	static float	ENEMY_DRONE_BULLET_WIDTH;
+	static float	ENEMY_DRONE_BULLET_HEIGHT;
+	static float	ENEMY_DRONE_BULLET_SPEED;
+	static int		ENEMY_DRONE_BULLET_DAMAGE;
+	static int		ENEMY_DRONE_SHIP_DAMAGE;
 
-	float					m_fEnemyDroneBulletWidth;
-	float					m_fEnemyDroneBulletHeight;
-	float					m_fEnemyDroneBulletSpeed;
-	int						m_iEnemyDroneBulletDamage;
-	int						m_iEnemyDroneShipDamage;
+	static float	ENEMY_SNIPER_BULLET_WIDTH;
+	static float	ENEMY_SNIPER_BULLET_HEIGHT;
+	static float	ENEMY_SNIPER_BULLET_SPEED;
+	static int		ENEMY_SNIPER_BULLET_DAMAGE;
+	static int		ENEMY_SNIPER_SHIP_DAMAGE;
 
-	float					m_fEnemySniperBulletWidth;
-	float					m_fEnemySniperBulletHeight;
-	float					m_fEnemySniperBulletSpeed;
-	int						m_iEnemySniperBulletDamage;
-	int						m_iEnemySniperShipDamage;
+	static float	ENEMY_ROLLER_BULLET_WIDTH;
+	static float	ENEMY_ROLLER_BULLET_HEIGHT;
+	static float	ENEMY_ROLLER_BULLET_SPEED;
+	static int		ENEMY_ROLLER_BULLET_DAMAGE;
+	static int		ENEMY_ROLLER_SHIP_DAMAGE;
 
-	float					m_fEnemyRollerBulletWidth;
-	float					m_fEnemyRollerBulletHeight;
-	float					m_fEnemyRollerBulletSpeed;
-	int						m_iEnemyRollerBulletDamage;
-	int						m_iEnemyRollerShipDamage;
+	static float	ENEMY_GUARD_BULLET_WIDTH;
+	static float	ENEMY_GUARD_BULLET_HEIGHT;
+	static float	ENEMY_GUARD_BULLET_SPEED;
+	static int		ENEMY_GUARD_BULLET_DAMAGE;
+	static int		ENEMY_GUARD_SHIP_DAMAGE;
 
-	float					m_fEnemyGuardBulletWidth;
-	float					m_fEnemyGuardBulletHeight;
-	float					m_fEnemyGuardBulletSpeed;
-	int						m_iEnemyGuardBulletDamage;
-	int						m_iEnemyGuardShipDamage;
+	static float	ENEMY_BOSS_LASER_BULLET_WIDTH;
+	static float	ENEMY_BOSS_LASER_BULLET_HEIGHT;
+	static float	ENEMY_BOSS_LASER_BULLET_SPEED;
+	static int		ENEMY_BOSS_LASER_BULLET_DAMAGE;
+	
+	static float	ENEMY_BOSS_SCATTER_BULLET_WIDTH;
+	static float	ENEMY_BOSS_SCATTER_BULLET_HEIGHT;
+	static float	ENEMY_BOSS_SCATTER_BULLET_SPEED;
+	static int		ENEMY_BOSS_SCATTER_BULLET_DAMAGE;
 
-	float					m_fEnemyBoss1LaserBulletWidth;
-	float					m_fEnemyBoss1LaserBulletHeight;
-	float					m_fEnemyBoss1LaserBulletSpeed;
-	int						m_iEnemyBoss1LaserBulletDamage;
-	float					m_fEnemyBoss1ScatterBulletWidth;
-	float					m_fEnemyBoss1ScatterBulletHeight;
-	float					m_fEnemyBoss1ScatterBulletSpeed;
-	int						m_iEnemyBoss1ScatterBulletDamage;
-
-	float					m_fEnemyBoss1CannonSpeed;
-	int						m_iEnemyBoss1CannonDamage;
+	static float	ENEMY_BOSS_CANNON_BULLET_SPEED;
+	static int		ENEMY_BOSS_CANNON_BULLET_DAMAGE;
 
 	// ENEMIES
 
-	int						m_iEnemyDroneHealth;
-	float					m_fEnemyDroneWidth;
-	float					m_fEnemyDroneHeight;
-	float					m_fEnemyDroneLaunchSpeed;
-	float					m_fEnemyDroneLaunchShootTime;
-	float					m_fEnemyDroneStrikeSpeed;
-	float					m_fEnemyDroneStrikeShootTime;
-	float					m_fEnemyDroneEnterDuration;
-	float					m_fEnemyDroneFleeDuration;
+	static int		ENEMY_DRONE_HEALTH;
+	static float	ENEMY_DRONE_WIDTH;
+	static float	ENEMY_DRONE_HEIGHT;
+	static float	ENEMY_DRONE_LAUNCH_SPEED;
+	static float	ENEMY_DRONE_LAUNCH_SHOOT_TIME;
+	static float	ENEMY_DRONE_STRIKE_SPEED;
+	static float	ENEMY_DRONE_STRIKE_SHOOT_TIME;
+	static float	ENEMY_DRONE_ENTER_DURATION;
+	static float	ENEMY_DRONE_FLEE_DURATION;
 
-	int						m_iEnemySniperHealth;
-	float					m_fEnemySniperWidth;
-	float					m_fEnemySniperHeight;
-	float					m_fEnemySniperLaunchSpeed;
-	float					m_fEnemySniperLaunchShootTime;
-	float					m_fEnemySniperStrikeSpeed;
-	float					m_fEnemySniperStrikeShootTime;
-	float					m_fEnemySniperEnterDuration;
-	float					m_fEnemySniperFleeDuration;
+	static int		ENEMY_SNIPER_HEALTH;
+	static float	ENEMY_SNIPER_WIDTH;
+	static float	ENEMY_SNIPER_HEIGHT;
+	static float	ENEMY_SNIPER_LAUNCH_SPEED;
+	static float	ENEMY_SNIPER_LAUNCH_SHOOT_TIME;
+	static float	ENEMY_SNIPER_STRIKE_SPEED;
+	static float	ENEMY_SNIPER_STRIKE_SHOOT_TIME;
+	static float	ENEMY_SNIPER_ENTER_DURATION;
+	static float	ENEMY_SNIPER_FLEE_DURATION;
 
-	int						m_iEnemyRollerHealth;
-	float					m_fEnemyRollerWidth;
-	float					m_fEnemyRollerHeight;
-	float					m_fEnemyRollerLaunchSpeed;
-	float					m_fEnemyRollerLaunchShootTime;
-	float					m_fEnemyRollerStrikeSpeed;
-	float					m_fEnemyRollerStrikeShootTime;
-	float					m_fEnemyRollerEnterDuration;
-	float					m_fEnemyRollerFleeDuration;
+	static int		ENEMY_ROLLER_HEALTH;
+	static float	ENEMY_ROLLER_WIDTH;
+	static float	ENEMY_ROLLER_HEIGHT;
+	static float	ENEMY_ROLLER_LAUNCH_SPEED;
+	static float	ENEMY_ROLLER_LAUNCH_SHOOT_TIME;
+	static float	ENEMY_ROLLER_STRIKE_SPEED;
+	static float	ENEMY_ROLLER_STRIKE_SHOOT_TIME;
+	static float	ENEMY_ROLLER_ENTER_DURATION;
+	static float	ENEMY_ROLLER_FLEE_DURATION;
 
-	int						m_iEnemyGuardHealth;
-	float					m_fEnemyGuardWidth;
-	float					m_fEnemyGuardHeight;
-	float					m_fEnemyGuardLaunchSpeed;
-	float					m_fEnemyGuardLaunchShootTime;
-	float					m_fEnemyGuardStrikeSpeed;
-	float					m_fEnemyGuardStrikeShootTime;
-	float					m_fEnemyGuardEnterDuration;
-	float					m_fEnemyGuardFleeDuration;
+	static int		ENEMY_GUARD_HEALTH;
+	static float	ENEMY_GUARD_WIDTH;
+	static float	ENEMY_GUARD_HEIGHT;
+	static float	ENEMY_GUARD_LAUNCH_SPEED;
+	static float	ENEMY_GUARD_LAUNCH_SHOOT_TIME;
+	static float	ENEMY_GUARD_STRIKE_SPEED;
+	static float	ENEMY_GUARD_STRIKE_SHOOT_TIME;
+	static float	ENEMY_GUARD_ENTER_DURATION;
+	static float	ENEMY_GUARD_FLEE_DURATION;
 
-	float					m_fEnemyStrikeSpeedMultiplierMin;
-	float					m_fEnemyStrikeSpeedMultiplierMax;
+	static float	ENEMY_STRIKE_SPEED_MULTIPLIER_MIN;
+	static float	ENEMY_STRIKE_SPEED_MULTIPLIER_MAX;
 
 	// BOSSES
 
-	float					m_fEnemyBoss1FrameWidth;
-	float					m_fEnemyBoss1FrameHeight;
-	int						m_iEnemyBoss1FrameHealth;
-	float					m_fEnemyBoss1FrameSpeed;
-	float					m_fEnemyBoss1FrameShootTime;
+	static float	ENEMY_BOSS_FRAME_WIDTH;
+	static float	ENEMY_BOSS_FRAME_HEIGHT;
+	static int		ENEMY_BOSS_FRAME_HEALTH;
+	static float	ENEMY_BOSS_FRAME_SPEED;
+	static float	ENEMY_BOSS_FRAME_SHOOT_TIME;
 
-	float					m_fEnemyBoss1LaserWidth;
-	float					m_fEnemyBoss1LaserHeight;
-	int						m_iEnemyBoss1LaserHealth;
+	static float	ENEMY_BOSS_LASER_WIDTH;
+	static float	ENEMY_BOSS_LASER_HEIGHT;
+	static int		ENEMY_BOSS_LASER_HEALTH;
 
-	float					m_fEnemyBoss1ScatterWidth;
-	float					m_fEnemyBoss1ScatterHeight;
-	int						m_iEnemyBoss1ScatterHealth;
-	float					m_fEnemyBoss1ScatterSpeed;
-	float					m_fEnemyBoss1ScatterShootTime;
-	int						m_iEnemyBoss1ScatterShootMultiMax;
+	static float	ENEMY_BOSS_SCATTER_WIDTH;
+	static float	ENEMY_BOSS_SCATTER_HEIGHT;
+	static int		ENEMY_BOSS_SCATTER_HEALTH;
+	static float	ENEMY_BOSS_SCATTER_SPEED;
+	static float	ENEMY_BOSS_SCATTER_SHOOT_TIME;
+	static int		ENEMY_BOSS_SCATTER_SHOOT_AMOUNT_MAX;
 
-	float					m_fEnemyBoss1CannonShootTime;
+	static float	ENEMY_BOSS_CANNON_SHOOT_TIME;
 
 	// OBSTACLES
 
-	static float			BIG_ASTEROID_WIDTH;
-	static float			BIG_ASTEROID_HEIGHT;
+	static float	BIG_ASTEROID_WIDTH;
+	static float	BIG_ASTEROID_HEIGHT;
 
-	static float			MEDIUM_ASTEROID_WIDTH;
-	static float			MEDIUM_ASTEROID_HEIGHT;
+	static float	MEDIUM_ASTEROID_WIDTH;
+	static float	MEDIUM_ASTEROID_HEIGHT;
 
-	static float			SMALL_ASTEROID_WIDTH;
-	static float			SMALL_ASTEROID_HEIGHT;
+	static float	SMALL_ASTEROID_WIDTH;
+	static float	SMALL_ASTEROID_HEIGHT;
 
-	// NUMBERS
+	static float	OSTACLE_SPEED_DEPTH_1;
+	static float	OSTACLE_SPEED_DEPTH_2;
+	static float	OSTACLE_SPEED_DEPTH_3;
+	static float	OSTACLE_SPEED_DEPTH_4;
+	static float	OSTACLE_SPEED_DEPTH_5;
 
-	float					m_fGameNumberWidth;
-	float					m_fGameNumberHeight;
+	// UI ELEMENTS
 
-	// POSITIONS
+	static float	UI_NUMBER_WIDTH;
+	static float	UI_NUMBER_HEIGHT;
 
-	float					m_fPlayerEnterPositionX;
-	float					m_fPlayerEnterPositionY;
-	float					m_fPlayerGamePositionX;
-	float					m_fPlayerGamePositionY;
+	static int		UI_PLAYER_LIVES_BASE_POS_X;
+	static int		UI_PLAYER_LIVES_BASE_POS_Y;
+	static int		UI_PLAYER_LIVES_NUMBER_POS_X;
+	static int		UI_PLAYER_LIVES_NUMBER_POS_Y;
 
-	int						m_iPlayerLivesBasePositionX;
-	int						m_iPlayerLivesBasePositionY;
-	int						m_iPlayerLivesNumberPositionX;
-	int						m_iPlayerLivesNumberPositionY;
+	static int		UI_PLAYER_BLAST_BASE_POS_X;
+	static int		UI_PLAYER_BLAST_BASE_POS_Y;
+	static int		UI_PLAYER_BLAST_NUMBER_POS_X;
+	static int		UI_PLAYER_BLAST_NUMBER_POS_Y;
 
-	int						m_iPlayerBlastsBasePositionX;
-	int						m_iPlayerBlastsBasePositionY;
-	int						m_iPlayerBlastsNumberPositionX;
-	int						m_iPlayerBlastsNumberPositionY;
+	static int		UI_PLAYER_HEALTH_BAR_POS_X;
+	static int		UI_PLAYER_HEALTH_BAR_POS_Y;
+	static int		UI_PLAYER_HEALTH_FILL_POS_X;
+	static int		UI_PLAYER_HEALTH_FILL_POS_Y;
 
-	int						m_iPlayerHealthBarPositionX;
-	int						m_iPlayerHealthBarPositionY;
-	int						m_iPlayerHealthMeterPositionX;
-	int						m_iPlayerHealthMeterPositionY;
-
-	int						m_iPlayerCannonBarPositionX;
-	int						m_iPlayerCannonBarPositionY;
-	int						m_iPlayerCannonMeterPositionX;
-	int						m_iPlayerCannonMeterPositionY;
+	static int		UI_PLAYER_CANNON_BAR_POS_X;
+	static int		UI_PLAYER_CANNON_BAR_POS_Y;
+	static int		UI_PLAYER_CANNON_FILL_POS_X;
+	static int		UI_PLAYER_CANNON_FILL_POS_Y;
 };

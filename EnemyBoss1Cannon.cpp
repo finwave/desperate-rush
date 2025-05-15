@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "EnemyBoss1Cannon.h"
 
 CEnemyBoss1Cannon::CEnemyBoss1Cannon(	eTYPE eType,
@@ -21,7 +22,6 @@ CEnemyBoss1Cannon::~CEnemyBoss1Cannon(void)
 }
 
 HRESULT CEnemyBoss1Cannon::Create(	CTheApp* pTheApp,
-									CGameSettings* pGameSettings,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
 									std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -30,7 +30,6 @@ HRESULT CEnemyBoss1Cannon::Create(	CTheApp* pTheApp,
 	HRESULT hres;
 
 	hres = IEnemy::Create(	pTheApp,
-							pGameSettings,
 							mesh,
 							materials,
 							textures,
@@ -53,7 +52,7 @@ HRESULT CEnemyBoss1Cannon::Create(	CTheApp* pTheApp,
 	}
 	else
 	{
-		float fVolume = pGameSettings->m_fVolumeBossCannon * (float)iVolume;
+		float fVolume = CGameSettings::VOLUME_BOSS_CANNON * (float)iVolume;
 		float fExactVolume = (fVolume - 100.0f) * 50.0f;
 		this->m_iVolumeSoundEffect = (int)fExactVolume;
 	}
@@ -62,7 +61,6 @@ HRESULT CEnemyBoss1Cannon::Create(	CTheApp* pTheApp,
 }
 
 void CEnemyBoss1Cannon::Init(	CTheApp* pTheApp,
-								CGameSettings* pGameSettings,
 								CSprite* pSpriteAfterburn,
 								int iVolumeSoundEffect)
 {
@@ -75,15 +73,15 @@ void CEnemyBoss1Cannon::Init(	CTheApp* pTheApp,
 	this->m_iHealth = 0;
 	this->m_iHealthMax = this->m_iHealth;
 
-	this->m_fSpeed = pGameSettings->m_fEnemyBoss1CannonSpeed;
+	this->m_fSpeed = CGameSettings::ENEMY_BOSS_CANNON_BULLET_SPEED;
 	this->m_fSpeedDefault = this->m_fSpeed;
 
-	this->m_fShootTime = pGameSettings->m_fEnemyBoss1CannonShootTime;
-	this->m_iCannonDamage = pGameSettings->m_iEnemyBoss1CannonDamage;
+	this->m_fShootTime = CGameSettings::ENEMY_BOSS_CANNON_SHOOT_TIME;
+	this->m_iCannonDamage = CGameSettings::ENEMY_BOSS_CANNON_BULLET_DAMAGE;
 
 	this->m_fShootCounter = this->m_fShootTime + 5.0f;
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 void CEnemyBoss1Cannon::Release()

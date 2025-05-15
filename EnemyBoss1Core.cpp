@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "EnemyBoss1Core.h"
 
 CEnemyBoss1Core::CEnemyBoss1Core(	eTYPE eType,
@@ -17,7 +18,6 @@ CEnemyBoss1Core::~CEnemyBoss1Core(void)
 }
 
 HRESULT CEnemyBoss1Core::Create(CTheApp* pTheApp,
-								CGameSettings* pGameSettings,
 								LPDIRECT3DDEVICE9 pDevice,
 								LPD3DXMESH mesh,
 								std::vector<D3DMATERIAL9*> materials,
@@ -36,7 +36,6 @@ HRESULT CEnemyBoss1Core::Create(CTheApp* pTheApp,
 	/** CREATE SHIP **/
 
 	hres = IEnemy::Create(	pTheApp,
-							pGameSettings,
 							mesh,
 							materials,
 							textures,
@@ -55,20 +54,19 @@ HRESULT CEnemyBoss1Core::Create(CTheApp* pTheApp,
 }
 
 void CEnemyBoss1Core::Init(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							CSprite* pSpriteAfterburn,
 							int iVolumeSoundEffect)
 {
 	this->m_fEnemyWidth = 0.0f;
 	this->m_fEnemyHeight = 0.0f;
 
-	this->m_iHealth = pGameSettings->m_iEnemyBoss1FrameHealth;
+	this->m_iHealth = CGameSettings::ENEMY_BOSS_FRAME_HEALTH;
 	this->m_iHealthMax = this->m_iHealth;
 
 	this->m_fSpeed = 0.0f;
 	this->m_fSpeedDefault = this->m_fSpeed;
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 void CEnemyBoss1Core::Release()

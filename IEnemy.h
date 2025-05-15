@@ -4,7 +4,6 @@
 
 #include "C3DObject.h"
 #include "TheApp.h"
-#include "GameSettings.h"
 #include "Queue.h"
 #include "Sprite.h"
 #include "Weapon.h"
@@ -129,7 +128,6 @@ public:
 	virtual ~IEnemy();
 
 	virtual HRESULT Create(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
 							std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -137,7 +135,6 @@ public:
 							int iVolumeSoundEffect);
 
 	virtual HRESULT Create(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							LPD3DXMESH mesh,
 							std::vector<MESHDATA>& meshData,
 							CSprite* pSpriteAfterburn,
@@ -276,7 +273,6 @@ public:
 protected:
 
 	virtual void Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect);
 
@@ -307,7 +303,6 @@ protected:
 	CQueue<CWeapon*>		m_pBullets;	
 
 	CTheApp*				m_pTheApp;
-	CGameSettings*			m_pGameSettings;
 
 	eTYPE					m_eType;
 	eBEHAVIOUR				m_eBehaviour;

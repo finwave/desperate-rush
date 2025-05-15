@@ -1,4 +1,5 @@
 #include "LerpUtils.h"
+#include "GameSettings.h"
 #include "EnemyDrone.h"
 
 CEnemyDrone::CEnemyDrone(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -20,31 +21,30 @@ CEnemyDrone::~CEnemyDrone(void)
 }
 
 void CEnemyDrone::Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect)
 {
 	switch (this->m_eBehaviour)
 	{
 	case eBEHAVIOUR::eBEHAVIOUR_LAUNCH:
-		this->m_fSpeed = pGameSettings->m_fEnemyDroneLaunchSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyDroneLaunchShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_DRONE_LAUNCH_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_DRONE_LAUNCH_SHOOT_TIME;
 		break;
 	case eBEHAVIOUR::eBEHAVIOUR_STRIKE:
-		this->m_fSpeed = pGameSettings->m_fEnemyDroneStrikeSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyDroneStrikeShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_DRONE_STRIKE_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_DRONE_STRIKE_SHOOT_TIME;
 		break;
 	}
 
-	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyDroneEnterDuration;
-	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyDroneFleeDuration;
+	this->m_fShipEnterSpeed = CGameSettings::ENEMY_DRONE_ENTER_DURATION;
+	this->m_fShipFleeSpeed = CGameSettings::ENEMY_DRONE_FLEE_DURATION;
 
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyDroneWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyDroneHeight;
-	this->m_iHealth = pGameSettings->m_iEnemyDroneHealth;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_DRONE_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_DRONE_HEIGHT;
+	this->m_iHealth = CGameSettings::ENEMY_DRONE_HEALTH;
 
 	this->m_iHealthMax = this->m_iHealth;
 	this->m_fSpeedDefault = this->m_fSpeed;
@@ -56,7 +56,7 @@ void CEnemyDrone::Init(	CTheApp* pTheApp,
 	this->GenerateRandomMoveTime();
 	this->GenerateRandomShootTime();
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 bool CEnemyDrone::Shoot()

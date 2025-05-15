@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "EnemyGuard.h"
 
 CEnemyGuard::CEnemyGuard(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -19,32 +20,31 @@ CEnemyGuard::~CEnemyGuard(void)
 }
 
 void CEnemyGuard::Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect)
 {
 	switch (this->m_eBehaviour)
 	{
 	case eBEHAVIOUR::eBEHAVIOUR_LAUNCH:
-		this->m_fSpeed = pGameSettings->m_fEnemyGuardLaunchSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyGuardLaunchShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_GUARD_LAUNCH_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_GUARD_LAUNCH_SHOOT_TIME;
 		break;
 	case eBEHAVIOUR::eBEHAVIOUR_STRIKE:
-		this->m_fSpeed = pGameSettings->m_fEnemyGuardStrikeSpeed;
-		this->m_fShootTime = pGameSettings->m_fEnemyGuardStrikeShootTime;
+		this->m_fSpeed = CGameSettings::ENEMY_GUARD_STRIKE_SPEED;
+		this->m_fShootTime = CGameSettings::ENEMY_GUARD_STRIKE_SHOOT_TIME;
 		break;
 	}
 
-	this->m_fShipEnterSpeed = pGameSettings->m_fEnemyGuardEnterDuration;
-	this->m_fShipFleeSpeed = pGameSettings->m_fEnemyGuardFleeDuration;
+	this->m_fShipEnterSpeed = CGameSettings::ENEMY_GUARD_ENTER_DURATION;
+	this->m_fShipFleeSpeed = CGameSettings::ENEMY_GUARD_FLEE_DURATION;
 
 	this->m_bEnterSound = true;
 	this->m_bFleeSound = true;
 
-	this->m_fEnemyWidth = pGameSettings->m_fEnemyGuardWidth;
-	this->m_fEnemyHeight = pGameSettings->m_fEnemyGuardHeight;
+	this->m_fEnemyWidth = CGameSettings::ENEMY_GUARD_WIDTH;
+	this->m_fEnemyHeight = CGameSettings::ENEMY_GUARD_HEIGHT;
 
-	this->m_iHealth = pGameSettings->m_iEnemyGuardHealth;
+	this->m_iHealth = CGameSettings::ENEMY_GUARD_HEALTH;
 
 	this->m_iHealthMax = this->m_iHealth;
 	this->m_fSpeedDefault = this->m_fSpeed;
@@ -56,7 +56,7 @@ void CEnemyGuard::Init(	CTheApp* pTheApp,
 	this->GenerateRandomMoveTime();
 	this->GenerateRandomShootTime();
 
-	IEnemy::Init(pTheApp, pGameSettings, pSpriteAfterburn, iVolumeSoundEffect);
+	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
 bool CEnemyGuard::Shoot()

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "EnemyBoss.h"
-#include "Player.h"
-#include "WeaponBoss1Laser.h"
+//#include "Player.h"
 
 class CEnemyBoss1Laser : public CEnemyBoss
 {
@@ -28,7 +27,6 @@ public:
 	virtual ~CEnemyBoss1Laser(void);
 
 	virtual HRESULT Create(	CTheApp* pTheApp,
-							CGameSettings* pGameSettings,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
 							std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -74,7 +72,6 @@ public:
 protected:
 
 	virtual void Init(	CTheApp* pTheApp,
-						CGameSettings* pGameSettings,
 						CSprite* pSpriteAfterburn,
 						int iVolumeSoundEffect);
 

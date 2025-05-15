@@ -1,5 +1,154 @@
 #include "GameSettings.h"
 
+// SOUND VOLUME (0.0f - 1.0f)
+
+float CGameSettings::VOLUME_MUSIC_GAME_OVER = 0.85f;
+
+float CGameSettings::VOLUME_PLAYER_MINIGUN_SHOOT = 0.9f;
+float CGameSettings::VOLUME_PLAYER_MINIGUN_TURN = 0.9f;
+float CGameSettings::VOLUME_PLAYER_CANNON = 0.93f;
+float CGameSettings::VOLUME_PLAYER_BLAST = 0.93f;
+float CGameSettings::VOLUME_PLAYER_VELOCITY_AFTERBURN = 0.8f;
+
+float CGameSettings::VOLUME_ENEMY_SHOOT_ROLLER = 1.0f;
+
+float CGameSettings::VOLUME_BOSS_SCATTER = 0.88f;
+float CGameSettings::VOLUME_BOSS_LASER = 0.94f;
+float CGameSettings::VOLUME_BOSS_CANNON = 0.9f;
+
+float CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MIN = 0.8f;
+float CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MAX = 1.0f;
+
+// PLAYER
+
+int CGameSettings::PLAYER_LIVES = 4;
+int CGameSettings::PLAYER_HEALTH = 100;
+float CGameSettings::PLAYER_WIDTH = 23.0f;
+float CGameSettings::PLAYER_HEIGHT = 34.0f;
+float CGameSettings::PLAYER_SPEED = 125.0f;
+float CGameSettings::PLAYER_MAX_VELOCITY = 1.75f * CGameSettings::PLAYER_SPEED;
+
+int CGameSettings::PLAYER_CANNON_ENERGY_MAX = 200;
+int CGameSettings::PLAYER_CANNON_DAMAGE = 75;
+float CGameSettings::PLAYER_CANNON_SPEED = 280.0f;
+float CGameSettings::PLAYER_CANNON_TIMER = 14.0f;
+int CGameSettings::PLAYER_BLAST_DAMAGE = 100;
+int CGameSettings::PLAYER_BLAST_AMOUNT = 3;
+
+float CGameSettings::PLAYER_SHIP_ENTER_POS_X = 0.0f;
+float CGameSettings::PLAYER_SHIP_ENTER_POS_Y = -250.0f;
+float CGameSettings::PLAYER_SHIP_START_POS_Y = -105.0f;
+
+// WEAPONS
+
+float CGameSettings::PLAYER_BULLET_WIDTH = 2.0f;
+float CGameSettings::PLAYER_BULLET_HEIGHT = 2.0f;
+
+float CGameSettings::ENEMY_DRONE_BULLET_WIDTH = 5.5f;
+float CGameSettings::ENEMY_DRONE_BULLET_HEIGHT = 5.5f;
+float CGameSettings::ENEMY_DRONE_BULLET_SPEED = 400.0f;
+int CGameSettings::ENEMY_DRONE_BULLET_DAMAGE = 4;
+int CGameSettings::ENEMY_DRONE_SHIP_DAMAGE = 50;
+
+float CGameSettings::ENEMY_SNIPER_BULLET_WIDTH = 2.8f;
+float CGameSettings::ENEMY_SNIPER_BULLET_HEIGHT = 10.0f;
+float CGameSettings::ENEMY_SNIPER_BULLET_SPEED = 450.0f;
+int CGameSettings::ENEMY_SNIPER_BULLET_DAMAGE = 6;
+int CGameSettings::ENEMY_SNIPER_SHIP_DAMAGE = 60;
+
+float CGameSettings::ENEMY_ROLLER_BULLET_WIDTH = 2.5f;
+float CGameSettings::ENEMY_ROLLER_BULLET_HEIGHT = 2.5f;
+float CGameSettings::ENEMY_ROLLER_BULLET_SPEED = 120.0f;
+int CGameSettings::ENEMY_ROLLER_BULLET_DAMAGE = 3;
+int CGameSettings::ENEMY_ROLLER_SHIP_DAMAGE = 70;
+
+float CGameSettings::ENEMY_GUARD_BULLET_WIDTH = 3.5f;
+float CGameSettings::ENEMY_GUARD_BULLET_HEIGHT = 3.5f;
+float CGameSettings::ENEMY_GUARD_BULLET_SPEED = 250.0f;
+int CGameSettings::ENEMY_GUARD_BULLET_DAMAGE = 6;
+int CGameSettings::ENEMY_GUARD_SHIP_DAMAGE = 80;
+
+float CGameSettings::ENEMY_BOSS_LASER_BULLET_WIDTH = 5.0f;
+float CGameSettings::ENEMY_BOSS_LASER_BULLET_HEIGHT = 5.0f;
+float CGameSettings::ENEMY_BOSS_LASER_BULLET_SPEED = 230.0f;
+int CGameSettings::ENEMY_BOSS_LASER_BULLET_DAMAGE = 3;
+
+float CGameSettings::ENEMY_BOSS_SCATTER_BULLET_WIDTH = 2.5f;
+float CGameSettings::ENEMY_BOSS_SCATTER_BULLET_HEIGHT = 2.5f;
+float CGameSettings::ENEMY_BOSS_SCATTER_BULLET_SPEED = 180.0f;
+int CGameSettings::ENEMY_BOSS_SCATTER_BULLET_DAMAGE = 5;
+
+float CGameSettings::ENEMY_BOSS_CANNON_BULLET_SPEED = 220.0f;
+int CGameSettings::ENEMY_BOSS_CANNON_BULLET_DAMAGE = 200;
+
+// ENEMIES
+
+int CGameSettings::ENEMY_DRONE_HEALTH = 15;
+float CGameSettings::ENEMY_DRONE_WIDTH = 21.0f;
+float CGameSettings::ENEMY_DRONE_HEIGHT = 28.0f;
+float CGameSettings::ENEMY_DRONE_LAUNCH_SPEED = 95.0f;
+float CGameSettings::ENEMY_DRONE_LAUNCH_SHOOT_TIME = 0.2f;
+float CGameSettings::ENEMY_DRONE_STRIKE_SPEED = 260.0f;
+float CGameSettings::ENEMY_DRONE_STRIKE_SHOOT_TIME = 0.35f;
+float CGameSettings::ENEMY_DRONE_ENTER_DURATION = 0.005625f;
+float CGameSettings::ENEMY_DRONE_FLEE_DURATION = 0.67f * CGameSettings::ENEMY_DRONE_ENTER_DURATION;
+
+int CGameSettings::ENEMY_SNIPER_HEALTH = 25;
+float CGameSettings::ENEMY_SNIPER_WIDTH = 26.0f;
+float CGameSettings::ENEMY_SNIPER_HEIGHT = 35.0f;
+float CGameSettings::ENEMY_SNIPER_LAUNCH_SPEED = 90.0f;
+float CGameSettings::ENEMY_SNIPER_LAUNCH_SHOOT_TIME = 0.25f;
+float CGameSettings::ENEMY_SNIPER_STRIKE_SPEED = 200.0f;
+float CGameSettings::ENEMY_SNIPER_STRIKE_SHOOT_TIME = 0.45f;
+float CGameSettings::ENEMY_SNIPER_ENTER_DURATION = 0.00525f;
+float CGameSettings::ENEMY_SNIPER_FLEE_DURATION = 0.67f * CGameSettings::ENEMY_SNIPER_ENTER_DURATION;
+
+int CGameSettings::ENEMY_ROLLER_HEALTH = 50;
+float CGameSettings::ENEMY_ROLLER_WIDTH = 50.0f;
+float CGameSettings::ENEMY_ROLLER_HEIGHT = 50.0f;
+float CGameSettings::ENEMY_ROLLER_LAUNCH_SPEED = 70.0f;
+float CGameSettings::ENEMY_ROLLER_LAUNCH_SHOOT_TIME = 0.4f;
+float CGameSettings::ENEMY_ROLLER_STRIKE_SPEED = 150.0f;
+float CGameSettings::ENEMY_ROLLER_STRIKE_SHOOT_TIME = 0.8f;
+float CGameSettings::ENEMY_ROLLER_ENTER_DURATION = 0.0065625f;
+float CGameSettings::ENEMY_ROLLER_FLEE_DURATION = 0.67f * CGameSettings::ENEMY_ROLLER_ENTER_DURATION;
+
+int CGameSettings::ENEMY_GUARD_HEALTH = 70;
+float CGameSettings::ENEMY_GUARD_WIDTH = 10.0f;
+float CGameSettings::ENEMY_GUARD_HEIGHT = 10.0f;
+float CGameSettings::ENEMY_GUARD_LAUNCH_SPEED = 60.0f;
+float CGameSettings::ENEMY_GUARD_LAUNCH_SHOOT_TIME = 0.4f;
+float CGameSettings::ENEMY_GUARD_STRIKE_SPEED = 120.0f;
+float CGameSettings::ENEMY_GUARD_STRIKE_SHOOT_TIME = 1.2f;
+float CGameSettings::ENEMY_GUARD_ENTER_DURATION = 0.0065625f;
+float CGameSettings::ENEMY_GUARD_FLEE_DURATION = 0.67f * CGameSettings::ENEMY_GUARD_ENTER_DURATION;
+
+float CGameSettings::ENEMY_STRIKE_SPEED_MULTIPLIER_MIN = 0.95f;
+float CGameSettings::ENEMY_STRIKE_SPEED_MULTIPLIER_MAX = 1.0f;
+
+// BOSSES
+
+float CGameSettings::ENEMY_BOSS_FRAME_WIDTH = 85.0f;
+float CGameSettings::ENEMY_BOSS_FRAME_HEIGHT = 123.0f;
+int CGameSettings::ENEMY_BOSS_FRAME_HEALTH = 1500;
+float CGameSettings::ENEMY_BOSS_FRAME_SPEED = 70.0f;
+float CGameSettings::ENEMY_BOSS_FRAME_SHOOT_TIME = 1.0f;
+
+float CGameSettings::ENEMY_BOSS_LASER_WIDTH = 60.0f;
+float CGameSettings::ENEMY_BOSS_LASER_HEIGHT = 60.0f;
+int CGameSettings::ENEMY_BOSS_LASER_HEALTH = 600;
+
+float CGameSettings::ENEMY_BOSS_SCATTER_WIDTH = 25.0f;
+float CGameSettings::ENEMY_BOSS_SCATTER_HEIGHT = 25.0f;
+int CGameSettings::ENEMY_BOSS_SCATTER_HEALTH = 400;
+float CGameSettings::ENEMY_BOSS_SCATTER_SPEED = 100.0f;
+float CGameSettings::ENEMY_BOSS_SCATTER_SHOOT_TIME = 4.5f;
+int CGameSettings::ENEMY_BOSS_SCATTER_SHOOT_AMOUNT_MAX = 40;
+
+float CGameSettings::ENEMY_BOSS_CANNON_SHOOT_TIME = 4.0f;
+
+// OBSTACLES
+
 float CGameSettings::BIG_ASTEROID_WIDTH = 74.0f;
 float CGameSettings::BIG_ASTEROID_HEIGHT = 45.0f;
 
@@ -9,378 +158,50 @@ float CGameSettings::MEDIUM_ASTEROID_HEIGHT = 36.0f;
 float CGameSettings::SMALL_ASTEROID_WIDTH = 20.0f;
 float CGameSettings::SMALL_ASTEROID_HEIGHT = 15.0f;
 
-CGameSettings::CGameSettings(void)
-{
-	// SOUND VOLUME
-	
-	this->m_fVolumeMusicGameOver = 0.0f;
-
-	this->m_fVolumePlayerMinigunShoot = 0.0f;
-	this->m_fVolumePlayerMinigunTurn = 0.0f;
-	this->m_fVolumePlayerCannon = 0.0f;
-	this->m_fVolumePlayerBlast = 0.0f;
-	this->m_fVolumePlayerVelocityAfterburn = 0.0f;
-
-	this->m_fVolumeEnemyShootRoller = 0.0f;
-
-	this->m_fVolumeBossScatter = 0.0f;
-	this->m_fVolumeBossLaser = 0.0f;
-	this->m_fVolumeBossCannon = 0.0f;
-
-	this->m_fVolumeBossChainExplosionMin = 0.0f;
-	this->m_fVolumeBossChainExplosionMax = 0.0f;
-
-	// PLAYER
-
-	this->m_iPlayerLives = 0;
-	this->m_iPlayerHealth = 0;
-	this->m_fPlayerWidth = 0.0f;
-	this->m_fPlayerHeight = 0.0f;
-	this->m_fPlayerSpeed = 0.0f;
-	this->m_fPlayerMaxVelocity = 0.0f;
-
-	this->m_iPlayerCannonEnergyMax = 0;
-	this->m_iPlayerCannonDamage = 0;
-	this->m_fPlayerCannonSpeed = 0.0f;
-	this->m_fPlayerCannonTimer = 0.0f;
-	this->m_iPlayerBlastDamage = 0;
-	this->m_iPlayerBlasts = 0;
-
-	// WEAPONS
-
-	this->m_fPlayerBulletMinigunWidth = 0.0f;
-	this->m_fPlayerBulletMinigunHeight = 0.0f;
-
-	this->m_fEnemyDroneBulletWidth = 0.0f;
-	this->m_fEnemyDroneBulletHeight = 0.0f;
-	this->m_fEnemyDroneBulletSpeed = 0.0f;
-	this->m_iEnemyDroneBulletDamage = 0;
-	this->m_iEnemyDroneShipDamage = 0;
-
-	this->m_fEnemySniperBulletWidth = 0.0f;
-	this->m_fEnemySniperBulletHeight = 0.0f;
-	this->m_fEnemySniperBulletSpeed = 0.0f;
-	this->m_iEnemySniperBulletDamage = 0;
-	this->m_iEnemySniperShipDamage = 0;
-
-	this->m_fEnemyRollerBulletWidth = 0.0f;
-	this->m_fEnemyRollerBulletHeight = 0.0f;
-	this->m_fEnemyRollerBulletSpeed = 0.0f;
-	this->m_iEnemyRollerBulletDamage = 0;
-	this->m_iEnemyRollerShipDamage = 0;
-
-	this->m_fEnemyGuardBulletWidth = 0.0f;
-	this->m_fEnemyGuardBulletHeight = 0.0f;
-	this->m_fEnemyGuardBulletSpeed = 0.0f;
-	this->m_iEnemyGuardBulletDamage = 0;
-	this->m_iEnemyGuardShipDamage = 0;
-
-	this->m_fEnemyBoss1LaserBulletWidth = 0.0f;
-	this->m_fEnemyBoss1LaserBulletHeight = 0.0f;
-	this->m_fEnemyBoss1LaserBulletSpeed = 0.0f;
-	this->m_iEnemyBoss1LaserBulletDamage = 30;
-	this->m_fEnemyBoss1ScatterBulletWidth = 0.0f;
-	this->m_fEnemyBoss1ScatterBulletHeight = 0.0f;
-	this->m_fEnemyBoss1ScatterBulletSpeed = 0.0f;
-	this->m_iEnemyBoss1ScatterBulletDamage = 0;
-
-	this->m_fEnemyBoss1CannonSpeed = 0.0f;
-	this->m_iEnemyBoss1CannonDamage = 0;
-
-	// ENEMIES
-
-	this->m_iEnemyDroneHealth = 0;
-	this->m_fEnemyDroneWidth = 0.0f;
-	this->m_fEnemyDroneHeight = 0.0f;
-	this->m_fEnemyDroneLaunchSpeed = 0.0f;
-	this->m_fEnemyDroneLaunchShootTime = 0.0f;
-	this->m_fEnemyDroneStrikeSpeed = 0.0f;
-	this->m_fEnemyDroneStrikeShootTime = 0.0f;
-	this->m_fEnemyDroneEnterDuration = 0.0f;
-	this->m_fEnemyDroneFleeDuration = 0.0f;
-
-	this->m_iEnemySniperHealth = 0;
-	this->m_fEnemySniperWidth = 0.0f;
-	this->m_fEnemySniperHeight = 0.0f;
-	this->m_fEnemySniperLaunchSpeed = 0.0f;
-	this->m_fEnemySniperLaunchShootTime = 0.0f;
-	this->m_fEnemySniperStrikeSpeed = 0.0f;
-	this->m_fEnemySniperStrikeShootTime = 0.0f;
-	this->m_fEnemySniperEnterDuration = 0.0f;
-	this->m_fEnemySniperFleeDuration = 0.0f;
-
-	this->m_iEnemyRollerHealth = 0;
-	this->m_fEnemyRollerWidth = 0.0f;
-	this->m_fEnemyRollerHeight = 0.0f;
-	this->m_fEnemyRollerLaunchSpeed = 0.0f;
-	this->m_fEnemyRollerLaunchShootTime = 0.0f;
-	this->m_fEnemyRollerStrikeSpeed = 0.0f;
-	this->m_fEnemyRollerStrikeShootTime = 0.0f;
-	this->m_fEnemyRollerEnterDuration = 0.0f;
-	this->m_fEnemyRollerFleeDuration = 0.0f;
-
-	this->m_iEnemyGuardHealth = 0;
-	this->m_fEnemyGuardWidth = 0.0f;
-	this->m_fEnemyGuardHeight = 0.0f;
-	this->m_fEnemyGuardLaunchSpeed = 0.0f;
-	this->m_fEnemyGuardLaunchShootTime = 0.0f;
-	this->m_fEnemyGuardStrikeSpeed = 0.0f;
-	this->m_fEnemyGuardStrikeShootTime = 0.0f;
-	this->m_fEnemyGuardEnterDuration = 0.0f;
-	this->m_fEnemyGuardFleeDuration = 0.0f;
-
-	this->m_fEnemyStrikeSpeedMultiplierMin = 0.0f;
-	this->m_fEnemyStrikeSpeedMultiplierMax = 0.0f;
-
-	// BOSSES
-
-	this->m_fEnemyBoss1FrameWidth = 0.0f;
-	this->m_fEnemyBoss1FrameHeight = 0.0f;
-	this->m_iEnemyBoss1FrameHealth = 0.0f;
-	this->m_fEnemyBoss1FrameSpeed = 0.0f;
-	this->m_fEnemyBoss1FrameShootTime = 0.0f;
-
-	this->m_fEnemyBoss1LaserWidth = 0.0f;
-	this->m_fEnemyBoss1LaserHeight = 0.0f;
-	this->m_iEnemyBoss1LaserHealth = 0;
-
-	this->m_fEnemyBoss1ScatterWidth = 0.0f;
-	this->m_fEnemyBoss1ScatterHeight = 0.0f;
-	this->m_iEnemyBoss1ScatterHealth = 0;
-	this->m_fEnemyBoss1ScatterSpeed = 0.0f;
-	this->m_fEnemyBoss1ScatterShootTime = 0.0f;
-	this->m_iEnemyBoss1ScatterShootMultiMax = 0;
-
-	this->m_fEnemyBoss1CannonShootTime = 0.0f;
-
-	// NUMBERS
-
-	this->m_fGameNumberWidth = 0.0f;
-	this->m_fGameNumberHeight = 0.0f;
-
-	// POSITIONS
-
-	this->m_fPlayerEnterPositionX = 0.0f;
-	this->m_fPlayerEnterPositionY = 0.0f;
-	this->m_fPlayerGamePositionX = 0.0f;
-	this->m_fPlayerGamePositionY = 0.0f;
-
-	this->m_iPlayerLivesBasePositionX = 0;
-	this->m_iPlayerLivesBasePositionY = 0;
-	this->m_iPlayerLivesNumberPositionX = 0;
-	this->m_iPlayerLivesNumberPositionY = 0;
-
-	this->m_iPlayerBlastsBasePositionX = 0;
-	this->m_iPlayerBlastsBasePositionY = 0;
-	this->m_iPlayerBlastsNumberPositionX = 0;
-	this->m_iPlayerBlastsNumberPositionY = 0;
-
-	this->m_iPlayerHealthBarPositionX = 0;
-	this->m_iPlayerHealthBarPositionY = 0;
-	this->m_iPlayerHealthMeterPositionX = 0;
-	this->m_iPlayerHealthMeterPositionY = 0;
-
-	this->m_iPlayerCannonBarPositionX = 0;
-	this->m_iPlayerCannonBarPositionY = 0;
-	this->m_iPlayerCannonMeterPositionX = 0;
-	this->m_iPlayerCannonMeterPositionY = 0;
-}
-
-CGameSettings::~CGameSettings(void)
-{
-}
-
-void CGameSettings::Create()
-{
-	// SOUND VOLUME (0.0f - 1.0f)
-
-	this->m_fVolumeMusicGameOver = 0.85f;
-
-	this->m_fVolumePlayerMinigunShoot = 0.9f;
-	this->m_fVolumePlayerMinigunTurn = 0.9f;
-	this->m_fVolumePlayerCannon = 0.93f;
-	this->m_fVolumePlayerBlast = 0.93f;
-	this->m_fVolumePlayerVelocityAfterburn = 0.8f;
-
-	this->m_fVolumeEnemyShootRoller = 1.0f;
-
-	this->m_fVolumeBossScatter = 0.88f;
-	this->m_fVolumeBossLaser = 0.94f;
-	this->m_fVolumeBossCannon = 0.9f;
-
-	this->m_fVolumeBossChainExplosionMin = 0.8f;
-	this->m_fVolumeBossChainExplosionMax = 1.0f;
-
-	// PLAYER
-
-	this->m_iPlayerLives = 4;
-	this->m_iPlayerHealth = 100;
-	this->m_fPlayerWidth = 23.0f;
-	this->m_fPlayerHeight = 34.0f;
-	this->m_fPlayerSpeed = 125.0f;
-	this->m_fPlayerMaxVelocity = 1.75f * this->m_fPlayerSpeed;
-
-	this->m_iPlayerCannonEnergyMax = 200;
-	this->m_iPlayerCannonDamage = 75;
-	this->m_fPlayerCannonSpeed = 280.0f;
-	this->m_fPlayerCannonTimer = 14.0f;
-	this->m_iPlayerBlastDamage = 100;
-	this->m_iPlayerBlasts = 3;
-	
-	// WEAPONS
-
-	this->m_fPlayerBulletMinigunWidth = 2.0f;
-	this->m_fPlayerBulletMinigunHeight = 2.0f;
-
-	this->m_fEnemyDroneBulletWidth = 5.5f;
-	this->m_fEnemyDroneBulletHeight = 5.5f;
-	this->m_fEnemyDroneBulletSpeed = 400.0f;
-	this->m_iEnemyDroneBulletDamage = 4;
-	this->m_iEnemyDroneShipDamage = 50;
-
-	this->m_fEnemySniperBulletWidth = 2.8f;
-	this->m_fEnemySniperBulletHeight = 10.0f;
-	this->m_fEnemySniperBulletSpeed = 450.0f;
-	this->m_iEnemySniperBulletDamage = 6;
-	this->m_iEnemySniperShipDamage = 60;
-
-	this->m_fEnemyRollerBulletWidth = 2.5f;
-	this->m_fEnemyRollerBulletHeight = 2.5f;
-	this->m_fEnemyRollerBulletSpeed = 120.0f;
-	this->m_iEnemyRollerBulletDamage = 3;
-	this->m_iEnemyRollerShipDamage = 70;
-
-	this->m_fEnemyGuardBulletWidth = 3.5f;
-	this->m_fEnemyGuardBulletHeight = 3.5f;
-	this->m_fEnemyGuardBulletSpeed = 250.0f;
-	this->m_iEnemyGuardBulletDamage = 6;
-	this->m_iEnemyGuardShipDamage = 80;
-
-	this->m_fEnemyBoss1LaserBulletWidth = 5.0f;
-	this->m_fEnemyBoss1LaserBulletHeight = 5.0f;
-	this->m_fEnemyBoss1LaserBulletSpeed = 230.0f;
-	this->m_iEnemyBoss1LaserBulletDamage = 3;
-
-	this->m_fEnemyBoss1ScatterBulletWidth = 2.5f;
-	this->m_fEnemyBoss1ScatterBulletHeight = 2.5f;
-	this->m_fEnemyBoss1ScatterBulletSpeed = 180.0f;
-	this->m_iEnemyBoss1ScatterBulletDamage = 5;
-
-	this->m_fEnemyBoss1CannonSpeed = 220.0f;
-	this->m_iEnemyBoss1CannonDamage = 200;
-
-	// ENEMIES
-	
-	this->m_iEnemyDroneHealth = 15;
-	this->m_fEnemyDroneWidth = 21.0f;
-	this->m_fEnemyDroneHeight = 28.0f;
-	this->m_fEnemyDroneLaunchSpeed = 95.0f;
-	this->m_fEnemyDroneLaunchShootTime = 0.2f;
-	this->m_fEnemyDroneStrikeSpeed = 260.0f;
-	this->m_fEnemyDroneStrikeShootTime = 0.35f;
-	this->m_fEnemyDroneEnterDuration = 0.005625f;
-	this->m_fEnemyDroneFleeDuration = 0.67f * this->m_fEnemyDroneEnterDuration;
-
-	this->m_iEnemySniperHealth = 25;
-	this->m_fEnemySniperWidth = 26.0f;
-	this->m_fEnemySniperHeight = 35.0f;
-	this->m_fEnemySniperLaunchSpeed = 90.0f;
-	this->m_fEnemySniperLaunchShootTime = 0.25f;
-	this->m_fEnemySniperStrikeSpeed = 200.0f;
-	this->m_fEnemySniperStrikeShootTime = 0.45f;
-	this->m_fEnemySniperEnterDuration = 0.00525f;
-	this->m_fEnemySniperFleeDuration = 0.67f * this->m_fEnemySniperEnterDuration;
-
-	this->m_iEnemyRollerHealth = 50;
-	this->m_fEnemyRollerWidth = 50.0f;
-	this->m_fEnemyRollerHeight = 50.0f;
-	this->m_fEnemyRollerLaunchSpeed = 70.0f;
-	this->m_fEnemyRollerLaunchShootTime = 0.4f;
-	this->m_fEnemyRollerStrikeSpeed = 150.0f;
-	this->m_fEnemyRollerStrikeShootTime = 0.8f;
-	this->m_fEnemyRollerEnterDuration = 0.0065625f;
-	this->m_fEnemyRollerFleeDuration = 0.67f * this->m_fEnemyRollerEnterDuration;
-
-	this->m_iEnemyGuardHealth = 70;
-	this->m_fEnemyGuardWidth = 10.0f;
-	this->m_fEnemyGuardHeight = 10.0f;
-	this->m_fEnemyGuardLaunchSpeed = 60.0f;
-	this->m_fEnemyGuardLaunchShootTime = 0.4f;
-	this->m_fEnemyGuardStrikeSpeed = 120.0f;
-	this->m_fEnemyGuardStrikeShootTime = 1.2f;
-	this->m_fEnemyGuardEnterDuration = 0.0065625f;
-	this->m_fEnemyGuardFleeDuration = 0.67f * this->m_fEnemyGuardEnterDuration;
-
-	this->m_fEnemyStrikeSpeedMultiplierMin = 0.95f;
-	this->m_fEnemyStrikeSpeedMultiplierMax = 1.0f;
-
-	// BOSSES
-
-	this->m_fEnemyBoss1FrameWidth = 85.0f;
-	this->m_fEnemyBoss1FrameHeight = 123.0f;
-	this->m_iEnemyBoss1FrameHealth = 1500;
-	this->m_fEnemyBoss1FrameSpeed = 70.0f;
-	this->m_fEnemyBoss1FrameShootTime = 1.0f;
-
-	this->m_fEnemyBoss1LaserWidth = 60.0f;
-	this->m_fEnemyBoss1LaserHeight = 60.0f;
-	this->m_iEnemyBoss1LaserHealth = 600;
-
-	this->m_fEnemyBoss1ScatterWidth = 25.0f;
-	this->m_fEnemyBoss1ScatterHeight = 25.0f;
-	this->m_iEnemyBoss1ScatterHealth = 400;
-	this->m_fEnemyBoss1ScatterSpeed = 100.0f;
-	this->m_fEnemyBoss1ScatterShootTime = 4.5f;
-	this->m_iEnemyBoss1ScatterShootMultiMax = 40;
-
-	this->m_fEnemyBoss1CannonShootTime = 4.0f;
-
-	// NUMBERS
-
-	this->m_fGameNumberWidth = 7.0f;
-	this->m_fGameNumberHeight = 10.0f;
-
-	// POSITIONS
-
-	this->m_fPlayerEnterPositionX = 0.0f;
-	this->m_fPlayerEnterPositionY = -250.0f;
-	this->m_fPlayerGamePositionX = 0.0f;
-	this->m_fPlayerGamePositionY = -105.0f;
-
-	this->m_iPlayerLivesBasePositionX = 29;
-	this->m_iPlayerLivesBasePositionY = 29;
-	this->m_iPlayerLivesNumberPositionX = this->m_iPlayerLivesBasePositionX + 66;
-	this->m_iPlayerLivesNumberPositionY = this->m_iPlayerLivesBasePositionY + 13;
-
-	this->m_iPlayerBlastsBasePositionX = 661;
-	this->m_iPlayerBlastsBasePositionY = 29;
-	this->m_iPlayerBlastsNumberPositionX = this->m_iPlayerBlastsBasePositionX + 66;
-	this->m_iPlayerBlastsNumberPositionY = this->m_iPlayerBlastsBasePositionY + 13;
-
-	this->m_iPlayerHealthBarPositionX = 148;
-	this->m_iPlayerHealthBarPositionY = 29;
-	this->m_iPlayerHealthMeterPositionX = this->m_iPlayerHealthBarPositionX + 5;
-	this->m_iPlayerHealthMeterPositionY = this->m_iPlayerHealthBarPositionY + 3;
-
-	this->m_iPlayerCannonBarPositionX = 148;
-	this->m_iPlayerCannonBarPositionY = 57;
-	this->m_iPlayerCannonMeterPositionX = this->m_iPlayerCannonBarPositionX + 5;
-	this->m_iPlayerCannonMeterPositionY = this->m_iPlayerCannonBarPositionY + 3;
-}
+float CGameSettings::OSTACLE_SPEED_DEPTH_1 = 35.0f;
+float CGameSettings::OSTACLE_SPEED_DEPTH_2 = 15.0f;
+float CGameSettings::OSTACLE_SPEED_DEPTH_3 = 11.0f;
+float CGameSettings::OSTACLE_SPEED_DEPTH_4 = 7.0f;
+float CGameSettings::OSTACLE_SPEED_DEPTH_5 = 3.0f;
+
+// UI ELEMENTS
+
+float CGameSettings::UI_NUMBER_WIDTH = 7.0f;
+float CGameSettings::UI_NUMBER_HEIGHT = 10.0f;
+
+int CGameSettings::UI_PLAYER_LIVES_BASE_POS_X = 29;
+int CGameSettings::UI_PLAYER_LIVES_BASE_POS_Y = 29;
+int CGameSettings::UI_PLAYER_LIVES_NUMBER_POS_X = CGameSettings::UI_PLAYER_LIVES_BASE_POS_X + 66;
+int CGameSettings::UI_PLAYER_LIVES_NUMBER_POS_Y = CGameSettings::UI_PLAYER_LIVES_BASE_POS_Y + 13;
+
+int CGameSettings::UI_PLAYER_BLAST_BASE_POS_X = 661;
+int CGameSettings::UI_PLAYER_BLAST_BASE_POS_Y = 29;
+int CGameSettings::UI_PLAYER_BLAST_NUMBER_POS_X = CGameSettings::UI_PLAYER_BLAST_BASE_POS_X + 66;
+int CGameSettings::UI_PLAYER_BLAST_NUMBER_POS_Y = CGameSettings::UI_PLAYER_BLAST_BASE_POS_Y + 13;
+
+int CGameSettings::UI_PLAYER_HEALTH_BAR_POS_X = 148;
+int CGameSettings::UI_PLAYER_HEALTH_BAR_POS_Y = 29;
+int CGameSettings::UI_PLAYER_HEALTH_FILL_POS_X = CGameSettings::UI_PLAYER_HEALTH_BAR_POS_X + 5;
+int CGameSettings::UI_PLAYER_HEALTH_FILL_POS_Y = CGameSettings::UI_PLAYER_HEALTH_BAR_POS_Y + 3;
+
+int CGameSettings::UI_PLAYER_CANNON_BAR_POS_X = 148;
+int CGameSettings::UI_PLAYER_CANNON_BAR_POS_Y = 57;
+int CGameSettings::UI_PLAYER_CANNON_FILL_POS_X = CGameSettings::UI_PLAYER_CANNON_BAR_POS_X + 5;
+int CGameSettings::UI_PLAYER_CANNON_FILL_POS_Y = CGameSettings::UI_PLAYER_CANNON_BAR_POS_Y + 3;
 
 float CGameSettings::GetObstacleSpeed(int depth)
 {
 	switch (depth)
 	{
 	case 2:
-		return 15.0f;
+		return CGameSettings::OSTACLE_SPEED_DEPTH_2;
 	case 3:
-		return 11.0f;
+		return CGameSettings::OSTACLE_SPEED_DEPTH_3;
 	case 4:
-		return 7.0f;
+		return CGameSettings::OSTACLE_SPEED_DEPTH_4;
 	case 5:
-		return 3.0f;
+		return CGameSettings::OSTACLE_SPEED_DEPTH_5;
 	default:
-		return 35.0f;
+		return CGameSettings::OSTACLE_SPEED_DEPTH_1;
 	}
 }
