@@ -12868,10 +12868,7 @@ void CTheGame::RenderPlayerCannonBar()
 
 void CTheGame::RenderScore(float fFrametime)
 {
-	char* pPointer;
-	char* sScore = NULL;
-	sScore = this->m_pPlayer->GetScoreString();
-	pPointer = sScore;
+	char* pScoreString = this->m_pPlayer->GetScoreString();
 
 	D3DXVECTOR3 pos;
 
@@ -12889,18 +12886,15 @@ void CTheGame::RenderScore(float fFrametime)
 		this->m_fScreenHeight - 20.0f,
 		-1000.0f);
 
-	while ((*pPointer) != NULL)
+	while ((*pScoreString) != NULL)
 	{
-		(this->m_pNumbersScore + ((*pPointer) - '0'))->SetPosition(pos);
-		(this->m_pNumbersScore + ((*pPointer) - '0'))->Update(fFrametime);
-		(this->m_pNumbersScore + ((*pPointer) - '0'))->Render(this->m_pTheApp->GetDevice());
-		pos.x += (this->m_pNumbersScore + ((*pPointer) - '0'))->GetWidth();
+		(this->m_pNumbersScore + ((*pScoreString) - '0'))->SetPosition(pos);
+		(this->m_pNumbersScore + ((*pScoreString) - '0'))->Update(fFrametime);
+		(this->m_pNumbersScore + ((*pScoreString) - '0'))->Render(this->m_pTheApp->GetDevice());
+		pos.x += (this->m_pNumbersScore + ((*pScoreString) - '0'))->GetWidth();
 
-		pPointer++;
+		pScoreString++;
 	}
-
-	delete[]sScore;
-	sScore = NULL;
 }
 
 void CTheGame::RenderTime(float fFrametime)

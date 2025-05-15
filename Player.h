@@ -207,6 +207,9 @@ private:
 	eHIT_SOUND		m_eHitSound;
 	eBLAST_LIGHT	m_eBlastLight;
 
+	char*			m_pScoreString;
+	char*			m_pHealthString;
+
 	float			m_fShipWidth;
 	float			m_fShipHeight;
 

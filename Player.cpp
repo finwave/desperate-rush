@@ -54,6 +54,9 @@ CPlayer::CPlayer(void)
 	this->m_fVelocity = 0.0f;
 	this->m_fBoostClock = 0.0f;
 	this->m_fBoostSpeed = 1.5f;
+
+	this->m_pScoreString = NULL;
+	this->m_pHealthString = NULL;
 }
 
 CPlayer::~CPlayer(void)
@@ -97,11 +100,20 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 	this->m_iBlastDamage = iBlastDamage;
 	this->m_iBlasts = iBlasts;
 
+	this->m_pScoreString = new char[128];
+	this->m_pHealthString = new char[128];
+
 	return S_OK;
 }
 
 void CPlayer::Release(void)
 {
+	delete[]this->m_pScoreString;
+	this->m_pScoreString = NULL;
+
+	delete[]this->m_pHealthString;
+	this->m_pHealthString = NULL;
+
 	C3DObject::Release();
 }
 
@@ -156,29 +168,22 @@ void CPlayer::SetUntouchable(bool bUntouchable)
 
 char* CPlayer::GetScoreString(void)
 {
-	char* sReturn = NULL;
-	sReturn = new char[128];
-	
-	sprintf_s(sReturn,128, "%d", this->m_iScore);
-
-	return sReturn;
+	sprintf_s(this->m_pScoreString, 128, "%d", this->m_iScore);
+	return this->m_pScoreString;
 }
 
 char* CPlayer::GetShipHealth(void)
 {
-	char* sReturn = NULL;
-	sReturn = new char[128];
-
 	if( this->m_iHealth < 0 )
 	{
-		sprintf_s(sReturn,128, "0");
+		sprintf_s(this->m_pHealthString,128, "0");
 	}
 	else
 	{
-		sprintf_s(sReturn,128, "%0.0f", (float)this->m_iHealth);
+		sprintf_s(this->m_pHealthString,128, "%0.0f", (float)this->m_iHealth);
 	}
 
-	return sReturn;
+	return this->m_pHealthString;
 }
 
 void CPlayer::IncreaseHealth(int iHealth)
