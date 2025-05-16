@@ -145,7 +145,6 @@
 // MISC VALUES
 
 #define TIME_PLAYER_BLAST									0.8
-#define TIMER_LEVEL_TITLE									0.8
 #define TIMER_SOUND_EXPLOSION_ENEMY							6
 
 // ENEMY FLEET VALUES
@@ -233,7 +232,7 @@ public:
 
 	/*
 	 * Render
-	 * Method invokes all necessary methods to make game playable.
+	 * Method invokes all necessary methods to make the game playable.
 	 */
 	void Render(void);
 
@@ -250,6 +249,13 @@ public:
 #endif
 
 private:
+
+	enum eLEVEL_TITLE_EVENT
+	{
+		Appear,
+		Stay,
+		Disappear
+	};
 
 	enum ePLAYER_CANNON_STATE
 	{
@@ -454,10 +460,14 @@ private:
 	void RenderPlayerHealthBar();
 	void RenderPlayerCannonBar();
 	void RenderScore(float fFrametime);
-	void RenderTime(float fFrametime);
-	void RenderLevelTitle();
-	bool RenderLevelTitleIn();
-	bool RenderLevelTitleOut();
+	void RenderGameTime(float fFrametime);
+
+	void RenderLevelTitleText(int posX, int posY);
+	void RenderLevelTitleBox(int posX, int posY);
+	bool RenderLevelTitleAppear(float fFrametime);
+	bool RenderLevelTitleStay(float fFrametime);
+	bool RenderLevelTitleDisappear(float fFrametime);
+
 	bool RenderMissionInfo();
 	bool RenderBossWarning(float fFrametime, bool bFreeze);
 	void RenderEndSuccess(float fFrametime);
@@ -466,7 +476,7 @@ private:
 
 	void EnablePlayerCannonDamage();
 
-	char* GetTimeString();
+	char* GetGameTimeString();
 
 	bool IsBoxCollision(const D3DXVECTOR3& pos1,
 						float fWidth,
@@ -620,6 +630,7 @@ private:
 	CNumber*					m_pNumbersScore;
 	CNumber*					m_pNumbersTime;
 
+	eLEVEL_TITLE_EVENT			m_eLevelTitleEvent;
 	ePLAYER_CANNON_STATE		m_ePlayerCannonState;
 	ePLAYER_CANNON_CHARGE		m_ePlayerCannonCharge;
 	ePLAYER_CANNON_BEAM			m_ePlayerCannonBeam;
@@ -711,10 +722,10 @@ private:
 	int							m_iGameStateEnd;
 
 	int							m_iExtraLives;
-
 	bool						m_bCheckHighScore;
-
 	bool						m_bCannonDamageBoss;
+
+	char*						m_pGameTimeString;
 
 	// Player cannon variables
 

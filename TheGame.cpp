@@ -167,10 +167,10 @@ CTheGame::CTheGame(void)
 	this->m_iEndSuccessTextIndex = 0;
 
 	this->m_iExtraLives = 0;
-
 	this->m_bCheckHighScore = false;
-
 	this->m_bCannonDamageBoss = true;
+
+	this->m_pGameTimeString = NULL;
 
 	this->m_fCannonChargeTime = 0.71f;
 	this->m_fCannonChargeCounter = this->m_fCannonChargeTime;
@@ -1217,16 +1217,10 @@ void CTheGame::Render(void)
 {
 	const float fFrametime = this->m_pTheApp->GetFrameTime();
 
-	static bool bLevelTitleIn = true;
-	static bool bLevelTitleStay = false;
-	static bool bLevelTitleOut = false;
-
 	static int iCountBossChainExplosions = 0;
 	static float fPauseBossChainExplosion = 0.0f;
 	static float fPauseBossPartExplosion = 0.0f;
 	static float fPauseBossBigExplosion = 0.0f;
-
-	static float fTimerLevelTitle = (float)TIMER_LEVEL_TITLE;
 
 	static bool bBackgroundSpeedChange;
 
@@ -1260,16 +1254,10 @@ void CTheGame::Render(void)
 		{
 		case LOAD_LEVEL_DEFAULT_VALUES:
 
-			bLevelTitleIn = true;
-			bLevelTitleStay = false;
-			bLevelTitleOut = false;
-
 			iCountBossChainExplosions = 0;
 			fPauseBossChainExplosion = 0.0f;
 			fPauseBossPartExplosion = 0.0f;
 			fPauseBossBigExplosion = 0.0f;
-
-			fTimerLevelTitle = (float)TIMER_LEVEL_TITLE;
 
 			fBackgroundSpeedChangePause = 0.0f;
 			bBackgroundSpeedChangeReinforcements = true;
@@ -1568,50 +1556,33 @@ void CTheGame::Render(void)
 				this->RenderPlayer(fFrametime);
 			}
 
-			// player enter movement is finished
+			// player enter movement is finished, show level title
 			if(!this->m_bPlayerEnter)
 			{
-				// display level title (moves in)
-				if(bLevelTitleIn)
+				// display level title "move in" event
+				if (this->m_eLevelTitleEvent == eLEVEL_TITLE_EVENT::Appear)
 				{
-					// level title finished moving in
-					if(!this->RenderLevelTitleIn())
+					if (!RenderLevelTitleAppear(fFrametime))
 					{
-						bLevelTitleIn = false;
-						bLevelTitleStay = true;
-
+						this->m_eLevelTitleEvent = eLEVEL_TITLE_EVENT::Stay;
 						// start level music
 						this->PlayMusicLevel();
 					}
 				}
-				// display level title (stays still)
-				else if(bLevelTitleStay)
+				// display level title "stay" event
+				else if (this->m_eLevelTitleEvent == eLEVEL_TITLE_EVENT::Stay)
 				{
-					this->RenderLevelTitle();
-
-					if(fTimerLevelTitle > 0.0f)
-					{	
-						fTimerLevelTitle -= fFrametime;
-					}
-					else
+					if (!RenderLevelTitleStay(fFrametime))
 					{
-						bLevelTitleStay = false;
-						bLevelTitleOut = true;
+						this->m_eLevelTitleEvent = eLEVEL_TITLE_EVENT::Disappear;
 					}
 				}
-				// display level title (moves out)
-				else if(bLevelTitleOut)
+				// display level title "move out" event
+				else if (this->m_eLevelTitleEvent == eLEVEL_TITLE_EVENT::Disappear)
 				{
-					// level title finished moving out
-					if(!this->RenderLevelTitleOut())
+					if (!RenderLevelTitleDisappear(fFrametime) && !RenderMissionInfo())
 					{
-						// display mission info
-						if(!this->RenderMissionInfo())
-						{
-							bLevelTitleOut = false;
-							this->m_bLevelIntro = false;
-							this->m_bPlayAfterburnSound = true;
-						}
+						this->m_bLevelIntro = false;
 					}
 				}
 			}
@@ -1638,12 +1609,6 @@ void CTheGame::Render(void)
 			{
 				this->m_bFleetStrike = true;
 			}
-
-			// reset level title display timer
-			fTimerLevelTitle = (float)TIMER_LEVEL_TITLE;
-			bLevelTitleIn = true;
-			bLevelTitleStay = false;
-			bLevelTitleOut = false;
 
 			this->m_pTheApp->CheckKeyPushes();
 		}
@@ -2082,6 +2047,7 @@ void CTheGame::Render(void)
 			{
 				this->RenderPlayerAfterburn(false);
 			}
+
 			if(this->m_bPlayAfterburnSound && bBackgroundSpeedChangeAfterburn)
 			{
 				this->PlaySoundPlayerAfterburn();
@@ -2707,6 +2673,11 @@ void CTheGame::SwitchGameState(int iNextGameState)
 	{
 	case GAME_STATE_LEVEL_INTRO:
 
+		this->m_eLevelTitleEvent = eLEVEL_TITLE_EVENT::Appear;
+
+		// enable player ship afterburn sounds
+		this->m_bPlayAfterburnSound = true;
+
 		// set player enter
 		this->PlayerSetEnter(iNextGameState);
 		this->m_bPlayerEnter = true;
@@ -3087,6 +3058,12 @@ void CTheGame::QuitGameAction(float fFrametime)
 
 void CTheGame::Release()
 {
+	if (this->m_pGameTimeString != NULL)
+	{
+		delete[]this->m_pGameTimeString;
+		this->m_pGameTimeString = NULL;
+	}
+
 	/* PLAYER */
 
 	if (this->m_pPlayer)
@@ -5912,47 +5889,21 @@ bool CTheGame::PlayerCannonLineOfFireEnemies(IEnemy* pEnemy)
 		posB = pEnemy->GetPosition();
 	}
 
-	float fLeftSide;
-	float fRightSide;
+	float widthB = pEnemy->GetWidth();
+
+	float fLeftSide = posB.x - (widthB / 2);
+	float fRightSide = posB.x + (widthB / 2);
 
 	if(bBossCore)
 	{
-		switch(this->m_pLevel->GetLevelNumber())
-		{
-		case 1:
-
-			fLeftSide = posB.x - 5.0f;
-			fRightSide = posB.x + 5.0f;
-
-			break;
-
-		case 2:
-
-			fLeftSide = posB.x - 5.0f;
-			fRightSide = posB.x + 5.0f;
-
-			break;
-
-		case 3:
-
-			fLeftSide = posB.x - 5.0f;
-			fRightSide = posB.x + 5.0f;
-
-			break;
-		}
-	}
-	else
-	{
-		float widthB = pEnemy->GetWidth();
-
-		fLeftSide = posB.x - (widthB / 2);
-		fRightSide = posB.x + (widthB / 2);
+		fLeftSide = posB.x - 5.0f;
+		fRightSide = posB.x + 5.0f;
 	}
 
-	if(( posA.x >= fLeftSide ) && 
-		( posA.x <= fRightSide ))
+	if ((posA.x >= fLeftSide) &&
+		(posA.x <= fRightSide))
 	{
-		if( posA.y < posB.y )
+		if (posA.y < posB.y)
 		{
 			bHit = true;
 		}
@@ -12657,29 +12608,19 @@ void CTheGame::RenderPlayerCannonBeam(float fFrametime, bool bFreeze)
 
 void CTheGame::RenderStatistics(float fFrametime)
 {
-	if(this->m_iGameState != GAME_STATE_LOAD_LEVEL)
+	if (this->m_iGameState == GAME_STATE_LOAD_LEVEL)
 	{
-		if(this->m_iGameState == GAME_STATE_QUIT)
-		{
-			if(this->m_bFadeOut)
-			{
-				this->RenderPlayerLives();
-				this->RenderPlayerBlasts();
-				this->RenderPlayerHealthBar();
-				this->RenderPlayerCannonBar();
-				this->RenderScore(fFrametime);
-				this->RenderTime(fFrametime);
-			}
-		}
-		else
-		{
-			this->RenderPlayerLives();
-			this->RenderPlayerBlasts();
-			this->RenderPlayerHealthBar();
-			this->RenderPlayerCannonBar();
-			this->RenderScore(fFrametime);
-			this->RenderTime(fFrametime);
-		}
+		return;
+	}
+
+	if (this->m_iGameState != GAME_STATE_QUIT || (this->m_iGameState == GAME_STATE_QUIT && this->m_bFadeOut))
+	{
+		this->RenderPlayerLives();
+		this->RenderPlayerBlasts();
+		this->RenderPlayerHealthBar();
+		this->RenderPlayerCannonBar();
+		this->RenderScore(fFrametime);
+		this->RenderGameTime(fFrametime);
 	}
 }
 
@@ -12896,13 +12837,10 @@ void CTheGame::RenderScore(float fFrametime)
 		pScoreString++;
 	}
 }
-
-void CTheGame::RenderTime(float fFrametime)
+ 
+void CTheGame::RenderGameTime(float fFrametime)
 {
-	char* pPointer;
-	char* sTime = NULL;
-	sTime = this->GetTimeString();
-	pPointer = sTime;
+	char* pGameTimeString = this->GetGameTimeString();
 
 	D3DXVECTOR3 pos;
 	float fPosX = 0.0f;
@@ -12926,169 +12864,147 @@ void CTheGame::RenderTime(float fFrametime)
 
 	pos.x = fPosX;
 
-	while ((*pPointer) != NULL)
+	while ((*pGameTimeString) != NULL)
 	{
-		(this->m_pNumbersTime + ((*pPointer) - '0'))->SetPosition(pos);
-		(this->m_pNumbersTime + ((*pPointer) - '0'))->Update(fFrametime);
-		(this->m_pNumbersTime + ((*pPointer) - '0'))->Render(this->m_pTheApp->GetDevice());
-		pos.x += (this->m_pNumbersTime + ((*pPointer) - '0'))->GetWidth();
+		(this->m_pNumbersTime + ((*pGameTimeString) - '0'))->SetPosition(pos);
+		(this->m_pNumbersTime + ((*pGameTimeString) - '0'))->Update(fFrametime);
+		(this->m_pNumbersTime + ((*pGameTimeString) - '0'))->Render(this->m_pTheApp->GetDevice());
+		pos.x += (this->m_pNumbersTime + ((*pGameTimeString) - '0'))->GetWidth();
 
-		pPointer++;
+		pGameTimeString++;
 	}
-
-	delete[]sTime;
-	sTime = NULL;
 }
 
-void CTheGame::RenderLevelTitle()
+void CTheGame::RenderLevelTitleText(int posX, int posY)
 {
-	int iTextPosX = 362;
+	switch (this->m_pLevel->GetLevelNumber())
+	{
+	case 1:
+		(this->m_pSpriteLevelTitleSpace + 0)->Draw(posX, posY);
+		break;
+	case 2:
+		(this->m_pSpriteLevelTitleSpace + 1)->Draw(posX, posY);
+		break;
+	case 3:
+		(this->m_pSpriteLevelTitleSpace + 2)->Draw(posX, posY);
+		break;
+	}
+}
+
+void CTheGame::RenderLevelTitleBox(int posX, int posY)
+{
+	(this->m_pSpriteLevelTitleSpace + 6)->Draw(posX, posY);
+}
+
+bool CTheGame::RenderLevelTitleAppear(float fFrametime)
+{
+	static float s_fEventTimer = 0.0f;
+	static float s_fEventDuration = CGameSettings::UI_LEVEL_TITLE_APPEAR_DURATION;
+
+	s_fEventTimer += fFrametime;
+	s_fEventTimer = min(s_fEventTimer, s_fEventDuration);
+
+	// horizontal start/end positions
+	int iTextStartPosX = -302;
+	int iTextEndPosX = 362;
+	int iBoxStartPosX = 1025;
+	int iBoxEndPosX = 306;
+	// vertical positions
 	int iTextPosY = 355;
-	int iBoxPosX = 306;
 	int iBoxPosY = 341;
 
-	switch(this->m_pLevel->GetLevelNumber())
+	// lerp position of horizontal movement
+	float fCurrentTextPosY = LerpUtils::CalculateEasingPosition(LerpUtils::eEASING_LOGIC::EaseOutCubic,
+		(float)iTextStartPosX, (float)iTextEndPosX, s_fEventTimer, s_fEventDuration);
+
+	float fCurrentBoxPosY = LerpUtils::CalculateEasingPosition(LerpUtils::eEASING_LOGIC::EaseOutCubic,
+		(float)iBoxStartPosX, (float)iBoxEndPosX, s_fEventTimer, s_fEventDuration);
+
+	int iCurrentTextPosY = (int)fCurrentTextPosY;
+	int iCurrentBoxPosY = (int)fCurrentBoxPosY;
+
+	// draw level title "text" element
+	RenderLevelTitleText(iCurrentTextPosY, iTextPosY);
+	// draw level title "box" element
+	RenderLevelTitleBox(iCurrentBoxPosY, iBoxPosY);
+
+	if (s_fEventTimer == s_fEventDuration)
 	{
-	case 1:
-		(this->m_pSpriteLevelTitleSpace + 0)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 2:
-		(this->m_pSpriteLevelTitleSpace + 1)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 3:
-		(this->m_pSpriteLevelTitleSpace + 2)->Draw(iTextPosX, iTextPosY);
-		break;
+		s_fEventTimer = 0.0f;
+		return false;
 	}
-	(this->m_pSpriteLevelTitleSpace + 6)->Draw(iBoxPosX, iBoxPosY);
+
+	return true;
 }
 
-bool CTheGame::RenderLevelTitleIn()
+bool CTheGame::RenderLevelTitleStay(float fFrametime)
 {
-	static int iTextPosX = -302;
-	static int iTextPosY = 355;
-	static int iBoxPosX = 1025;
-	static int iBoxPosY = 341;
+	static float s_fEventTimer = 0.0f;
+	static float s_fEventDuration = CGameSettings::UI_LEVEL_TITLE_STAY_DURATION;
 
-	const int iMovementSpeedText = 20;
-	const int iMovementSpeedBox = 21;
+	s_fEventTimer += fFrametime;
+	s_fEventTimer = min(s_fEventTimer, s_fEventDuration);
 
-	bool bMovingIn = true;
+	// horizontal positions
+	int iTextPosX = 362;
+	int iBoxPosX = 306;
+	// vertical positions
+	int iTextPosY = 355;
+	int iBoxPosY = 341;
 
-	// draw sprites
+	// draw level title "text" element
+	RenderLevelTitleText(iTextPosX, iTextPosY);
+	// draw level title "box" element
+	RenderLevelTitleBox(iBoxPosX, iBoxPosY);
 
-	switch(this->m_pLevel->GetLevelNumber())
+	if (s_fEventTimer == s_fEventDuration)
 	{
-	case 1:
-		(this->m_pSpriteLevelTitleSpace + 0)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 2:
-		(this->m_pSpriteLevelTitleSpace + 1)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 3:
-		(this->m_pSpriteLevelTitleSpace + 2)->Draw(iTextPosX, iTextPosY);
-		break;
-	}
-	(this->m_pSpriteLevelTitleSpace + 6)->Draw(iBoxPosX, iBoxPosY);
-
-	// reached destination
-	if( (iTextPosX == 362) && (iBoxPosX == 306) )
-	{
-		iTextPosX = -302;
-		iBoxPosX = 1025;
-		bMovingIn = false;
+		s_fEventTimer = 0.0f;
+		return false;
 	}
 
-	// move sprites
-
-	if(iTextPosX < 362)
-	{
-		if( (iTextPosX + iMovementSpeedText) > 362 )
-		{
-			iTextPosX = 362;
-		}
-		else
-		{
-			iTextPosX += iMovementSpeedText;
-		}
-	}
-	if(iBoxPosX > 306)
-	{
-		if( (iBoxPosX - iMovementSpeedBox) < 306 )
-		{
-			iBoxPosX = 306;
-		}
-		else
-		{
-			iBoxPosX -= iMovementSpeedBox;
-		}
-	}
-
-	return bMovingIn;
+	return true;
 }
 
-bool CTheGame::RenderLevelTitleOut()
+bool CTheGame::RenderLevelTitleDisappear(float fFrametime)
 {
-	static int iTextPosX = 362;
-	static int iTextPosY = 355;
-	static int iBoxPosX = 306;
-	static int iBoxPosY = 341;
+	static float s_fEventTimer = 0.0f;
+	static float s_fEventDuration = CGameSettings::UI_LEVEL_TITLE_DISAPPEAR_DURATION;
 
-	const int iMovementSpeedText = 30;
-	const int iMovementSpeedBox = 31;
+	s_fEventTimer += fFrametime;
+	s_fEventTimer = min(s_fEventTimer, s_fEventDuration);
 
-	bool bMovingOut = true;
+	// horizontal start/end positions
+	int iTextStartPosX = 362;
+	int iTextEndPosX = 1025;
+	int iBoxStartPosX = 306;
+	int iBoxEndPosX = -412;
+	// vertical positions
+	int iTextPosY = 355;
+	int iBoxPosY = 341;
 
-	// draw sprites
+	// lerp position of horizontal movement
+	float fCurrentTextPosY = LerpUtils::CalculateEasingPosition(LerpUtils::eEASING_LOGIC::EaseDirect,
+		(float)iTextStartPosX, (float)iTextEndPosX, s_fEventTimer, s_fEventDuration);
 
-	switch(this->m_pLevel->GetLevelNumber())
+	float fCurrentBoxPosY = LerpUtils::CalculateEasingPosition(LerpUtils::eEASING_LOGIC::EaseDirect,
+		(float)iBoxStartPosX, (float)iBoxEndPosX, s_fEventTimer, s_fEventDuration);
+
+	int iCurrentTextPosY = (int)fCurrentTextPosY;
+	int iCurrentBoxPosY = (int)fCurrentBoxPosY;
+
+	// draw level title "text" element
+	RenderLevelTitleText(iCurrentTextPosY, iTextPosY);
+	// draw level title "box" element
+	RenderLevelTitleBox(iCurrentBoxPosY, iBoxPosY);
+
+	if (s_fEventTimer == s_fEventDuration)
 	{
-	case 1:
-		(this->m_pSpriteLevelTitleSpace + 0)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 2:
-		(this->m_pSpriteLevelTitleSpace + 1)->Draw(iTextPosX, iTextPosY);
-		break;
-	case 3:
-		(this->m_pSpriteLevelTitleSpace + 2)->Draw(iTextPosX, iTextPosY);
-		break;
-	}
-	(this->m_pSpriteLevelTitleSpace + 6)->Draw(iBoxPosX, iBoxPosY);
-
-	// reached destination
-	if( (iBoxPosX == -412) && (iTextPosX == 1025) )
-	{
-		iTextPosX = 362;
-		iBoxPosX = 306;
-		bMovingOut = false;
-	}
-
-	// move sprites
-
-	if(iBoxPosX > -412)
-	{
-		if( (iBoxPosX - iMovementSpeedBox) < -412 )
-		{
-			iBoxPosX = -412;
-		}
-		else
-		{
-			iBoxPosX -= iMovementSpeedBox;
-		}
+		s_fEventTimer = 0.0f;
+		return false;
 	}
 
-	if(iTextPosX < 1025)
-	{
-		if( (iTextPosX + iMovementSpeedText) > 1025 )
-		{
-			iTextPosX = 1025;
-		}
-		else
-		{
-			iTextPosX += iMovementSpeedText;
-		}
-	}
-
-	return bMovingOut;
+	return true;
 }
 
 bool CTheGame::RenderMissionInfo()
@@ -13304,14 +13220,18 @@ void CTheGame::EnablePlayerCannonDamage()
 }
 
 
-char* CTheGame::GetTimeString()
+char* CTheGame::GetGameTimeString()
 {
-	char* sTime = NULL;
-	sTime = new char[128];
+	if (this->m_pGameTimeString != NULL)
+	{
+		delete[]this->m_pGameTimeString;
+		this->m_pGameTimeString = NULL;
+	}
 
-	sprintf_s(sTime, 128, "%0.0f", this->m_fGameTime);
+	m_pGameTimeString = new char[128];
+	sprintf_s(m_pGameTimeString, 128, "%0.0f", this->m_fGameTime);
 
-	return sTime;
+	return m_pGameTimeString;
 }
 
 

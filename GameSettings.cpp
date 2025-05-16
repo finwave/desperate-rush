@@ -189,6 +189,10 @@ int CGameSettings::UI_PLAYER_CANNON_BAR_POS_Y = 57;
 int CGameSettings::UI_PLAYER_CANNON_FILL_POS_X = CGameSettings::UI_PLAYER_CANNON_BAR_POS_X + 5;
 int CGameSettings::UI_PLAYER_CANNON_FILL_POS_Y = CGameSettings::UI_PLAYER_CANNON_BAR_POS_Y + 3;
 
+float CGameSettings::UI_LEVEL_TITLE_APPEAR_DURATION = 0.5f;
+float CGameSettings::UI_LEVEL_TITLE_STAY_DURATION = 0.5f;
+float CGameSettings::UI_LEVEL_TITLE_DISAPPEAR_DURATION = 0.35f;
+
 float CGameSettings::GetObstacleSpeed(int depth)
 {
 	switch (depth)

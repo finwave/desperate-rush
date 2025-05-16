@@ -100,19 +100,22 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 	this->m_iBlastDamage = iBlastDamage;
 	this->m_iBlasts = iBlasts;
 
-	this->m_pScoreString = new char[128];
-	this->m_pHealthString = new char[128];
-
 	return S_OK;
 }
 
 void CPlayer::Release(void)
 {
-	delete[]this->m_pScoreString;
-	this->m_pScoreString = NULL;
+	if (this->m_pScoreString != NULL)
+	{
+		delete[]this->m_pScoreString;
+		this->m_pScoreString = NULL;
+	}
 
-	delete[]this->m_pHealthString;
-	this->m_pHealthString = NULL;
+	if (this->m_pHealthString != NULL)
+	{
+		delete[]this->m_pHealthString;
+		this->m_pHealthString = NULL;
+	}
 
 	C3DObject::Release();
 }
@@ -168,12 +171,28 @@ void CPlayer::SetUntouchable(bool bUntouchable)
 
 char* CPlayer::GetScoreString(void)
 {
+	if (this->m_pScoreString != NULL)
+	{
+		delete[]this->m_pScoreString;
+		this->m_pScoreString = NULL;
+	}
+
+	this->m_pScoreString = new char[128];
 	sprintf_s(this->m_pScoreString, 128, "%d", this->m_iScore);
+
 	return this->m_pScoreString;
 }
 
 char* CPlayer::GetShipHealth(void)
 {
+	if (this->m_pHealthString != NULL)
+	{
+		delete[]this->m_pHealthString;
+		this->m_pHealthString = NULL;
+	}
+
+	this->m_pHealthString = new char[128];
+
 	if( this->m_iHealth < 0 )
 	{
 		sprintf_s(this->m_pHealthString,128, "0");

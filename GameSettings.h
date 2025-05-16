@@ -194,4 +194,8 @@ public:
 	static int		UI_PLAYER_CANNON_BAR_POS_Y;
 	static int		UI_PLAYER_CANNON_FILL_POS_X;
 	static int		UI_PLAYER_CANNON_FILL_POS_Y;
+
+	static float	UI_LEVEL_TITLE_APPEAR_DURATION;
+	static float	UI_LEVEL_TITLE_STAY_DURATION;
+	static float	UI_LEVEL_TITLE_DISAPPEAR_DURATION;
 };
