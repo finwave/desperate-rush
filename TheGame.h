@@ -138,9 +138,9 @@
 #define EXPLOSION_PART_TIMER_MIN_BOSS_3						0.01
 #define EXPLOSION_PART_TIMER_MAX_BOSS_3						0.05
 
-#define EXPLOSION_BIG_TIMER_BOSS_1							4.0
-#define EXPLOSION_BIG_TIMER_BOSS_2							4.0
-#define EXPLOSION_BIG_TIMER_BOSS_3							4.0
+#define EXPLOSION_BIG_TIMER_BOSS_1							2.5
+#define EXPLOSION_BIG_TIMER_BOSS_2							2.5
+#define EXPLOSION_BIG_TIMER_BOSS_3							2.5
 
 // MISC VALUES
 
@@ -339,9 +339,12 @@ private:
 	bool CheckBossEnter();
 	void CheckExtraLife();
 
-	void PlayerSetEnter(int currentGameState);
+	void PlayerSetMoveEnter(int currentGameState);
 	void PlayerMoveEnter(float fFrametime);
-	void PlayerMoveAway(float fFrametime);
+
+	void PlayerSetMoveExit();
+	void PlayerMoveExit(float fFrametime);
+
 	void PlayerDestroyed();
 	void PlayerBlastActive();
 	void PlayerBlastDeactive();
@@ -658,7 +661,12 @@ private:
 	float						m_fPlayerEnterMoveTimer;
 	bool						m_bPlayerEnter;
 
-	bool						m_bPlayerMoveAway;
+	const float					PLAYER_EXIT_MOVE_DURATION = 1.5f;
+	float						m_fPlayerExitMoveTimer;
+	float						m_fPlayerExitMoveStartPosY;
+	float						m_fPlayerExitMoveEndPosY;
+	bool						m_bPlayerExit;
+
 	bool						m_bPlayerAfterburn;
 	bool						m_bPlayAfterburnSound;
 	

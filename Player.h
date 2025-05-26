@@ -74,9 +74,7 @@ public:
 	 */
 	void Release(void);
 
-	void Update(bool bUpdate, 
-				float fFrametime);
-
+	void Update(bool bUpdateObject, float fFrametime);
 	void Render();
 
 	inline eMINIGUN_SOUND GetMinigunSound() { return this->m_eMinigunSound; }

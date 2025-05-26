@@ -120,8 +120,7 @@ void CPlayer::Release(void)
 	C3DObject::Release();
 }
 
-void CPlayer::Update(bool bUpdate,
-					 float fFrametime)
+void CPlayer::Update(bool bUpdateObject, float fFrametime)
 {
 	if(this->m_fUntouchable > 0.0f)
 	{
@@ -141,7 +140,7 @@ void CPlayer::Update(bool bUpdate,
 		this->UpdateBoostSound();
 	}
 
-	if(bUpdate)
+	if(bUpdateObject)
 	{
 		C3DObject::Update(fFrametime);
 	}

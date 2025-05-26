@@ -112,8 +112,15 @@ CTheGame::CTheGame(void)
 	this->m_bFadeOut = false;
 	this->m_bFadeOutMusic = true;
 	this->m_bLevelIntro = false;
+
+	this->m_fPlayerEnterMoveTimer = 0.0f;
 	this->m_bPlayerEnter = false;
-	this->m_bPlayerMoveAway = false;
+
+	this->m_fPlayerExitMoveTimer = 0.0f;
+	this->m_fPlayerExitMoveStartPosY = 0.0f;
+	this->m_fPlayerExitMoveEndPosY = 0.0f;
+	this->m_bPlayerExit = false;
+
 	this->m_bPlayerAfterburn = false;
 	this->m_bPlayAfterburnSound = false;
 
@@ -2368,7 +2375,7 @@ void CTheGame::Render(void)
 				}
 
 				// boss core big explosion
-				this->BossFrameBigExplosion();
+				BossFrameBigExplosion();
 				// play sound effect
 				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_BIG).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 
@@ -2380,7 +2387,7 @@ void CTheGame::Render(void)
 			fPauseBossChainExplosion -= fFrametime;
 		}
 
-		this->RenderStatistics(fFrametime);
+		RenderStatistics(fFrametime);
 
 		break;
 
@@ -2451,7 +2458,7 @@ void CTheGame::Render(void)
 
 		if(fPauseOutroMinigunsRotation <= 0.0f)
 		{
-			if(!this->m_bPlayerMoveAway)
+			if(!this->m_bPlayerExit)
 			{
 				// player has finished the game
 				if(this->m_pLevel->GetLevelNumber() == LEVELS_MAX)
@@ -2489,7 +2496,7 @@ void CTheGame::Render(void)
 
 			if(fPauseOutroMinigunsRotation <= 0.0f)
 			{
-				this->m_bPlayerMoveAway = true;
+				PlayerSetMoveExit();
 			}
 		}
 
@@ -2679,7 +2686,7 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_bPlayAfterburnSound = true;
 
 		// set player enter
-		this->PlayerSetEnter(iNextGameState);
+		this->PlayerSetMoveEnter(iNextGameState);
 		this->m_bPlayerEnter = true;
 
 		// set screen fade-in
@@ -5166,9 +5173,9 @@ void CTheGame::CheckExtraLife()
 }
 
 
-void CTheGame::PlayerSetEnter(int currentGameState)
+void CTheGame::PlayerSetMoveEnter(int currentGameState)
 {
-	m_fPlayerEnterMoveTimer = 0;
+	this->m_fPlayerEnterMoveTimer = 0.0f;
 
 	// player health to max
 	this->m_pPlayer->SetHealth(CGameSettings::PLAYER_HEALTH);
@@ -5217,14 +5224,14 @@ void CTheGame::PlayerMoveEnter(float fFrametime)
 		this->RenderPlayerAfterburn(false);
 	}
 
-	D3DXVECTOR3 pos = this->m_pPlayer->GetPosition();
+	D3DXVECTOR3 playerPos = this->m_pPlayer->GetPosition();
 
 	float currentPosY = LerpUtils::CalculateEasingPosition(
 		LerpUtils::eEASING_LOGIC::EaseOutBack, CGameSettings::PLAYER_SHIP_ENTER_POS_Y,
 		CGameSettings::PLAYER_SHIP_START_POS_Y, this->m_fPlayerEnterMoveTimer, PLAYER_ENTER_MOVE_DURATION);
 
-	pos.y = currentPosY;
-	this->m_pPlayer->SetPosition(pos);
+	playerPos.y = currentPosY;
+	this->m_pPlayer->SetPosition(playerPos);
 
 	if (this->m_fPlayerEnterMoveTimer == PLAYER_ENTER_MOVE_DURATION)
 	{
@@ -5234,38 +5241,41 @@ void CTheGame::PlayerMoveEnter(float fFrametime)
 	}
 }
 
-void CTheGame::PlayerMoveAway(float fFrametime)
+void CTheGame::PlayerSetMoveExit()
 {
-	static bool bSound = true;
-	static float fSpeedIncrease = 0.05f;
+	this->m_bPlayerExit = true;
+	this->m_fPlayerExitMoveTimer = 0.0f;
 
-	float fFrameSpeed = 0.0f;
+	D3DXVECTOR3 playerPos = this->m_pPlayer->GetPosition();
+	float currentPlayerPosY = playerPos.y;
 
-	D3DXVECTOR3 pos = this->m_pPlayer->GetPosition();
+	this->m_fPlayerExitMoveStartPosY = currentPlayerPosY;
+	this->m_fPlayerExitMoveEndPosY = currentPlayerPosY + 3.0f * this->m_pTheApp->GetScreenHeight();
 
-	if (pos.y < (this->m_fScreenHeight + 50.0f))
+	this->PlaySoundPlayerAfterburn();
+}
+
+void CTheGame::PlayerMoveExit(float fFrametime)
+{
+	this->m_fPlayerExitMoveTimer += fFrametime;
+	this->m_fPlayerExitMoveTimer = min(this->m_fPlayerExitMoveTimer, PLAYER_EXIT_MOVE_DURATION);
+
+	float delta = m_fPlayerExitMoveTimer / PLAYER_EXIT_MOVE_DURATION;
+
+	D3DXVECTOR3 playerPos = this->m_pPlayer->GetPosition();
+
+	float currentPosY = LerpUtils::CalculateEasingPosition(
+		LerpUtils::eEASING_LOGIC::EaseInSine, this->m_fPlayerExitMoveStartPosY,
+		this->m_fPlayerExitMoveEndPosY, this->m_fPlayerExitMoveTimer, PLAYER_EXIT_MOVE_DURATION);
+
+	playerPos.y = currentPosY;
+	this->m_pPlayer->SetPosition(playerPos);
+
+	this->RenderPlayerAfterburn(false);
+
+	if (this->m_fPlayerExitMoveTimer == PLAYER_EXIT_MOVE_DURATION)
 	{
-		this->RenderPlayerAfterburn(false);
-
-		fFrameSpeed = (fFrametime * (this->m_pPlayer->GetSpeed() / 2.0f)) + fSpeedIncrease;
-		fSpeedIncrease += 0.05f;
-
-		pos.y += fFrameSpeed;
-		this->m_pPlayer->SetPosition(pos);
-
-		// play sound effect
-		if (bSound)
-		{
-			bSound = false;
-			this->PlaySoundPlayerAfterburn();
-		}
-	}
-	else
-	{
-		fSpeedIncrease = 0.05f;
-		bSound = true;
-
-		this->m_bPlayerMoveAway = false;
+		this->m_bPlayerExit = false;
 	}
 }
 
@@ -7748,137 +7758,42 @@ void CTheGame::BossFrameChainExplosion()
 
 void CTheGame::BossFrameBigExplosion()
 {
-	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
-	D3DXVECTOR3 pos = this->m_pEnemyBoss1Frame->GetPosition();
+	// create boss frame expolsion
 
-	switch(this->m_pLevel->GetLevelNumber())
+	D3DXVECTOR3 posBossFrame = this->m_pEnemyBoss1Frame->GetPosition();
+
+	this->m_pExplosions->AddExplosion(
+		CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG,
+		this->m_iExplosionMoveSpeed,
+		this->m_fExplosionMovePause,
+		posBossFrame);
+
+	// create boss scatter explosions
+
+	if (this->m_pEnemyBoss1ScatterLeft->IsActive())
 	{
-	case 1:
-		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG;
-		break;
-
-	case 2:
-		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG;
-		break;
-
-	case 3:
-		explosionType = CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG;
-		break;
+		this->BossPartExplosion(this->m_pEnemyBoss1ScatterLeft);
 	}
 
-	if (explosionType != CExplosion::eEXPLOSION_TYPE_NONE)
+	if (this->m_pEnemyBoss1ScatterRight->IsActive())
 	{
-		m_pExplosions->AddExplosion(explosionType,
-									this->m_iExplosionMoveSpeed,
-									this->m_fExplosionMovePause,
-									pos);
+		this->BossPartExplosion(this->m_pEnemyBoss1ScatterRight);
 	}
 
 	// deactivate boss frame
 
-	switch(this->m_pLevel->GetLevelNumber())
+	this->m_pEnemyBoss1Frame->SetActive(FALSE);
+
+	// deactivate boss parts that have not exploded yet
+
+	if (this->m_pEnemyBoss1LaserLeft->IsActive())
 	{
-	case 1:
-		this->m_pEnemyBoss1Frame->SetActive(FALSE);
-		break;
-	case 2:
-		this->m_pEnemyBoss1Frame->SetActive(FALSE);
-		break;
-	case 3:
-		this->m_pEnemyBoss1Frame->SetActive(FALSE);
-		break;
+		this->m_pEnemyBoss1LaserLeft->SetActive(FALSE);
 	}
 
-	// boss parts also explodes if they are active
-	switch(this->m_pLevel->GetLevelNumber())
+	if (this->m_pEnemyBoss1LaserRight->IsActive())
 	{
-	case 1:
-
-		// left scatter explosion
-		if( this->m_pEnemyBoss1ScatterLeft->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterLeft);
-		}
-		// right scatter explosion
-		if( this->m_pEnemyBoss1ScatterRight->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterRight);
-		}
-
-		break;
-
-	case 2:
-
-		// left scatter explosion
-		if( this->m_pEnemyBoss1ScatterLeft->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterLeft);
-		}
-		// right scatter explosion
-		if( this->m_pEnemyBoss1ScatterRight->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterRight);
-		}
-
-		break;
-
-	case 3:
-
-		// left scatter explosion
-		if( this->m_pEnemyBoss1ScatterLeft->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterLeft);
-		}
-		// right scatter explosion
-		if( this->m_pEnemyBoss1ScatterRight->IsActive() )
-		{
-			this->BossPartExplosion(this->m_pEnemyBoss1ScatterRight);
-		}
-
-		break;
-	}
-
-	// deactivate all the active boss parts
-	switch(this->m_pLevel->GetLevelNumber())
-	{
-	case 1:
-
-		if(this->m_pEnemyBoss1ScatterLeft->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterLeft->SetActive(FALSE);
-		}
-		if(this->m_pEnemyBoss1ScatterRight->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterRight->SetActive(FALSE);
-		}
-
-		break;
-
-	case 2:
-
-		if(this->m_pEnemyBoss1ScatterLeft->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterLeft->SetActive(FALSE);
-		}
-		if(this->m_pEnemyBoss1ScatterRight->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterRight->SetActive(FALSE);
-		}
-
-		break;
-
-	case 3:
-
-		if(this->m_pEnemyBoss1ScatterLeft->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterLeft->SetActive(FALSE);
-		}
-		if(this->m_pEnemyBoss1ScatterRight->IsActive())
-		{
-			this->m_pEnemyBoss1ScatterRight->SetActive(FALSE);
-		}
-
-		break;
+		this->m_pEnemyBoss1LaserRight->SetActive(FALSE);
 	}
 }
 
@@ -7887,7 +7802,7 @@ void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
 	D3DXVECTOR3 pos = pEnemy->GetPosition();
 
-	switch( pEnemy->GetType() )
+	switch (pEnemy->GetType())
 	{
 	case IEnemy::eTYPE_BOSS_1_LASER_LEFT:
 	case IEnemy::eTYPE_BOSS_1_LASER_RIGHT:
@@ -7900,12 +7815,12 @@ void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 	if (explosionType != CExplosion::eEXPLOSION_TYPE_NONE)
 	{
 		m_pExplosions->AddExplosion(explosionType,
-									this->m_iExplosionMoveSpeed,
-									this->m_fExplosionMovePause,
-									pos);
+			this->m_iExplosionMoveSpeed,
+			this->m_fExplosionMovePause,
+			pos);
 	}
 
-	if(pEnemy->IsActive())
+	if (pEnemy->IsActive())
 	{
 		pEnemy->SetActive(FALSE);
 	}
@@ -10503,25 +10418,25 @@ void CTheGame::ClearParticles()
 
 void CTheGame::UpdatePlayer(float fFrametime)
 {
-	if(this->m_iGameState != GAME_STATE_BLAST_ACTIVE)
+	if (this->m_iGameState != GAME_STATE_BLAST_ACTIVE)
 	{
-		if(this->m_bPlayerEnter)
+		if (this->m_bPlayerEnter)
 		{
 			// player enter movement
-			this->PlayerMoveEnter(fFrametime);
+			PlayerMoveEnter(fFrametime);
 		}
-		else if(this->m_bPlayerMoveAway)
+		else if (this->m_bPlayerExit)
 		{
 			// player away movement
-			this->PlayerMoveAway(fFrametime);
+			PlayerMoveExit(fFrametime);
 		}
 
 		// ignore player movement inputs
-		if(	(this->m_iGameState == GAME_STATE_LEVEL_INTRO) || 
-			(this->m_iGameState == GAME_STATE_LEVEL_OUTRO) || 
-			this->m_bPlayerEnter || this->m_bPlayerMoveAway)
+		if ((this->m_iGameState == GAME_STATE_LEVEL_INTRO) ||
+			(this->m_iGameState == GAME_STATE_LEVEL_OUTRO) ||
+			this->m_bPlayerEnter || this->m_bPlayerExit)
 		{
-			if(this->m_pPlayerController->GetExecuteInputs())
+			if (this->m_pPlayerController->GetExecuteInputs())
 			{
 				// don't execute player movement inputs
 				this->m_pPlayerController->SetExecuteInputs(false);
@@ -10530,7 +10445,7 @@ void CTheGame::UpdatePlayer(float fFrametime)
 		// notice player movement inputs
 		else
 		{
-			if(!this->m_pPlayerController->GetExecuteInputs())
+			if (!this->m_pPlayerController->GetExecuteInputs())
 			{
 				// execute player movement inputs
 				this->m_pPlayerController->SetExecuteInputs(true);
@@ -10539,9 +10454,9 @@ void CTheGame::UpdatePlayer(float fFrametime)
 
 		this->m_pPlayerController->UpdatePlayer(fFrametime, this->m_pPlayer);
 
-		if(this->m_pPlayer->IsVelocityControl())
+		if (this->m_pPlayer->IsVelocityControl())
 		{
-			if(this->m_pPlayer->IsBoostIncreaseSound())
+			if (this->m_pPlayer->IsBoostIncreaseSound())
 			{
 				this->m_pPlayer->DisableBoostIncreaseSound();
 				this->PlaySoundPlayerAfterburn();
@@ -10549,14 +10464,8 @@ void CTheGame::UpdatePlayer(float fFrametime)
 		}
 	}
 
-	if(this->m_iGameState == GAME_STATE_BLAST_ACTIVE)
-	{
-		this->m_pPlayer->Update(false, fFrametime);
-	}
-	else
-	{
-		this->m_pPlayer->Update(true, fFrametime);
-	}
+	bool bUpdateObject = this->m_iGameState != GAME_STATE_BLAST_ACTIVE;
+	this->m_pPlayer->Update(bUpdateObject, fFrametime);
 }
 
 void CTheGame::UpdateBoss(float fFrametime)
@@ -11421,7 +11330,7 @@ void CTheGame::RenderPlayer(float fFrametime)
 			if(this->m_fPlayerEnterTimer <= 0.0f)
 			{
 				this->m_fPlayerEnterTimer = 0.0f;
-				this->PlayerSetEnter(m_iGameState);
+				this->PlayerSetMoveEnter(m_iGameState);
 				this->m_bPlayerEnter = true;
 			}
 		}
