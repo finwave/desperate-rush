@@ -24,7 +24,7 @@
 #define MODEL_TYPE_TEXT										13
 #define MODEL_TYPE_HIGHSCORE_PLAYER							14
 
-// Loading cycle pause times
+// Loading cycle pause steps
 #define LOAD_STEPS_WAIT_DEFAULT								50
 #define LOAD_STEPS_WAIT_GAME								100
 

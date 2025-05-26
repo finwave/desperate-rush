@@ -11,6 +11,9 @@
 #define SHADOW_VOLUME_UPDATE_ALTERNATE
 #define SHADOW_VOLUME_COMBINE_FIRST_2_PASSES
 
+// Sound files (wav) loading pause steps
+#define SOUND_FILES_LOAD_STEPS_WAIT 15
+
 #include <time.h>
 #include <sstream>
 
@@ -213,12 +216,11 @@ public:
 			(this->m_iCurrentMouseY != this->m_iPreviousMouseY));
 	}
 
-	inline bool IsLoadMenuSoundFiles() { return this->m_bLoadMenuSoundFiles; }
+	inline bool IsLoadMenuSoundFiles() { return (this->m_iMenuSoundLoadIndex < NUM_WAVES); }
 	inline bool IsLoadGameSoundFiles() { return this->m_bLoadGameSoundFiles; }
-
-	inline void SetLoadMenuSoundFiles(bool enable) { this->m_bLoadMenuSoundFiles = enable; }
 	inline void SetLoadGameSoundFiles(bool enable) { this->m_bLoadGameSoundFiles = enable; }
 
+	bool IsMenuSoundLoadWaitCycle();
 	void SetTextY(int iTextY);
 
 	HRESULT CreateJoystick(void);
@@ -375,7 +377,9 @@ private:
 	// random seed
 	unsigned int					m_fRandomSeed;
 
-	bool							m_bLoadMenuSoundFiles;
+	int								m_iMenuSoundLoadIndex;
+	int								m_iMenuSoundLoadStepCounter;
+
 	bool							m_bLoadGameSoundFiles;
 
 	bool							m_bShowLoadingScreen;

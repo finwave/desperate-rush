@@ -307,6 +307,9 @@ private:
 	DWORD					m_KeyDown;
 	bool					m_bIsClickPause;
 
+	bool					m_bUnpackSoundMasterFile;
+	bool					m_bUnpackSoundChildFile;
+
 	const int				MOUSE_CURSOR_SPEED = 4;
 	const int				MAX_HIGHSCORE_ITEMS = 10;
 

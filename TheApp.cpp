@@ -35,7 +35,9 @@ CTheApp::CTheApp(void)
 	this->m_pShadowVolumes = NULL;
 #endif
 
-	this->m_bLoadMenuSoundFiles = true;
+	this->m_iMenuSoundLoadIndex = 0;
+	this->m_iMenuSoundLoadStepCounter = 0;
+
 	this->m_bLoadGameSoundFiles = true;
 
 	this->m_bShowLoadingScreen = false;
@@ -150,39 +152,50 @@ HRESULT CTheApp::OnCreate(void)
 
 HRESULT CTheApp::LoadSoundFiles()
 {
-	int i;
 	HRESULT hres;
 	std::string resourcePath;
 
 	int volumeSoundEffect = this->GetVolumeSoundEffect();
 
 	// load the wave files
-	for (i = 0; i < NUM_WAVES; i++)
+
+	DWORD dwDuplicates = 0;
+
+	if (this->m_iMenuSoundLoadIndex >= FIRST_DUPLICATE_SOUND)
 	{
-		DWORD dwDuplicates = 0;
-
-		if (i >= FIRST_DUPLICATE_SOUND)
-		{
-			dwDuplicates = DUPLICATE_SOUND_BUFFER;
-		}
-
-		resourcePath = m_ZipManager.GetResourceFilePath(waveFilenames[i].c_str());
-		LPCTSTR strFilename = TextUtils::StringToLPCWSTR(resourcePath);
-
-		hres = m_Waves[i].Load(&m_SoundEngine, strFilename,
-			dwDuplicates, DSBCAPS_CTRLVOLUME);
-
-		if (FAILED(hres))
-		{
-			this->ErrorMessage(hres);
-			return hres;
-		}
-
-		// set volume of sound effect
-		m_Waves[i].SetVolume(volumeSoundEffect, dwDuplicates);
+		dwDuplicates = DUPLICATE_SOUND_BUFFER;
 	}
 
+	resourcePath = m_ZipManager.GetResourceFilePath(waveFilenames[this->m_iMenuSoundLoadIndex].c_str());
+	LPCTSTR strFilename = TextUtils::StringToLPCWSTR(resourcePath);
+
+	hres = m_Waves[this->m_iMenuSoundLoadIndex].Load(&m_SoundEngine, strFilename,
+		dwDuplicates, DSBCAPS_CTRLVOLUME);
+
+	if (FAILED(hres))
+	{
+		this->ErrorMessage(hres);
+		return hres;
+	}
+
+	// set volume of sound effect
+	m_Waves[this->m_iMenuSoundLoadIndex].SetVolume(volumeSoundEffect, dwDuplicates);
+
+	this->m_iMenuSoundLoadIndex++;
+	this->m_iMenuSoundLoadStepCounter++;
+
 	return S_OK;
+}
+
+bool CTheApp::IsMenuSoundLoadWaitCycle()
+{
+	if (this->m_iMenuSoundLoadStepCounter >= SOUND_FILES_LOAD_STEPS_WAIT)
+	{
+		this->m_iMenuSoundLoadStepCounter = 0;
+		return true;
+	}
+
+	return false;
 }
 
 void CTheApp::OnRelease(void)

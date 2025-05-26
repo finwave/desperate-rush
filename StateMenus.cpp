@@ -70,6 +70,9 @@ CStateMenus::CStateMenus(void)
 	this->m_KeyDown = 0;
 	this->m_bIsClickPause = false;
 
+	this->m_bUnpackSoundMasterFile = false;
+	this->m_bUnpackSoundChildFile = false;
+
 	ResetPlayerInput();
 }
 
@@ -91,6 +94,9 @@ HRESULT CStateMenus::Create(CTheApp* pApp,
 
 	this->m_pResourceMenus = pApp->GetResourceMenus();
 	this->m_pResourceHighScores = pApp->GetResourceHighScore();
+
+	this->m_bUnpackSoundMasterFile = true;
+	this->m_bUnpackSoundChildFile = true;
 
 	pApp->SetLoadingScreen(false);
 
@@ -114,7 +120,10 @@ HRESULT CStateMenus::Create(CTheApp* pApp,
 	// menu sounds
 	if (pApp->IsLoadMenuSoundFiles())
 	{
-		this->m_iStepsMax += 1;
+		// zip unpacking
+		this->m_iStepsMax += 10;
+		// wav sound files
+		this->m_iStepsMax += 2 * NUM_WAVES;
 	}
 
 	this->m_pResourceMenus->SetSpriteFilePath("textures/loading/");
@@ -216,28 +225,71 @@ HRESULT CStateMenus::InitState(DWORD dwState)
 		return S_OK;
 	}
 
-	// Load menu sounds.
+	// Load menu music files and all the sound files.
 	if (this->m_pApp->IsLoadMenuSoundFiles())
 	{
 		CZipManager* zipManager = this->m_pApp->GetZipManager();
 
-		// Unpack "menu sounds" ZIP resource file.
-		if (!zipManager->IsExistResourceFile("music/title.mp3") ||
-			!zipManager->IsExistResourceFile("sound/menu_start.wav"))
+		// Unpack "menu sound" ZIP resource files.
+		if (this->m_bUnpackSoundMasterFile)
 		{
-			zipManager->UnpackMasterZipFileWithTarget("data_2", "data3");
-			zipManager->UnpackChildZipFile("data3");
+			this->m_bUnpackSoundMasterFile = false;
+			bool bWaitLoadingBar = false;
+
+			if (!zipManager->IsExistResourceFile("music/title.mp3") ||
+				!zipManager->IsExistResourceFile("sound/menu_start.wav"))
+			{
+				zipManager->UnpackMasterZipFileWithTarget("data_2", "data3");
+				bWaitLoadingBar = true;
+			}
+
+			this->UpdateLoadingBar(5);
+
+			if (bWaitLoadingBar)
+			{
+				this->SetLoadWaitTimer();
+				return S_OK;
+			}
 		}
 
-		hres = this->m_pApp->LoadSoundFiles();
-		this->m_pApp->SetLoadMenuSoundFiles(false);
-
-		if (FAILED(hres))
+		if (this->m_bUnpackSoundChildFile)
 		{
-			return hres;
+			this->m_bUnpackSoundChildFile = false;
+			bool bWaitLoadingBar = false;
+
+			if (!zipManager->IsExistResourceFile("music/title.mp3") ||
+				!zipManager->IsExistResourceFile("sound/menu_start.wav"))
+			{
+				zipManager->UnpackChildZipFile("data3");
+				bWaitLoadingBar = true;
+			}
+
+			this->UpdateLoadingBar(5);
+
+			if (bWaitLoadingBar)
+			{
+				this->SetLoadWaitTimer();
+				return S_OK;
+			}
 		}
 
-		this->UpdateLoadingBar(1);
+		while (this->m_pApp->IsLoadMenuSoundFiles())
+		{
+			hres = this->m_pApp->LoadSoundFiles();
+			this->UpdateLoadingBar(2);
+
+			if (FAILED(hres))
+			{
+				return hres;
+			}
+
+			if (this->m_pApp->IsMenuSoundLoadWaitCycle())
+			{
+				this->SetLoadWaitTimer();
+				return S_OK;
+			}
+		}
+
 		this->SetLoadWaitTimer();
 		return S_OK;
 	}

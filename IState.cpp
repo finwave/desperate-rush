@@ -147,9 +147,9 @@ void IState::UpdateLoadingBar(int iStepsForward)
 	this->m_fLoadingBarIndex += iStepsForward * this->m_fLoadingBarMultiplier;
 	this->m_iLoadingBarIndex = (int)ceil(this->m_fLoadingBarIndex);
 
-	if(this->m_iLoadingBarIndex > 325)
+	if(this->m_iLoadingBarIndex > ISTATE_LOADING_BAR_MAX - 2)
 	{
-		this->m_iLoadingBarIndex = 325;
+		this->m_iLoadingBarIndex = ISTATE_LOADING_BAR_MAX - 2;
 	}
 }
 
