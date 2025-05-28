@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Controllers/PlayerBlastController.h"
 #include "TheApp.h"
-#include "Player.h"
 
 class CLights
 {
@@ -23,7 +23,7 @@ public:
 	void SetGamePlayerBlast(bool bActive,
 							D3DXVECTOR3 posPlayer);
 
-	void UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight);
+	void UpdateGamePlayerBlast(CPlayerBlastController::eBLAST_LIGHT eBlastLight);
 
 	int GetLightCount();
 	int* GetLightIndex();

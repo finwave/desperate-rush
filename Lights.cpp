@@ -276,7 +276,7 @@ void CLights::SetGamePlayerBlast(	bool bActive,
 	}
 }
 
-void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
+void CLights::UpdateGamePlayerBlast(CPlayerBlastController::eBLAST_LIGHT eBlastLight)
 {
 	if(this->m_bPlayerBlastUpdateStart)
 	{
@@ -286,11 +286,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(1, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(1, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -304,11 +304,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(2, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(2, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -322,11 +322,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(3, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(3, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -340,11 +340,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(4, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(4, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -358,11 +358,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(5, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(5, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -376,11 +376,11 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 		{
 			switch(eBlastLight)
 			{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(6, &this->m_LightGamePlayerBlastHigh);
 				break;
 
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(6, &this->m_LightGamePlayerBlastLow);
 				break;
 			}
@@ -397,12 +397,12 @@ void CLights::UpdateGamePlayerBlast(CPlayer::eBLAST_LIGHT eBlastLight)
 
 		switch(eBlastLight)
 		{
-			case CPlayer::eBLAST_LIGHT_HIGH:
+			case CPlayerBlastController::eBLAST_LIGHT_HIGH:
 				this->m_pTheApp->GetDevice()->SetLight(	this->m_iPlayerBlastLight, 
 														&this->m_LightGamePlayerBlastHigh);
 				break;
 			
-			case CPlayer::eBLAST_LIGHT_LOW:
+			case CPlayerBlastController::eBLAST_LIGHT_LOW:
 				this->m_pTheApp->GetDevice()->SetLight(	this->m_iPlayerBlastLight,
 														&this->m_LightGamePlayerBlastLow);
 				break;

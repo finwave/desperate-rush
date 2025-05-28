@@ -1,11 +1,12 @@
 #include "Controllers/ShipAfterburnController.h"
+#include "Controllers/PlayerBlastController.h"
 #include "Player.h"
 
 CPlayer::CPlayer(void)
 {
 	this->m_pTheApp = NULL;
-	this->m_pSpriteBlast = NULL;
 	this->m_pShipAfterburnController = NULL;
+	this->m_pPlayerBlastController = NULL;
 
 	this->m_bDestroyed = false;
 
@@ -32,23 +33,6 @@ CPlayer::CPlayer(void)
 
 	this->m_iCannonEnergyMax = 0;
 	this->m_iCannonEnergy = 0;
-
-	this->m_iBlasts = 0;
-	this->m_iBlastDamage = 0;
-
-	this->m_fBlastBeamTime = 0.035f;
-	this->m_fBlastBeamCounter = 0.0f;
-
-	this->m_bBlast = false;
-
-	this->m_bBlastBeamUp = false;
-	this->m_bBlastBeamDown = false;
-	this->m_bBlastBeamLeft = false;
-	this->m_bBlastBeamRight = false;
-	this->m_bBlastBeamUpLeft = false;
-	this->m_bBlastBeamUpRight = false;
-	this->m_bBlastBeamDownLeft = false;
-	this->m_bBlastBeamDownRight = false;
 
 	this->m_bShield = false;
 
@@ -79,9 +63,7 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 						float fSpeed,
 						float fMaxVelocity,
 						int iHealth,
-						int iCannonEnergy,
-						int iBlastDamage,
-						int iBlasts)
+						int iCannonEnergy)
 {
 	// get default matrix
 	this->m_mDefault = this->GetLocalMatrix();
@@ -103,13 +85,12 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 	this->m_iHealthMax = iHealth;
 	this->m_iCannonEnergyMax = iCannonEnergy;
 	this->m_iCannonEnergy = this->m_iCannonEnergyMax;
-	this->m_iBlastDamage = iBlastDamage;
-	this->m_iBlasts = iBlasts;
-
-	this->m_pSpriteBlast = pSpriteBlast;
 
 	this->m_pShipAfterburnController = new CShipAfterburnController();
 	this->m_pShipAfterburnController->Init(this, pSpriteAfterburn, CShipAfterburnController::eSHIP_TYPE::Player);
+
+	this->m_pPlayerBlastController = new CPlayerBlastController();
+	this->m_pPlayerBlastController->Init(pTheApp, this, pSpriteBlast);
 
 	return S_OK;
 }
@@ -118,20 +99,28 @@ void CPlayer::Release(void)
 {
 	if (this->m_pScoreString != NULL)
 	{
-		delete[]this->m_pScoreString;
+		delete[] this->m_pScoreString;
 		this->m_pScoreString = NULL;
 	}
 
 	if (this->m_pHealthString != NULL)
 	{
-		delete[]this->m_pHealthString;
+		delete[] this->m_pHealthString;
 		this->m_pHealthString = NULL;
 	}
 
 	if (this->m_pShipAfterburnController != NULL)
 	{
+		this->m_pShipAfterburnController->Release();
 		delete this->m_pShipAfterburnController;
 		this->m_pShipAfterburnController = NULL;
+	}
+
+	if (this->m_pPlayerBlastController != NULL)
+	{
+		this->m_pPlayerBlastController->Release();
+		delete this->m_pPlayerBlastController;
+		this->m_pPlayerBlastController = NULL;
 	}
 
 	C3DObject::Release();
@@ -148,14 +137,13 @@ void CPlayer::Update(bool bUpdateObject, float fFrametime)
 			this->m_fUntouchable = 0.0f;
 		}
 	}
-	if(this->m_bBlast)
-	{
-		this->UpdateBlast(fFrametime);
-	}
+
 	if(this->m_bBoostSoundCheck)
 	{
 		this->UpdateBoostSound();
 	}
+
+	this->m_pPlayerBlastController->Update(fFrametime);
 
 	if(bUpdateObject)
 	{
@@ -166,11 +154,7 @@ void CPlayer::Update(bool bUpdateObject, float fFrametime)
 void CPlayer::Render()
 {
 	C3DObject::Render(this->m_pTheApp->GetDevice());
-
-	if(this->m_bBlast)
-	{
-		this->RenderBlast();
-	}
+	this->m_pPlayerBlastController->Render();
 }
 
 void CPlayer::RenderAfterburn(float fFrametime)
@@ -194,7 +178,7 @@ char* CPlayer::GetScoreString(void)
 {
 	if (this->m_pScoreString != NULL)
 	{
-		delete[]this->m_pScoreString;
+		delete[] this->m_pScoreString;
 		this->m_pScoreString = NULL;
 	}
 
@@ -208,19 +192,19 @@ char* CPlayer::GetShipHealth(void)
 {
 	if (this->m_pHealthString != NULL)
 	{
-		delete[]this->m_pHealthString;
+		delete[] this->m_pHealthString;
 		this->m_pHealthString = NULL;
 	}
 
 	this->m_pHealthString = new char[128];
 
-	if( this->m_iHealth < 0 )
+	if (this->m_iHealth < 0)
 	{
-		sprintf_s(this->m_pHealthString,128, "0");
+		sprintf_s(this->m_pHealthString, 128, "0");
 	}
 	else
 	{
-		sprintf_s(this->m_pHealthString,128, "%0.0f", (float)this->m_iHealth);
+		sprintf_s(this->m_pHealthString, 128, "%0.0f", (float)this->m_iHealth);
 	}
 
 	return this->m_pHealthString;
@@ -382,20 +366,6 @@ void CPlayer::ResetHitSound(float fFrametime)
 	}
 }
 
-void CPlayer::SetBlast(bool bBlast)
-{
-	if(bBlast)
-	{
-		this->m_bBlast = true;
-		this->m_eBlastLight = eBLAST_LIGHT_HIGH;
-		this->m_fBlastBeamCounter = this->m_fBlastBeamTime;
-	}
-	else
-	{
-		this->m_bBlast = false;
-	}
-}
-
 bool CPlayer::GameOver()
 {	
 	if( this->m_iLives <= 0 )
@@ -451,240 +421,6 @@ void CPlayer::SetMinigunSpecs()
 			this->m_fMinigunSpeed = 415.0f;
 			this->m_fMinigunFirerate = 0.10f;
 			break;
-	}
-}
-
-void CPlayer::UpdateBlast(float fFrametime)
-{
-	if(this->m_fBlastBeamCounter >= this->m_fBlastBeamTime)
-	{
-		this->m_fBlastBeamCounter = 0.0f;
-
-		this->m_bBlastBeamUp = false;
-		this->m_bBlastBeamDown = false;
-		this->m_bBlastBeamLeft = false;
-		this->m_bBlastBeamRight = false;
-		this->m_bBlastBeamUpLeft = false;
-		this->m_bBlastBeamUpRight = false;
-		this->m_bBlastBeamDownLeft = false;
-		this->m_bBlastBeamDownRight = false;
-
-		for(int i = 1; i < 4;)
-		{
-			switch(this->m_pTheApp->RandInt(0,7))
-			{
-			case SPRITE_PLAYER_BLAST_UP:
-
-				if(!this->m_bBlastBeamUp)
-				{
-					this->m_bBlastBeamUp = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_DOWN:
-
-				if(!this->m_bBlastBeamDown)
-				{
-					this->m_bBlastBeamDown = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_LEFT:
-
-				if(!this->m_bBlastBeamLeft)
-				{
-					this->m_bBlastBeamLeft = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_RIGHT:
-
-				if(!this->m_bBlastBeamRight)
-				{
-					this->m_bBlastBeamRight = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_UP_LEFT:
-
-				if(!this->m_bBlastBeamUpLeft)
-				{
-					this->m_bBlastBeamUpLeft = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_UP_RIGHT:
-
-				if(!this->m_bBlastBeamUpRight)
-				{
-					this->m_bBlastBeamUpRight = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_DOWN_LEFT:
-
-				if(!this->m_bBlastBeamDownLeft)
-				{
-					this->m_bBlastBeamDownLeft = true;
-					i++;
-				}
-
-				break;
-
-			case SPRITE_PLAYER_BLAST_DOWN_RIGHT:
-
-				if(!this->m_bBlastBeamDownRight)
-				{
-					this->m_bBlastBeamDownRight = true;
-					i++;
-				}
-
-				break;
-			}
-		}
-	}
-	else
-	{
-		this->m_fBlastBeamCounter += fFrametime;
-
-		if(this->m_fBlastBeamCounter >= this->m_fBlastBeamTime)
-		{
-			switch(this->m_eBlastLight)
-			{
-			case eBLAST_LIGHT_LOW:
-				this->m_eBlastLight = eBLAST_LIGHT_HIGH;
-				break;
-
-			case eBLAST_LIGHT_HIGH:
-				this->m_eBlastLight = eBLAST_LIGHT_LOW;
-				break;
-			}
-		}
-	}
-}
-
-void CPlayer::RenderBlast()
-{
-	const float fPixelMultiplier = 2.5f;
-
-	float fMoveX;
-	float fMoveY;
-
-	int iPosOriginalX;
-	int iPosOriginalY;
-
-	int iPosX;
-	int iPosY;
-
-	D3DXVECTOR3 pos = this->GetPosition();
-
-	// x-position
-
-	pos = this->GetPosition();
-
-	fMoveX = pos.x * fPixelMultiplier;
-	iPosOriginalX = ( (SCREEN_WIDTH / 2) - 12.0f) + fMoveX;
-
-	// y-position
-
-	fMoveY = pos.y * fPixelMultiplier;
-	fMoveY = fMoveY * -1.0f;
-
-	iPosOriginalY = ( (SCREEN_HEIGHT / 2) - 12.0f) + fMoveY;
-
-	// draw blast beams
-
-	if(this->m_bBlastBeamUp)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 162;
-		iPosY -= 1215;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_UP].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamDown)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 162;
-		iPosY += 25;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_DOWN].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamLeft)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 1215;
-		iPosY -= 162;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_LEFT].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamRight)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX += 25;
-		iPosY -= 162;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_RIGHT].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamUpLeft)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 980;
-		iPosY -= 980;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_UP_LEFT].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamUpRight)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 90;
-		iPosY -= 980;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_UP_RIGHT].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamDownLeft)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 980;
-		iPosY -= 90;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_DOWN_LEFT].Draw(iPosX, iPosY);
-	}
-	if(this->m_bBlastBeamDownRight)
-	{
-		iPosX = iPosOriginalX;
-		iPosY = iPosOriginalY;
-
-		iPosX -= 90;
-		iPosY -= 90;
-
-		this->m_pSpriteBlast[SPRITE_PLAYER_BLAST_DOWN_RIGHT].Draw(iPosX, iPosY);
 	}
 }
 

@@ -32,6 +32,11 @@ int CGameSettings::PLAYER_CANNON_ENERGY_MAX = 200;
 int CGameSettings::PLAYER_CANNON_DAMAGE = 75;
 float CGameSettings::PLAYER_CANNON_SPEED = 280.0f;
 float CGameSettings::PLAYER_CANNON_TIMER = 14.0f;
+
+float CGameSettings::PLAYER_BLAST_ACTIVE_DURATION = 0.8f;
+float CGameSettings::PLAYER_BLAST_BEAM_DURATION = 0.05f;
+int CGameSettings::PLAYER_BLAST_BEAM_COUNT = 4;
+
 int CGameSettings::PLAYER_BLAST_DAMAGE = 100;
 int CGameSettings::PLAYER_BLAST_AMOUNT = 3;
 
@@ -197,6 +202,10 @@ int CGameSettings::UI_PLAYER_CANNON_FILL_POS_Y = CGameSettings::UI_PLAYER_CANNON
 float CGameSettings::UI_LEVEL_TITLE_APPEAR_DURATION = 0.5f;
 float CGameSettings::UI_LEVEL_TITLE_STAY_DURATION = 0.5f;
 float CGameSettings::UI_LEVEL_TITLE_DISAPPEAR_DURATION = 0.35f;
+
+// EXTRA VISUAL EFFECTS
+
+bool CGameSettings::EFFECT_PLAYER_BLAST_LIGHT = false;
 
 float CGameSettings::GetObstacleSpeed(int depth)
 {

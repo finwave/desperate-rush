@@ -218,6 +218,7 @@ void IEnemy::Release()
 
 	if (this->m_pShipAfterburnController != NULL)
 	{
+		this->m_pShipAfterburnController->Release();
 		delete this->m_pShipAfterburnController;
 		this->m_pShipAfterburnController = NULL;
 	}

@@ -1,15 +1,6 @@
 #pragma once
 
-#define SOUND_TIMER_HIT					1
-
-#define SPRITE_PLAYER_BLAST_UP			1
-#define SPRITE_PLAYER_BLAST_DOWN		3
-#define SPRITE_PLAYER_BLAST_LEFT		7
-#define SPRITE_PLAYER_BLAST_RIGHT		2
-#define SPRITE_PLAYER_BLAST_UP_LEFT		4
-#define SPRITE_PLAYER_BLAST_UP_RIGHT	0
-#define SPRITE_PLAYER_BLAST_DOWN_LEFT	6
-#define SPRITE_PLAYER_BLAST_DOWN_RIGHT	5
+#define SOUND_TIMER_HIT 1
 
 #include "TheApp.h"
 #include "C3DObject.h"
@@ -18,6 +9,7 @@
 
 // Forward declaration
 class CShipAfterburnController;
+class CPlayerBlastController;
 
 class CPlayer : public C3DObject
 {
@@ -45,12 +37,6 @@ public:
 		eHIT_SOUND_QUIET
 	};
 
-	enum eBLAST_LIGHT
-	{
-		eBLAST_LIGHT_HIGH,
-		eBLAST_LIGHT_LOW
-	};
-
 	CPlayer(void);
 	virtual ~CPlayer(void);
 
@@ -69,9 +55,7 @@ public:
 					float fSpeed,
 					float fMaxVelocity,
 					int iHealth,
-					int iCannonEnergy,
-					int iBlastDamage,
-					int iBlasts);
+					int iCannonEnergy);
 
 	/*
 	 * Clean-up all mess in this class
@@ -133,12 +117,6 @@ public:
 
 	void SetLevelStartVelocityControls();
 
-	inline int GetBlasts() { return this->m_iBlasts; }
-	inline void IncreaseBlasts() { this->m_iBlasts++; }
-	inline void DecreaseBlasts() { this->m_iBlasts--; }
-
-	inline int GetBlastDamage() { return this->m_iBlastDamage; }
-
 	inline bool IsShield(void) { return this->m_bShield; }
 	inline void SetShield(bool bShield) { this->m_bShield = bShield; }
 
@@ -177,8 +155,6 @@ public:
 
 	inline void ResetHitSoundTimer() { this->m_fHitSoundTimer = 0.0f; }
 
-	inline eBLAST_LIGHT GetBlastLight() { return this->m_eBlastLight; }
-
 	void IncreaseMinigunLevel();
 
 	void ChangeMinigunSound();
@@ -186,12 +162,12 @@ public:
 	void ResetMinigunSound();
 	void ResetHitSound(float fFrametime);
 
-	void SetBlast(bool bBlast);
-
 	bool GameOver();
 
 	void IncreaseCannonEnergy(int iIncrease);
 	void DecreaseCannonEnergy(int iDecrease);
+
+	inline CPlayerBlastController* GetBlastController() { return m_pPlayerBlastController; }
 
 private:
 
@@ -199,18 +175,15 @@ private:
 	// according to current boost level
 	void SetMinigunSpecs();
 
-	void UpdateBlast(float fFrametime);
-	void RenderBlast();
-
 	void UpdateBoostSound();
 
 	CTheApp*		m_pTheApp;
-	CSprite*		m_pSpriteBlast;
+
 	CShipAfterburnController* m_pShipAfterburnController;
+	CPlayerBlastController* m_pPlayerBlastController;
 
 	eMINIGUN_SOUND	m_eMinigunSound;
 	eHIT_SOUND		m_eHitSound;
-	eBLAST_LIGHT	m_eBlastLight;
 
 	char*			m_pScoreString;
 	char*			m_pHealthString;
@@ -265,23 +238,6 @@ private:
 	int			m_iCannonEnergyMax;
 	int			m_iCannonEnergy;
 
-	// number of blasts available
-	int			m_iBlasts;
-	// blast damage
-	int			m_iBlastDamage;
-	// blast timers
-	float		m_fBlastBeamTime;
-	float		m_fBlastBeamCounter;
-
-	bool		m_bBlast;
-	bool		m_bBlastBeamUp;
-	bool		m_bBlastBeamDown;
-	bool		m_bBlastBeamLeft;
-	bool		m_bBlastBeamRight;
-	bool		m_bBlastBeamUpLeft;
-	bool		m_bBlastBeamUpRight;
-	bool		m_bBlastBeamDownLeft;
-	bool		m_bBlastBeamDownRight;
 	bool		m_bShield;
 
 	int			m_iScore;

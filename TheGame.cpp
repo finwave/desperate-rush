@@ -1,5 +1,6 @@
 #include "LerpUtils.h"
 #include "GameSettings.h"
+#include "Controllers/PlayerBlastController.h"
 #include "TheGame.h"
 
 CTheGame::CTheGame(void)
@@ -190,9 +191,6 @@ CTheGame::CTheGame(void)
 	this->m_fMinigunRotationTime = 0.0f;
 	this->m_fMinigunFireTime = 0.0f;
 	this->m_fBlastButtonTimer = 0.0f;
-
-	this->m_fBlastActiveTime = (float)TIME_PLAYER_BLAST;
-	this->m_fBlastActiveCounter = this->m_fBlastActiveTime;
 	
 	this->m_fPlayerEnterTimer = 0.0f;
 	this->m_fPlayerBlinkTimer = 0.0f;
@@ -509,9 +507,7 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					CGameSettings::PLAYER_SPEED,
 					CGameSettings::PLAYER_MAX_VELOCITY,
 					CGameSettings::PLAYER_HEALTH,
-					CGameSettings::PLAYER_CANNON_ENERGY_MAX,
-					CGameSettings::PLAYER_BLAST_DAMAGE,
-					CGameSettings::PLAYER_BLAST_AMOUNT);
+					CGameSettings::PLAYER_CANNON_ENERGY_MAX);
 
 				if (FAILED(hres))
 				{
@@ -2520,20 +2516,18 @@ void CTheGame::Render(void)
 	// player blast is active
 	case GAME_STATE_BLAST_ACTIVE:
 
-		if( this->m_fBlastActiveCounter <= 0.0f )
+		if(!this->m_pPlayer->GetBlastController()->IsBlastActive())
 		{
 			this->PlayerBlastDeactive();
 		}
 		else
 		{
-			// update blast active counter
-			this->m_fBlastActiveCounter -= fFrametime;
-
-			// update player's blast lighting
-			/*
-			this->m_pState->GetLights()->UpdateGamePlayerBlast(
-				this->m_pPlayer->GetBlastLight());
-			*/
+			// update player blast light effect
+			if (CGameSettings::EFFECT_PLAYER_BLAST_LIGHT)
+			{
+				this->m_pState->GetLights()->UpdateGamePlayerBlast(
+					this->m_pPlayer->GetBlastController()->GetBlastLight());
+			}
 
 			this->UpdatePlayer(fFrametime);
 
@@ -2627,12 +2621,11 @@ void CTheGame::Render(void)
 
 		if(!this->m_bFadeOut && !this->m_bFadeOutMusic)
 		{
-			// set player's blast light off
+			// deactivate player blast light effect
 			if(this->m_iGameStatePrevious == GAME_STATE_BLAST_ACTIVE)
 			{
 				this->m_pState->GetLights()->SetGamePlayerBlast(false, this->m_pPlayer->GetPosition());
 			}
-
 
 			this->m_pState->SetState(STATE_MENUS);
 
@@ -5298,8 +5291,13 @@ void CTheGame::PlayerDestroyed()
 void CTheGame::PlayerBlastActive()
 {
 	// activate player blast effect
-	this->m_pPlayer->SetBlast(true);
-	//this->m_pState->GetLights()->SetGamePlayerBlast(true, this->m_pPlayer->GetPosition());
+	this->m_pPlayer->GetBlastController()->Activate();
+
+	// activate player blast light effect
+	if (CGameSettings::EFFECT_PLAYER_BLAST_LIGHT)
+	{
+		this->m_pState->GetLights()->SetGamePlayerBlast(true, this->m_pPlayer->GetPosition());
+	}
 	
 	// set boss blast shaking
 	if( (this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
@@ -5353,9 +5351,11 @@ void CTheGame::PlayerBlastActive()
 
 void CTheGame::PlayerBlastDeactive()
 {
-	// deactivate player blast effect
-	this->m_pPlayer->SetBlast(false);
-	//this->m_pState->GetLights()->SetGamePlayerBlast(false, this->m_pPlayer->GetPosition());
+	// deactivate player blast light effect
+	if (CGameSettings::EFFECT_PLAYER_BLAST_LIGHT)
+	{
+		this->m_pState->GetLights()->SetGamePlayerBlast(false, this->m_pPlayer->GetPosition());
+	}
 
 	bool bEnemyExplosion = false;
 
@@ -5364,7 +5364,7 @@ void CTheGame::PlayerBlastDeactive()
 	{
 		if( this->m_pEnemyBoss1Frame->IsActive() )
 		{
-			if( this->m_pEnemyBoss1Frame->Destroyed(this->m_pPlayer->GetBlastDamage()) )
+			if( this->m_pEnemyBoss1Frame->Destroyed(CGameSettings::PLAYER_BLAST_DAMAGE) )
 			{
 				this->m_bBossDestroyed = true;
 			}
@@ -5378,7 +5378,7 @@ void CTheGame::PlayerBlastDeactive()
 
 		if( this->m_pEnemyBoss1LaserLeft->IsActive() )
 		{
-			if( this->m_pEnemyBoss1LaserLeft->Destroyed(this->m_pPlayer->GetBlastDamage()) )
+			if( this->m_pEnemyBoss1LaserLeft->Destroyed(CGameSettings::PLAYER_BLAST_DAMAGE) )
 			{
 				this->m_pPlayer->IncreaseScore(this->m_pEnemyBoss1LaserLeft->GetScoreDestroyed());
 				// enemy explosion
@@ -5395,7 +5395,7 @@ void CTheGame::PlayerBlastDeactive()
 
 		if( this->m_pEnemyBoss1LaserRight->IsActive() )
 		{
-			if( this->m_pEnemyBoss1LaserRight->Destroyed(this->m_pPlayer->GetBlastDamage()) )
+			if( this->m_pEnemyBoss1LaserRight->Destroyed(CGameSettings::PLAYER_BLAST_DAMAGE) )
 			{
 				this->m_pPlayer->IncreaseScore(this->m_pEnemyBoss1LaserRight->GetScoreDestroyed());
 				// enemy explosion
@@ -5412,7 +5412,7 @@ void CTheGame::PlayerBlastDeactive()
 
 		if( this->m_pEnemyBoss1ScatterLeft->IsActive() )
 		{
-			if( this->m_pEnemyBoss1ScatterLeft->Destroyed(this->m_pPlayer->GetBlastDamage()) )
+			if( this->m_pEnemyBoss1ScatterLeft->Destroyed(CGameSettings::PLAYER_BLAST_DAMAGE) )
 			{
 				this->m_pPlayer->IncreaseScore(this->m_pEnemyBoss1ScatterLeft->GetScoreDestroyed());
 				// enemy explosion
@@ -5429,7 +5429,7 @@ void CTheGame::PlayerBlastDeactive()
 
 		if( this->m_pEnemyBoss1ScatterRight->IsActive() )
 		{
-			if( this->m_pEnemyBoss1ScatterRight->Destroyed(this->m_pPlayer->GetBlastDamage()) )
+			if( this->m_pEnemyBoss1ScatterRight->Destroyed(CGameSettings::PLAYER_BLAST_DAMAGE) )
 			{
 				this->m_pPlayer->IncreaseScore(this->m_pEnemyBoss1ScatterRight->GetScoreDestroyed());
 				// enemy explosion
@@ -5483,9 +5483,6 @@ void CTheGame::PlayerBlastDeactive()
 
 	// destroy bullets
 	this->ClearBullets(true);
-
-	// reset blast activity timer
-	this->m_fBlastActiveCounter = this->m_fBlastActiveTime;
 
 	// go back to previous game state
 	SwitchGameState(this->m_iGameStatePrevious);
@@ -5599,7 +5596,7 @@ void CTheGame::PlayerShooting(float fFrametime)
 				if (this->m_fBlastButtonTimer <= 0)
 				{
 					// player has blasts available
-					if (this->m_pPlayer->GetBlasts() > 0)
+					if (this->m_pPlayer->GetBlastController()->GetBlastAmount() > 0)
 					{
 						bAllowed = true;
 					}
@@ -5614,7 +5611,7 @@ void CTheGame::PlayerShooting(float fFrametime)
 			this->PlayerBlastActive();
 
 			// decrease blast count
-			this->m_pPlayer->DecreaseBlasts();
+			this->m_pPlayer->GetBlastController()->DecreaseBlastAmount();
 			// to avoid multiple button presses
 			this->m_fBlastButtonTimer = 1.0f;
 		}
@@ -12509,7 +12506,7 @@ void CTheGame::RenderPlayerLives()
 
 void CTheGame::RenderPlayerBlasts()
 {
-	int iBlasts = this->m_pPlayer->GetBlasts();
+	int iBlastAmount = this->m_pPlayer->GetBlastController()->GetBlastAmount();
 
 	int iBaseX = CGameSettings::UI_PLAYER_BLAST_BASE_POS_X;
 	int iBaseY = CGameSettings::UI_PLAYER_BLAST_BASE_POS_Y;
@@ -12519,7 +12516,7 @@ void CTheGame::RenderPlayerBlasts()
 	// base layer
 	(this->m_pSpriteInfoPlayerBlasts + 10)->Draw(iBaseX,iBaseY);
 	// number of blasts
-	(this->m_pSpriteInfoPlayerBlasts + iBlasts)->Draw(iNumberX,iNumberY);
+	(this->m_pSpriteInfoPlayerBlasts + iBlastAmount)->Draw(iNumberX,iNumberY);
 }
 
 void CTheGame::RenderPlayerHealthBar()

@@ -16,6 +16,7 @@ CShipAfterburnController::CShipAfterburnController(void)
 
 CShipAfterburnController::~CShipAfterburnController(void)
 {
+	Release();
 }
 
 void CShipAfterburnController::Init(C3DObject* pShipObject, CSprite* pSpriteAfterburn, eSHIP_TYPE eShipType)
@@ -23,6 +24,10 @@ void CShipAfterburnController::Init(C3DObject* pShipObject, CSprite* pSpriteAfte
 	this->m_pShipObject = pShipObject;
 	this->m_pSpriteAfterburn = pSpriteAfterburn;
 	this->m_eShipType = eShipType;
+}
+
+void CShipAfterburnController::Release(void)
+{
 }
 
 void CShipAfterburnController::Render(float fFrametime)

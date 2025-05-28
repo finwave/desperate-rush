@@ -38,6 +38,11 @@ public:
 	static int		PLAYER_CANNON_DAMAGE;
 	static float	PLAYER_CANNON_SPEED;
 	static float	PLAYER_CANNON_TIMER;
+
+	static float	PLAYER_BLAST_ACTIVE_DURATION;
+	static float	PLAYER_BLAST_BEAM_DURATION;
+	static int		PLAYER_BLAST_BEAM_COUNT;
+
 	static int		PLAYER_BLAST_DAMAGE;
 	static int		PLAYER_BLAST_AMOUNT;
 
@@ -203,4 +208,8 @@ public:
 	static float	UI_LEVEL_TITLE_APPEAR_DURATION;
 	static float	UI_LEVEL_TITLE_STAY_DURATION;
 	static float	UI_LEVEL_TITLE_DISAPPEAR_DURATION;
+
+	// EXTRA VISUAL EFFECTS
+
+	static bool		EFFECT_PLAYER_BLAST_LIGHT;
 };

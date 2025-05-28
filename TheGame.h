@@ -144,7 +144,6 @@
 
 // MISC VALUES
 
-#define TIME_PLAYER_BLAST									0.8
 #define TIMER_SOUND_EXPLOSION_ENEMY							6
 
 // ENEMY FLEET VALUES
@@ -749,11 +748,6 @@ private:
 
 	// timers to avoid accidental multiple button presses
 	float						m_fBlastButtonTimer;
-
-	// player blast active time
-	float						m_fBlastActiveTime;
-	// counted towards zero
-	float						m_fBlastActiveCounter;
 
 	// timer to wait player appearance after destroyed
 	float						m_fPlayerEnterTimer;

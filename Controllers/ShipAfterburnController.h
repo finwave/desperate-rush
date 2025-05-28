@@ -18,9 +18,11 @@ public:
 	};
 
 	CShipAfterburnController(void);
-	virtual ~CShipAfterburnController(void);
+	~CShipAfterburnController(void);
 
 	void Init(C3DObject* pShipObject, CSprite* pSpriteAfterburn, eSHIP_TYPE eShipType);
+	void Release(void);
+
 	void Render(float fFrametime);
 
 private:
@@ -32,4 +34,3 @@ private:
 	float m_fPlayerAfterburnFlickerTimer;
 	int m_iPlayerAfterburnFlickerMode;
 };
-

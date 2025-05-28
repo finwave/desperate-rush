@@ -255,6 +255,9 @@
     <ClCompile Include="Controllers\ShipAfterburnController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Controllers\PlayerBlastController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -507,6 +510,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Controllers\ShipAfterburnController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controllers\PlayerBlastController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
