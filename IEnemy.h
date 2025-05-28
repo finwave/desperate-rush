@@ -11,6 +11,9 @@
 #include "Obstacle.h"
 #include "XFileContainer.h"
 
+// Forward declaration
+class CShipAfterburnController;
+
 class IEnemy : public C3DObject
 {
 public:
@@ -150,7 +153,7 @@ public:
 	void UpdateEnemyCannonShake(float fFrametime);
 	void UpdateEnemyBlastShake(float fFrametime);
 
-	void RenderEnemyAfterburn(bool bFreeze, bool bPauseTimer);
+	void RenderAfterburn(float fFrametime);
 
 	virtual HRESULT InitWeapons(CTheApp* pTheApp,
 								LPD3DXMESH mesh,
@@ -241,7 +244,6 @@ public:
 	inline eMOVE_DAMAGE_LEVEL GetMoveDamageLevel() { return this->m_eMoveDamageLevel; }
 	inline void SetMoveDamageLevel(eMOVE_DAMAGE_LEVEL eLevel) { this->m_eMoveDamageLevel = eLevel; }
 
-	inline void SetSpriteAfterburn(CSprite* pAfterburn) { this->m_pSpriteAfterburn = pAfterburn; }
 	inline CSprite* GetSpriteAfterburn() { return this->m_pSpriteAfterburn; }
 
 	inline void SetBonus(bool bBonus) { this->m_bBonus = bBonus; }
@@ -300,9 +302,10 @@ protected:
 	inline bool GetShootCount() { return this->m_bShootCount; }
 	inline void SetShootCount(bool bCount) { this->m_bShootCount = bCount; }
 
-	CQueue<CWeapon*>		m_pBullets;	
-
 	CTheApp*				m_pTheApp;
+	CShipAfterburnController* m_pShipAfterburnController;
+
+	CQueue<CWeapon*>		m_pBullets;	
 
 	eTYPE					m_eType;
 	eBEHAVIOUR				m_eBehaviour;

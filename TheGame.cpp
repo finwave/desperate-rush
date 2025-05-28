@@ -11467,13 +11467,9 @@ void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
 			{
 				if( pEnemy->GetAfterburn() )
 				{
-					if(this->m_iGameState == GAME_STATE_BLAST_ACTIVE)
+					if (!bFreeze)
 					{
-						pEnemy->RenderEnemyAfterburn(bFreeze, false);
-					}
-					else
-					{
-						pEnemy->RenderEnemyAfterburn(bFreeze, true);
+						pEnemy->RenderAfterburn(fFrametime);
 					}
 				}
 			}
@@ -11506,6 +11502,7 @@ void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
 				}
 			}
 		}
+
 		this->m_pActiveEnemies.SetNext();
 	}
 }
@@ -11537,17 +11534,14 @@ void CTheGame::RenderReinforcements(float fFrametime, bool bFreeze)
 			{
 				if( pEnemy->GetAfterburn() )
 				{
-					if(this->m_iGameState == GAME_STATE_BLAST_ACTIVE)
+					if (!bFreeze)
 					{
-						pEnemy->RenderEnemyAfterburn(bFreeze, false);
-					}
-					else
-					{
-						pEnemy->RenderEnemyAfterburn(bFreeze, true);
+						pEnemy->RenderAfterburn(fFrametime);
 					}
 				}
 			}
 		}
+
 		this->m_pReinforcements.SetNext();
 	}
 }

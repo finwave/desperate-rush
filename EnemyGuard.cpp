@@ -1,4 +1,5 @@
 #include "GameSettings.h"
+#include "ShipAfterburnController.h"
 #include "EnemyGuard.h"
 
 CEnemyGuard::CEnemyGuard(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -55,6 +56,9 @@ void CEnemyGuard::Init(	CTheApp* pTheApp,
 
 	this->GenerateRandomMoveTime();
 	this->GenerateRandomShootTime();
+
+	this->m_pShipAfterburnController = new CShipAfterburnController();
+	this->m_pShipAfterburnController->Init(this, pSpriteAfterburn, CShipAfterburnController::eSHIP_TYPE::Guard);
 
 	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }

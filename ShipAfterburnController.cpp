@@ -39,17 +39,35 @@ void CShipAfterburnController::Render(float fFrametime)
 		float fMoveX = pos.x * fPixelMultiplier;
 		float fMoveY = pos.y * fPixelMultiplier;
 
-		if (m_eShipType == eSHIP_TYPE::Player)
+		fMoveY = fMoveY * -1.0f;
+
+		posX = ((SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
+		posY = ((SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
+
+		switch (m_eShipType)
 		{
-			fMoveY = fMoveY * -1.0f;
-
-			posX = ((SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
-			posY = ((SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
-
+		case eSHIP_TYPE::Player:
 			posY += 66;
+			this->m_pSpriteAfterburn->Draw(posX, posY);
+			break;
+		case eSHIP_TYPE::Drone:
+			posY -= 49;
+			(this->m_pSpriteAfterburn + 0)->Draw(posX, posY);
+			break;
+		case eSHIP_TYPE::Sniper:
+			posX += 6;
+			posY -= 62;
+			(this->m_pSpriteAfterburn + 1)->Draw(posX, posY);
+			break;
+		case eSHIP_TYPE::Roller:
+			posY += 55;
+			(this->m_pSpriteAfterburn + 2)->Draw(posX, posY);
+			break;
+		case eSHIP_TYPE::Guard:
+			posY += 55;
+			(this->m_pSpriteAfterburn + 3)->Draw(posX, posY);
+			break;
 		}
-
-		this->m_pSpriteAfterburn->Draw(posX, posY);
 	}
 
 	this->m_fPlayerAfterburnFlickerTimer -= fFrametime;

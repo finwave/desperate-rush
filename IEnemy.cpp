@@ -1,9 +1,11 @@
 #include "LerpUtils.h"
+#include "ShipAfterburnController.h"
 #include "IEnemy.h"
 
 IEnemy::IEnemy(void)
 {
 	this->m_pTheApp = NULL;
+	this->m_pShipAfterburnController = NULL;
 
 	this->m_pBullets.Clear();
 
@@ -211,7 +213,14 @@ void IEnemy::Release()
 {
 	this->m_pBullets.Clear();
 	this->m_pCollisionEnemies.Clear();
+
 	this->m_pTheApp = NULL;
+
+	if (this->m_pShipAfterburnController != NULL)
+	{
+		delete this->m_pShipAfterburnController;
+		this->m_pShipAfterburnController = NULL;
+	}
 
 	C3DObject::Release();
 }
@@ -726,130 +735,6 @@ void IEnemy::UpdateEnemyBlastShake(float fFrametime)
 	else
 	{
 		this->m_fBlastDamageMoveCounter += fFrametime;
-	}
-}
-
-void IEnemy::RenderEnemyAfterburn(bool bFreeze, bool bPauseTimer)
-{
-	if(bPauseTimer)
-	{
-		if(this->m_iPauseAfterburn == 0)
-		{
-			this->m_iPauseAfterburn = 3;
-
-			const float fPixelMultiplier = 2.5f;
-
-			// enemy's current position
-			D3DXVECTOR3 pos = this->GetPosition();
-
-			float fMoveX = pos.x * fPixelMultiplier;
-			float fMoveY = pos.y * fPixelMultiplier;
-
-			fMoveY = fMoveY * -1.0f;
-
-			int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
-			int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
-
-			switch(this->m_eType)
-			{
-			case eTYPE_DRONE:
-
-				posX += 0;
-				posY -= 49;
-
-				(this->m_pSpriteAfterburn + 0)->Draw(posX, posY);
-
-				break;
-
-			case eTYPE_SNIPER:
-
-				posX += 6;
-				posY -= 62;
-
-				(this->m_pSpriteAfterburn + 1)->Draw(posX, posY);
-
-				break;
-
-			case eTYPE_ROLLER:
-
-				posX += 0;
-				posY += 55;
-
-				(this->m_pSpriteAfterburn + 2)->Draw(posX, posY);
-
-				break;
-
-			case eTYPE_GUARD:
-
-				posX += 0;
-				posY += 55;
-
-				(this->m_pSpriteAfterburn + 3)->Draw(posX, posY);
-
-				break;
-			}
-		}
-		else
-		{
-			if(!bFreeze)
-			{
-				this->m_iPauseAfterburn--;
-			}
-		}
-	}
-	else
-	{
-		const float fPixelMultiplier = 2.5f;
-
-		// enemy's current position
-		D3DXVECTOR3 pos = this->GetPosition();
-
-		float fMoveX = pos.x * fPixelMultiplier;
-		float fMoveY = pos.y * fPixelMultiplier;
-
-		fMoveY = fMoveY * -1.0f;
-
-		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
-		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
-
-		switch(this->m_eType)
-		{
-		case eTYPE_DRONE:
-
-			posX += 0;
-			posY -= 49;
-
-			(this->m_pSpriteAfterburn + 0)->Draw(posX, posY);
-
-			break;
-
-		case eTYPE_SNIPER:
-
-			posX += 6;
-			posY -= 62;
-
-			(this->m_pSpriteAfterburn + 1)->Draw(posX, posY);
-
-			break;
-
-		case eTYPE_ROLLER:
-
-			posX += 0;
-			posY += 55;
-
-			(this->m_pSpriteAfterburn + 2)->Draw(posX, posY);
-
-			break;
-
-		case eTYPE_GUARD:
-
-			posX += 0;
-			posY += 55;
-
-			(this->m_pSpriteAfterburn + 3)->Draw(posX, posY);
-
-			break;
-		}
 	}
 }
 
@@ -3472,4 +3357,9 @@ void IEnemy::SetDepth(eENEMY_DEPTH eDepth)
 	this->SetPosition(pos);
 
 	this->m_eDepth = eDepth;
+}
+
+void IEnemy::RenderAfterburn(float fFrametime)
+{
+	this->m_pShipAfterburnController->Render(fFrametime);
 }

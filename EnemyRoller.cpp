@@ -1,4 +1,5 @@
 #include "GameSettings.h"
+#include "ShipAfterburnController.h"
 #include "EnemyRoller.h"
 
 CEnemyRoller::CEnemyRoller(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -76,6 +77,9 @@ void CEnemyRoller::Init(CTheApp* pTheApp,
 	this->GenerateRandomShootTime();
 
 	this->ChangeRotationZ();
+
+	this->m_pShipAfterburnController = new CShipAfterburnController();
+	this->m_pShipAfterburnController->Init(this, pSpriteAfterburn, CShipAfterburnController::eSHIP_TYPE::Roller);
 
 	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 

@@ -12,7 +12,9 @@ public:
 	{
 		Player,
 		Drone,
-		Sniper
+		Sniper,
+		Roller,
+		Guard
 	};
 
 	CShipAfterburnController(void);

@@ -1,5 +1,6 @@
 #include "LerpUtils.h"
 #include "GameSettings.h"
+#include "ShipAfterburnController.h"
 #include "EnemyDrone.h"
 
 CEnemyDrone::CEnemyDrone(eTYPE eType, eBEHAVIOUR eBehaviour)
@@ -55,6 +56,9 @@ void CEnemyDrone::Init(	CTheApp* pTheApp,
 
 	this->GenerateRandomMoveTime();
 	this->GenerateRandomShootTime();
+
+	this->m_pShipAfterburnController = new CShipAfterburnController();
+	this->m_pShipAfterburnController->Init(this, pSpriteAfterburn, CShipAfterburnController::eSHIP_TYPE::Drone);
 
 	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
