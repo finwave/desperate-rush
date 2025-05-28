@@ -177,6 +177,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
   <ItemGroup>
     <ClCompile Include="C3DObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Controllers\ShipAfterburnController.cpp" />
     <ClCompile Include="HighscoreLetterWheel.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
@@ -229,7 +230,6 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClCompile Include="ResourceMenus.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="ShadowVolume.cpp" />
-    <ClCompile Include="ShipAfterburnController.cpp" />
     <ClCompile Include="SoundEngine.cpp" />
     <ClCompile Include="SoundMP3Player.cpp" />
     <ClCompile Include="SoundWave.cpp" />
@@ -260,6 +260,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="btBulletCollisionCommon.h" />
     <ClInclude Include="C3DObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Controllers\ShipAfterburnController.h" />
     <ClInclude Include="HighscoreLetterWheel.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DisplayObject.h" />
@@ -313,7 +314,6 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="ResourceMenus.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ShadowVolume.h" />
-    <ClInclude Include="ShipAfterburnController.h" />
     <ClInclude Include="sounddefines.h" />
     <ClInclude Include="SoundEngine.h" />
     <ClInclude Include="SoundMP3Player.h" />

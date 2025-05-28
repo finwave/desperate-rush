@@ -252,7 +252,7 @@
     <ClCompile Include="LerpUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShipAfterburnController.cpp">
+    <ClCompile Include="Controllers\ShipAfterburnController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -506,7 +506,7 @@
     <ClInclude Include="LerpUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShipAfterburnController.h">
+    <ClInclude Include="Controllers\ShipAfterburnController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

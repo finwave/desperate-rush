@@ -1,6 +1,6 @@
 #include "LerpUtils.h"
 #include "GameSettings.h"
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "EnemySniper.h"
 
 CEnemySniper::CEnemySniper(eTYPE eType, eBEHAVIOUR eBehaviour)

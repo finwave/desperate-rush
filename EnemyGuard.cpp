@@ -1,5 +1,5 @@
 #include "GameSettings.h"
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "EnemyGuard.h"
 
 CEnemyGuard::CEnemyGuard(eTYPE eType, eBEHAVIOUR eBehaviour)

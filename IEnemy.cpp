@@ -1,5 +1,5 @@
 #include "LerpUtils.h"
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "IEnemy.h"
 
 IEnemy::IEnemy(void)

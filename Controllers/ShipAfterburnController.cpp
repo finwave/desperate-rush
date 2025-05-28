@@ -1,13 +1,14 @@
-#include "IApplication.h"
-#include "GameSettings.h"
-#include "C3DObject.h"
-#include "Sprite.h"
+#include "../IApplication.h"
+#include "../GameSettings.h"
+#include "../C3DObject.h"
+#include "../Sprite.h"
 #include "ShipAfterburnController.h"
 
 CShipAfterburnController::CShipAfterburnController(void)
 {
-	this->m_pSpriteAfterburn = NULL;
 	this->m_pShipObject = NULL;
+	this->m_pSpriteAfterburn = NULL;
+	this->m_eShipType = eSHIP_TYPE::Player;
 
 	this->m_fPlayerAfterburnFlickerTimer = CGameSettings::SHIP_AFTERBURN_FLICKER_SHOW_DURATION;
 	this->m_iPlayerAfterburnFlickerMode = 0;

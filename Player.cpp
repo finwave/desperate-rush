@@ -1,4 +1,4 @@
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "Player.h"
 
 CPlayer::CPlayer(void)

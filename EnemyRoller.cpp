@@ -1,5 +1,5 @@
 #include "GameSettings.h"
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "EnemyRoller.h"
 
 CEnemyRoller::CEnemyRoller(eTYPE eType, eBEHAVIOUR eBehaviour)

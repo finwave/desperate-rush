@@ -1,6 +1,6 @@
 #include "LerpUtils.h"
 #include "GameSettings.h"
-#include "ShipAfterburnController.h"
+#include "Controllers/ShipAfterburnController.h"
 #include "EnemyDrone.h"
 
 CEnemyDrone::CEnemyDrone(eTYPE eType, eBEHAVIOUR eBehaviour)
