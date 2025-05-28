@@ -128,6 +128,12 @@ void CPlayer::Release(void)
 		this->m_pHealthString = NULL;
 	}
 
+	if (this->m_pShipAfterburnController != NULL)
+	{
+		delete this->m_pShipAfterburnController;
+		this->m_pShipAfterburnController = NULL;
+	}
+
 	C3DObject::Release();
 }
 
