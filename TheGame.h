@@ -206,7 +206,6 @@
 #include "Sprite.h"
 #include "SpriteScrolling.h"
 #include "Obstacle.h"
-#include "GameSettings.h"
 #include "Number.h"
 #include "DisplayObject.h"
 //#include "ParticleEngine.h"
@@ -453,7 +452,6 @@ private:
 	void RenderBullets(float fFrametime, bool bFreeze);
 	void RenderExplosions();
 	void RenderParticles(float fFrametime, bool bFreeze);
-	void RenderPlayerAfterburn(bool bFreeze);
 	void RenderPlayerCannon(float fFrametime, bool bFreeze);
 	void RenderPlayerCannonCharge(float fFrametime, bool bFreeze);
 	void RenderPlayerCannonBeam(float fFrametime, bool bFreeze);
@@ -586,8 +584,6 @@ private:
 	CSprite*					m_pSpriteLevelTitleSpace;
 	// boss warning
 	CSprite*					m_pSpriteBossWarningSpace;
-	// player afterburn
-	CSprite*					m_pSpritePlayerAfterburn;
 	// player cannon
 	CSprite*					m_pSpriteInfoPlayerCannonChargeSmall;
 	CSprite*					m_pSpriteInfoPlayerCannonChargeMedium;
@@ -595,8 +591,6 @@ private:
 	CSprite*					m_pSpriteInfoPlayerCannonBeamCenter;
 	CSprite*					m_pSpriteInfoPlayerCannonBeamLeft;
 	CSprite*					m_pSpriteInfoPlayerCannonBeamRight;
-	// player blast
-	CSprite*					m_pSpritePlayerBlast;
 	// enemy afterburn
 	CSprite*					m_pSpriteEnemyAfterburn;
 	// boss sprites
@@ -756,7 +750,7 @@ private:
 	// timers to avoid accidental multiple button presses
 	float						m_fBlastButtonTimer;
 
-	// blast active time
+	// player blast active time
 	float						m_fBlastActiveTime;
 	// counted towards zero
 	float						m_fBlastActiveCounter;

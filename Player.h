@@ -16,6 +16,9 @@
 #include "XFileContainer.h"
 #include "Sprite.h"
 
+// Forward declaration
+class CShipAfterburnController;
+
 class CPlayer : public C3DObject
 {
 public:
@@ -59,6 +62,7 @@ public:
 					LPD3DXMESH mesh,
 					std::vector<D3DMATERIAL9*> materials,
 					std::vector<LPDIRECT3DTEXTURE9> textures,
+					CSprite* pSpriteAfterburn,
 					CSprite* pSpriteBlast,
 					float fShipWidth,
 					float fShipHeight,
@@ -76,6 +80,8 @@ public:
 
 	void Update(bool bUpdateObject, float fFrametime);
 	void Render();
+
+	void RenderAfterburn(float fFrametime);
 
 	inline eMINIGUN_SOUND GetMinigunSound() { return this->m_eMinigunSound; }
 	inline eHIT_SOUND GetHitSound() { return this->m_eHitSound; }
@@ -200,6 +206,7 @@ private:
 
 	CTheApp*		m_pTheApp;
 	CSprite*		m_pSpriteBlast;
+	CShipAfterburnController* m_pShipAfterburnController;
 
 	eMINIGUN_SOUND	m_eMinigunSound;
 	eHIT_SOUND		m_eHitSound;

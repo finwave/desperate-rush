@@ -1,4 +1,5 @@
 #include "LerpUtils.h"
+#include "GameSettings.h"
 #include "TheGame.h"
 
 CTheGame::CTheGame(void)
@@ -50,15 +51,12 @@ CTheGame::CTheGame(void)
 	this->m_pSpriteLevelTitleSpace = NULL;
 	this->m_pSpriteBossWarningSpace = NULL;
 
-	this->m_pSpritePlayerAfterburn = NULL;
 	this->m_pSpriteInfoPlayerCannonChargeSmall = NULL;
 	this->m_pSpriteInfoPlayerCannonChargeMedium = NULL;
 	this->m_pSpriteInfoPlayerCannonChargeLarge = NULL;
 	this->m_pSpriteInfoPlayerCannonBeamCenter = NULL;
 	this->m_pSpriteInfoPlayerCannonBeamLeft = NULL;
 	this->m_pSpriteInfoPlayerCannonBeamRight = NULL;
-
-	this->m_pSpritePlayerBlast = NULL;
 
 	this->m_pSpriteEnemyAfterburn = NULL;
 
@@ -504,7 +502,8 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 					this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_PLAYER_FRAME),
 					this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_PLAYER_FRAME),
 					this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_PLAYER_FRAME),
-					this->m_pSpritePlayerBlast,
+					this->m_pResourceGame->GetSpriteGamePlayerAfterburn(),
+					this->m_pResourceGame->GetSpritePlayerBlast(),
 					CGameSettings::PLAYER_WIDTH,
 					CGameSettings::PLAYER_HEIGHT,
 					CGameSettings::PLAYER_SPEED,
@@ -2052,7 +2051,7 @@ void CTheGame::Render(void)
 
 			if(bBackgroundSpeedChangeAfterburn)
 			{
-				this->RenderPlayerAfterburn(false);
+				this->m_pPlayer->RenderAfterburn(fFrametime);
 			}
 
 			if(this->m_bPlayAfterburnSound && bBackgroundSpeedChangeAfterburn)
@@ -3357,10 +3356,6 @@ void CTheGame::LoadSprites()
 	case 2:
 		this->m_pSpriteBossWarningSpace = this->m_pResourceGame->GetSpriteBossWarningSpace();
 		break;
-	// player afterburn
-	case 3:
-		this->m_pSpritePlayerAfterburn = this->m_pResourceGame->GetSpriteGamePlayerAfterburn();
-		break;
 	// player cannon
 	case 4:
 		this->m_pSpriteInfoPlayerCannonChargeSmall = this->m_pResourceGame->GetSpritePlayerCannonChargeSmall();
@@ -3380,13 +3375,10 @@ void CTheGame::LoadSprites()
 	case 9:
 		this->m_pSpriteInfoPlayerCannonBeamRight = this->m_pResourceGame->GetSpritePlayerCannonBeamRight();
 		break;
-	// player blast
-	case 10:
-		this->m_pSpritePlayerBlast = this->m_pResourceGame->GetSpritePlayerBlast();
-		break;
 	// enemy afterburn
 	case 11:
 		this->m_pSpriteEnemyAfterburn = this->m_pResourceGame->GetSpriteEnemyAfterburn();
+		break;
 	// boss sprites
 	case 12:
 		this->m_pSpriteBoss1CannonCharge = this->m_pResourceGame->GetSpriteBoss1CannonCharge();
@@ -5221,7 +5213,7 @@ void CTheGame::PlayerMoveEnter(float fFrametime)
 
 	if (this->m_bPlayerAfterburn)
 	{
-		this->RenderPlayerAfterburn(false);
+		this->m_pPlayer->RenderAfterburn(fFrametime);
 	}
 
 	D3DXVECTOR3 playerPos = this->m_pPlayer->GetPosition();
@@ -5269,9 +5261,9 @@ void CTheGame::PlayerMoveExit(float fFrametime)
 		this->m_fPlayerExitMoveEndPosY, this->m_fPlayerExitMoveTimer, PLAYER_EXIT_MOVE_DURATION);
 
 	playerPos.y = currentPosY;
-	this->m_pPlayer->SetPosition(playerPos);
 
-	this->RenderPlayerAfterburn(false);
+	this->m_pPlayer->SetPosition(playerPos);
+	this->m_pPlayer->RenderAfterburn(fFrametime);
 
 	if (this->m_fPlayerExitMoveTimer == PLAYER_EXIT_MOVE_DURATION)
 	{
@@ -11386,9 +11378,13 @@ void CTheGame::RenderPlayer(float fFrametime)
 			this->m_pPlayer->Render();
 		}
 
+		// render player afterburn
 		if(	this->m_pPlayer->IsVelocityControl() && this->m_pPlayer->IsBoostIncrease())
 		{
-			this->RenderPlayerAfterburn(false);
+			if (this->m_iGameState != GAME_STATE_BLAST_ACTIVE)
+			{
+				this->m_pPlayer->RenderAfterburn(fFrametime);
+			}
 		}
 	}
 }
@@ -11930,40 +11926,6 @@ void CTheGame::RenderParticles(float fFrametime, bool bFreeze)
 		this->m_pParticles.SetNext();
 	}
 	*/
-}
-
-void CTheGame::RenderPlayerAfterburn(bool bFreeze)
-{
-	static int iPause = 0;
-
-	if(iPause == 0)
-	{
-		iPause = 3;
-
-		const float fPixelMultiplier = 2.5f;
-
-		// player's current position
-		D3DXVECTOR3 pos = this->m_pPlayer->GetPosition();
-
-		float fMoveX = pos.x * fPixelMultiplier;
-		float fMoveY = pos.y * fPixelMultiplier;
-
-		fMoveY = fMoveY * -1.0f;
-
-		int posX = ( (SCREEN_WIDTH / 2) - 38.0f) + fMoveX;
-		int posY = ( (SCREEN_HEIGHT / 2) - 38.0f) + fMoveY;
-
-		posY += 66;
-
-		this->m_pSpritePlayerAfterburn->Draw(posX, posY);
-	}
-	else
-	{
-		if(!bFreeze)
-		{
-			iPause--;
-		}
-	}
 }
 
 void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)

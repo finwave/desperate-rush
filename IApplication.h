@@ -17,8 +17,9 @@
 #include "Timer.h"
 #include "ZipManager.h"
 
-// define the screen resolution
+// define the screen pixel width
 #define SCREEN_WIDTH	1024
+// define the screen pixel height
 #define SCREEN_HEIGHT	768
 
 class IApplication

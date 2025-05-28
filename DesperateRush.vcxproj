@@ -229,6 +229,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClCompile Include="ResourceMenus.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="ShadowVolume.cpp" />
+    <ClCompile Include="ShipAfterburnController.cpp" />
     <ClCompile Include="SoundEngine.cpp" />
     <ClCompile Include="SoundMP3Player.cpp" />
     <ClCompile Include="SoundWave.cpp" />
@@ -312,6 +313,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="ResourceMenus.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="ShadowVolume.h" />
+    <ClInclude Include="ShipAfterburnController.h" />
     <ClInclude Include="sounddefines.h" />
     <ClInclude Include="SoundEngine.h" />
     <ClInclude Include="SoundMP3Player.h" />

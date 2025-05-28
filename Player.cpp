@@ -1,7 +1,12 @@
+#include "ShipAfterburnController.h"
 #include "Player.h"
 
 CPlayer::CPlayer(void)
 {
+	this->m_pTheApp = NULL;
+	this->m_pSpriteBlast = NULL;
+	this->m_pShipAfterburnController = NULL;
+
 	this->m_bDestroyed = false;
 
 	this->m_eHitSound = eHIT_SOUND_NORMAL;
@@ -67,6 +72,7 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 						LPD3DXMESH mesh,
 						std::vector<D3DMATERIAL9*> materials,
 						std::vector<LPDIRECT3DTEXTURE9> textures,
+						CSprite* pSpriteAfterburn,
 						CSprite* pSpriteBlast,
 						float fShipWidth,
 						float fShipHeight,
@@ -88,7 +94,7 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 	}
 
 	this->m_pTheApp = pTheApp;
-	this->m_pSpriteBlast = pSpriteBlast;
+
 	this->m_fShipWidth = fShipWidth;
 	this->m_fShipHeight = fShipHeight;
 	this->m_fSpeed = fSpeed;
@@ -99,6 +105,11 @@ HRESULT CPlayer::Create(CTheApp* pTheApp,
 	this->m_iCannonEnergy = this->m_iCannonEnergyMax;
 	this->m_iBlastDamage = iBlastDamage;
 	this->m_iBlasts = iBlasts;
+
+	this->m_pSpriteBlast = pSpriteBlast;
+
+	this->m_pShipAfterburnController = new CShipAfterburnController();
+	this->m_pShipAfterburnController->Init(this, pSpriteAfterburn, CShipAfterburnController::eSHIP_TYPE::Player);
 
 	return S_OK;
 }
@@ -154,6 +165,11 @@ void CPlayer::Render()
 	{
 		this->RenderBlast();
 	}
+}
+
+void CPlayer::RenderAfterburn(float fFrametime)
+{
+	this->m_pShipAfterburnController->Render(fFrametime);
 }
 
 void CPlayer::SetUntouchable(bool bUntouchable)

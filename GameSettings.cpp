@@ -164,6 +164,11 @@ float CGameSettings::OSTACLE_SPEED_DEPTH_3 = 11.0f;
 float CGameSettings::OSTACLE_SPEED_DEPTH_4 = 7.0f;
 float CGameSettings::OSTACLE_SPEED_DEPTH_5 = 3.0f;
 
+// SHIPS COMMON VALUES
+
+float CGameSettings::SHIP_AFTERBURN_FLICKER_SHOW_DURATION = 0.015f;
+float CGameSettings::SHIP_AFTERBURN_FLICKER_HIDE_DURATION = 0.025f;
+
 // UI ELEMENTS
 
 float CGameSettings::UI_NUMBER_WIDTH = 7.0f;
