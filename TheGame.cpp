@@ -159,7 +159,8 @@ CTheGame::CTheGame(void)
 	this->m_iExplosionMoveSpeed = 0;
 	this->m_fExplosionMovePause = 0;
 
-	this->m_iVelocityPixels = 0;
+	this->m_iExplosionPixelVelocity = 0;
+	this->m_iBackgroundPixelVelocity = 0;
 	this->m_fVelocityTimeMargin = 0.0f;
 
 	this->m_fBossWarningStartTimer = 0.0f;
@@ -2671,7 +2672,7 @@ void CTheGame::SwitchGameState(int iNextGameState)
 	switch (iNextGameState)
 	{
 	case GAME_STATE_LEVEL_INTRO:
-
+	{
 		this->m_eLevelTitleEvent = eLEVEL_TITLE_EVENT::Appear;
 
 		// enable player ship afterburn sounds
@@ -2686,10 +2687,16 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pState->GetFading()->SetDefaultFadeStep();
 		//this->m_pState->GetFading()->SetFadeStep(m_FadeInLevelTime);
 
+		int iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
+		int iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
+
 		if (this->m_pLevel->IsObstaclesFirst())
 		{
 			this->m_pPlayer->SetVelocity(this->m_pLevel->GetPlayerVelocityObstacle());
 			this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxObstacle());
+
+			iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
+			iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
 
 			ActivateBackgroundObstacles(TRUE);
 		}
@@ -2699,8 +2706,11 @@ void CTheGame::SwitchGameState(int iNextGameState)
 			this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxEnemy());
 		}
 
-		this->m_bLevelIntro = true;
+		this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
+		this->m_pSpriteBackgroundTop->SetMaxPause(iBackgroundTopPause);
 
+		this->m_bLevelIntro = true;
+	}
 		break;
 
 	case GAME_STATE_PLAY_OBSTACLES:
@@ -11241,57 +11251,56 @@ void CTheGame::UpdateVelocityPixels()
 {
 	float velocity = this->m_pPlayer->GetVelocity();
 
-	if(	(velocity >= 100.0f) && (velocity <= 149.0f) )
+	float maxVelocity = 100.0f;
+	float subtraction = maxVelocity / 6.0f;
+
+	if (velocity >= maxVelocity)
 	{
-		this->m_iVelocityPixels = 0;
+		this->m_iBackgroundPixelVelocity = 6;
 	}
-	else if((velocity >= 150.0f) && (velocity <= 199.0f) )
+	else if (velocity >= (maxVelocity - 1 * subtraction))
 	{
-		this->m_iVelocityPixels = 1;
+		this->m_iBackgroundPixelVelocity = 5;
 	}
-	else if((velocity >= 200.0f) && (velocity <= 249.0f) )
+	else if (velocity >= (maxVelocity - 2 * subtraction))
 	{
-		this->m_iVelocityPixels = 2;
+		this->m_iBackgroundPixelVelocity = 4;
 	}
-	else if((velocity >= 250.0f) && (velocity <= 299.0f) )
+	else if (velocity >= (maxVelocity - 3 * subtraction))
 	{
-		this->m_iVelocityPixels = 3;
+		this->m_iBackgroundPixelVelocity = 3;
 	}
-	else if((velocity >= 300.0f) && (velocity <= 349.0f) )
+	else if (velocity >= (maxVelocity - 4 * subtraction))
 	{
-		this->m_iVelocityPixels = 4;
+		this->m_iBackgroundPixelVelocity = 2;
 	}
-	else if((velocity >= 350.0f) && (velocity <= 399.0f) )
+	else
 	{
-		this->m_iVelocityPixels = 5;
+		this->m_iBackgroundPixelVelocity = 1;
 	}
-	else if((velocity >= 400.0f) && (velocity <= 449.0f) )
+
+	this->m_iExplosionPixelVelocity = this->m_iBackgroundPixelVelocity + 1;
+
+	if (m_iGameState == GAME_STATE_PLAY_OBSTACLES || m_iGameState == GAME_STATE_WAIT_OBSTACLES)
 	{
-		this->m_iVelocityPixels = 6;
+		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 3.0f);
 	}
-	else if((velocity >= 450.0f) && (velocity <= 499.0f) )
+	else
 	{
-		this->m_iVelocityPixels = 7;
-	}
-	else if(velocity >= 500.0f)
-	{
-		this->m_iVelocityPixels = 8;
+		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 4.0f);
 	}
 }
 
 void CTheGame::UpdateBackgroundVelocity()
 {
-	int speed = 0;
-
-	speed = this->m_pSpriteBackgroundTop->GetDefaultSpeed() + this->m_iVelocityPixels;
+	int speed = this->m_pSpriteBackgroundTop->GetDefaultSpeed() + this->m_iBackgroundPixelVelocity;
 	this->m_pSpriteBackgroundTop->SetSpeed(speed);
 }
 
 void CTheGame::UpdateExplosionVelocity()
 {
-	this->m_pExplosions->UpdateVelocity(this->m_iVelocityPixels, this->m_iGameState);
+	this->m_pExplosions->UpdateVelocity(this->m_iExplosionPixelVelocity, this->m_iGameState);
 }
-
 
 void CTheGame::RenderPlayer(float fFrametime)
 {

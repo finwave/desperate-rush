@@ -704,7 +704,8 @@ private:
 	int							m_iExplosionMoveSpeed;
 	int							m_fExplosionMovePause;
 
-	int							m_iVelocityPixels;
+	int							m_iExplosionPixelVelocity;
+	int							m_iBackgroundPixelVelocity;
 	float						m_fVelocityTimeMargin;
 
 	float						m_fBossWarningStartTimer;
