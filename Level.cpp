@@ -80,6 +80,7 @@ void CLevel::Release()
 
 void CLevel::ReadLevel(void)
 {
+	this->m_vBossBattleParts.clear();
 	this->m_iLevelNumber++;
 
 	if(this->m_iLevelNumber <= 3)
@@ -120,6 +121,10 @@ void CLevel::ReadLevel(void)
 			this->m_iBackgroundTopSpeedBoss = 1;
 			this->m_iBackgroundTopPauseBoss = 2;
 
+			// boss battle parts
+			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_STATIONARY);
+			this->m_vBossBattleParts.push_back(BossBattlePart::SCATTER_STATIONARY);
+
 			break;
 
 		case 2:
@@ -156,6 +161,11 @@ void CLevel::ReadLevel(void)
 			this->m_iBackgroundTopSpeedBoss = 1;
 			this->m_iBackgroundTopPauseBoss = 2;
 
+			// boss battle parts
+			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
+			this->m_vBossBattleParts.push_back(BossBattlePart::SCATTER_STATIONARY);
+			this->m_vBossBattleParts.push_back(BossBattlePart::FRONT_CANNON);
+
 			break;
 
 		case 3:
@@ -191,6 +201,11 @@ void CLevel::ReadLevel(void)
 			this->m_iBackgroundTopPauseObstacles = 1;
 			this->m_iBackgroundTopSpeedBoss = 1;
 			this->m_iBackgroundTopPauseBoss = 2;
+
+			// boss battle parts
+			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
+			this->m_vBossBattleParts.push_back(BossBattlePart::SCATTER_MOVING);
+			this->m_vBossBattleParts.push_back(BossBattlePart::FRONT_CANNON);
 
 			break;
 		}
@@ -681,4 +696,17 @@ void CLevel::CalculateStrikeFleets()
 	}
 
 	this->m_iFleetsStrike = iIndex;
+}
+
+bool CLevel::IsBossBattlePartEnabled(BossBattlePart enumValue)
+{
+	for (DWORD i = 0; i < this->m_vBossBattleParts.size(); i++)
+	{
+		if (this->m_vBossBattleParts.at(i) == enumValue)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -1,3 +1,4 @@
+#include "Level.h"
 #include "GameSettings.h"
 #include "WeaponBoss1Laser.h"
 #include "EnemyBoss1Laser.h"
@@ -12,6 +13,7 @@ CEnemyBoss1Laser::CEnemyBoss1Laser(	eTYPE eType,
 	this->m_eAction = eACTION_WAIT;
 	this->m_eDirection = eDIRECTION_FRONT;
 
+	this->m_pLevel = NULL;
 	this->m_pLaser = NULL;
 
 	this->m_fShootMultiTime = 0.0f;
@@ -25,6 +27,7 @@ CEnemyBoss1Laser::CEnemyBoss1Laser(	eTYPE eType,
 
 	this->m_fAngleZ = 0.0f;
 	this->m_fAngleMaxZ = 0.0f;
+	this->m_fStationaryAngleTimer = 0.0f;
 
 	this->GenerateRandomShootTime();
 }
@@ -33,7 +36,8 @@ CEnemyBoss1Laser::~CEnemyBoss1Laser(void)
 {
 }
 
-HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
+HRESULT CEnemyBoss1Laser::Create(	CLevel* pLevel,
+									CTheApp* pTheApp,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
 									std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -53,6 +57,8 @@ HRESULT CEnemyBoss1Laser::Create(	CTheApp* pTheApp,
 	{
 		return hres;
 	}
+
+	this->m_pLevel = pLevel;
 
 	// sound effect volume
 	int iVolume = pTheApp->GetConfig().GetVolumeSoundEffect();
@@ -106,26 +112,26 @@ void CEnemyBoss1Laser::Release()
 }
 
 void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
-								  bool bShootPossible,
-								  bool leftActive,
-								  float fFrametime)
+	bool bShootPossible,
+	bool leftActive,
+	float fFrametime)
 {
-	if(this->m_bRotateLaser)
+	if (this->m_bRotateLaser)
 	{
 		this->RotateLaser(pBossFrame, fFrametime);
 	}
 
 	this->InitPosition(pBossFrame->GetPosition());
 
-	if(!this->m_bEnter)
+	if (!this->m_bEnter)
 	{
-		switch(this->m_eAction)
+		switch (this->m_eAction)
 		{
 		case eACTION_TURN:
 
-			if(leftActive)
+			if (leftActive)
 			{
-				if(this->m_eSide == eSIDE_LEFT)
+				if (this->m_eSide == eSIDE_LEFT)
 				{
 					this->RandomTurn();
 				}
@@ -135,28 +141,21 @@ void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
 				this->RandomTurn();
 			}
 
-			this->m_eAction = eACTION_SHOOT;
-			this->m_fShootMultiTimer = 0.0f;
-
-			if(this->m_eSide == eSIDE_LEFT)
-			{
-				this->m_iShootMulti = this->m_pTheApp->RandInt(
-					10, this->m_iShootMultiMax);
-			}
+			SetAction(eACTION_SHOOT);
 
 			break;
 
 		case eACTION_SHOOT:
 
-			if(!m_bRotateLaser)
+			if (!m_bRotateLaser)
 			{
-				if(bShootPossible)
+				if (bShootPossible)
 				{
 					// current multi-shoot session is not finished
-					if(this->m_iShootMultiCount < this->m_iShootMulti)
+					if (this->m_iShootMultiCount < this->m_iShootMulti)
 					{
 						// fire next multi-shoot bullet
-						if(this->m_fShootMultiTimer <= 0.0f)
+						if (this->m_fShootMultiTimer <= 0.0f)
 						{
 							// shoot next bullet
 							this->ShootWeapons(pBossFrame->GetPosition());
@@ -179,7 +178,7 @@ void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
 						// reset sound effect
 						this->m_eSoundFiring = eSOUND_FIRING_NORMAL_1;
 						// wait for the next attack command
-						this->m_eAction = eACTION_WAIT;
+						SetAction(eACTION_WAIT);
 					}
 				}
 				else
@@ -189,7 +188,7 @@ void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
 					// reset sound effect
 					this->m_eSoundFiring = eSOUND_FIRING_NORMAL_1;
 					// wait for the next attack command
-					this->m_eAction = eACTION_WAIT;
+					SetAction(eACTION_WAIT);
 				}
 			}
 
@@ -200,6 +199,26 @@ void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
 	IEnemy::Update(fFrametime, 0.0f);
 }
 
+void CEnemyBoss1Laser::SetAction(eACTION eAction)
+{
+	switch (eAction)
+	{
+	case eACTION::eACTION_SHOOT:
+
+		this->m_fShootMultiTimer = 0.0f;
+
+		if (this->m_eSide == eSIDE_LEFT)
+		{
+			this->m_iShootMulti = this->m_pTheApp->RandInt(
+				10, this->m_iShootMultiMax);
+		}
+
+		break;
+	}
+
+	this->m_eAction = eAction;
+}
+
 void CEnemyBoss1Laser::Render()
 {
 	IEnemy::Render(this->m_pTheApp->GetDevice());
@@ -207,11 +226,13 @@ void CEnemyBoss1Laser::Render()
 
 void CEnemyBoss1Laser::RandomTurn()
 {
-	switch(this->m_pTheApp->RandInt(1,6))
+	int iRand = this->m_pTheApp->RandInt(1, 6);
+
+	switch (iRand)
 	{
 	case 1:
 
-		if(this->m_eDirection == eDIRECTION_DIAGONAL)
+		if (this->m_eDirection == eDIRECTION_DIAGONAL)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -220,7 +241,7 @@ void CEnemyBoss1Laser::RandomTurn()
 
 	case 2:
 
-		if(this->m_eDirection == eDIRECTION_FRONT)
+		if (this->m_eDirection == eDIRECTION_FRONT)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -229,7 +250,7 @@ void CEnemyBoss1Laser::RandomTurn()
 
 	case 3:
 
-		if(this->m_eDirection == eDIRECTION_FRONT)
+		if (this->m_eDirection == eDIRECTION_FRONT)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -238,7 +259,7 @@ void CEnemyBoss1Laser::RandomTurn()
 
 	case 4:
 
-		if(this->m_eDirection == eDIRECTION_DIAGONAL)
+		if (this->m_eDirection == eDIRECTION_DIAGONAL)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -247,7 +268,7 @@ void CEnemyBoss1Laser::RandomTurn()
 
 	case 5:
 
-		if(this->m_eDirection == eDIRECTION_DIAGONAL)
+		if (this->m_eDirection == eDIRECTION_DIAGONAL)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -256,7 +277,7 @@ void CEnemyBoss1Laser::RandomTurn()
 
 	case 6:
 
-		if(this->m_eDirection == eDIRECTION_FRONT)
+		if (this->m_eDirection == eDIRECTION_FRONT)
 		{
 			this->m_bRotateLaser = true;
 		}
@@ -458,10 +479,23 @@ HRESULT CEnemyBoss1Laser::InitWeapons(	CTheApp* pTheApp,
 
 void CEnemyBoss1Laser::RotateLaser(IEnemy* pBossFrame, float fFrametime)
 {
-	this->SetRotateY(pBossFrame->GetAngleY());
-
 	// rotation speed
 	float fRotationSpeed = fFrametime + 0.005f;
+
+	if (this->m_pLevel->IsBossBattlePartEnabled(CLevel::BossBattlePart::LASER_STATIONARY) && (this->m_eDirection == eDIRECTION_FRONT))
+	{
+		this->m_fStationaryAngleTimer += fRotationSpeed;
+
+		if (this->m_fStationaryAngleTimer >= this->m_fAngleMaxZ)
+		{
+			this->m_fStationaryAngleTimer = 0.0f;
+			this->m_bRotateLaser = false;
+		}
+
+		return;
+	}
+
+	this->SetRotateY(pBossFrame->GetAngleY());
 
 	switch(this->m_eDirection)
 	{

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "EnemyBoss.h"
-//#include "Player.h"
+
+// Forward declaration
+class CLevel;
 
 class CEnemyBoss1Laser : public CEnemyBoss
 {
@@ -11,6 +13,12 @@ public:
 	{
 		eSIDE_LEFT,
 		eSIDE_RIGHT
+	};
+
+	enum eDIRECTION
+	{
+		eDIRECTION_FRONT,
+		eDIRECTION_DIAGONAL
 	};
 
 	enum eACTION
@@ -26,7 +34,8 @@ public:
 
 	virtual ~CEnemyBoss1Laser(void);
 
-	virtual HRESULT Create(	CTheApp* pTheApp,
+	virtual HRESULT Create(	CLevel* pLevel,
+							CTheApp* pTheApp,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
 							std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -59,9 +68,10 @@ public:
 						int iLaserDamage);
 
 	void InitPosition(D3DXVECTOR3 pos);
+	void SetAction(eACTION eAction);
 
 	inline eACTION GetAction() { return this->m_eAction; }
-	inline void SetAction(eACTION eAction) { this->m_eAction = eAction; }
+	inline eDIRECTION GetDirection() { return this->m_eDirection; }
 
 	inline bool GetRotateLaser() { return this->m_bRotateLaser; }
 	inline void SetRotateLaser(bool bRotate) { this->m_bRotateLaser = bRotate; }
@@ -77,17 +87,13 @@ protected:
 
 private:
 
-	enum eDIRECTION
-	{
-		eDIRECTION_FRONT,
-		eDIRECTION_DIAGONAL
-	};
-
 	void RandomTurn();
 	void ShootWeapons(D3DXVECTOR3 framePos);
 	void RotateLaser(IEnemy* pBossFrame, float fFrametime);
 
 	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
+
+	CLevel*		m_pLevel;
 
 	// weapons
 
@@ -119,4 +125,5 @@ private:
 
 	float		m_fAngleZ;
 	float		m_fAngleMaxZ;
+	float		m_fStationaryAngleTimer;
 };

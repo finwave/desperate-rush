@@ -4,6 +4,9 @@
 CEnemyBoss1Frame::CEnemyBoss1Frame(	eTYPE eType,
 									eBEHAVIOUR eBehaviour)
 {
+	this->m_pLaserLeft = NULL;
+	this->m_pLaserRight = NULL;
+
 	this->m_eType = eType;
 	this->m_eBehaviour = eBehaviour;
 	this->m_eAction = eACTION_WAIT;
@@ -15,11 +18,11 @@ CEnemyBoss1Frame::~CEnemyBoss1Frame(void)
 {
 }
 
-HRESULT CEnemyBoss1Frame::Create(	CTheApp* pTheApp,
-									LPD3DXMESH mesh,
-									std::vector<D3DMATERIAL9*> materials,
-									std::vector<LPDIRECT3DTEXTURE9> textures,
-									int iVolumeSoundEffect)
+HRESULT CEnemyBoss1Frame::Create(CTheApp* pTheApp,
+								LPD3DXMESH mesh,
+								std::vector<D3DMATERIAL9*> materials,
+								std::vector<LPDIRECT3DTEXTURE9> textures,
+								int iVolumeSoundEffect)
 {
 	HRESULT hres;
 
@@ -64,15 +67,18 @@ void CEnemyBoss1Frame::Init(CTheApp* pTheApp,
 	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
+void CEnemyBoss1Frame::SetLaserObjects(CEnemyBoss1Laser* pLaserLeft, CEnemyBoss1Laser* pLaserRight)
+{
+	this->m_pLaserLeft = pLaserLeft;
+	this->m_pLaserRight = pLaserRight;
+}
+
 void CEnemyBoss1Frame::Release()
 {
 	CEnemyBoss::Release();
 }
 
-void CEnemyBoss1Frame::UpdateShip(	CEnemyBoss1Laser* pLaserLeft,
-									CEnemyBoss1Laser* pLaserRight,
-									bool bShootPossible,
-									float fFrametime)
+void CEnemyBoss1Frame::UpdateShip(bool bShootPossible, float fFrametime)
 {
 	if(!this->m_bEnter)
 	{
@@ -94,22 +100,8 @@ void CEnemyBoss1Frame::UpdateShip(	CEnemyBoss1Laser* pLaserLeft,
 				}
 				else
 				{
-					if(pLaserLeft->IsActive() && pLaserRight->IsActive())
-					{
-						// small lasers are waiting, can start counting for the next shooting
-						if( (pLaserLeft->GetAction() == CEnemyBoss1Laser::eACTION_WAIT) && 
-							(pLaserRight->GetAction() == CEnemyBoss1Laser::eACTION_WAIT))
-						{
-							this->SetShootCount(true);
-						}
-					}
-					else if(pLaserLeft->IsActive() && 
-							pLaserLeft->GetAction() == CEnemyBoss1Laser::eACTION_WAIT)
-					{
-						this->SetShootCount(true);
-					}
-					else if(pLaserRight->IsActive() && 
-							pLaserRight->GetAction() == CEnemyBoss1Laser::eACTION_WAIT)
+					// small lasers are waiting, can start counting for the next shooting
+					if (IsSmallLaserReady())
 					{
 						this->SetShootCount(true);
 					}
@@ -120,16 +112,19 @@ void CEnemyBoss1Frame::UpdateShip(	CEnemyBoss1Laser* pLaserLeft,
 
 		case eACTION_SMALL_LASER:
 
-			if(pLaserLeft->IsActive())
+			if (IsSmallLaserReady())
 			{
-				pLaserLeft->SetAction(CEnemyBoss1Laser::eACTION_TURN);
-			}
-			if(pLaserRight->IsActive())
-			{
-				pLaserRight->SetAction(CEnemyBoss1Laser::eACTION_TURN);
-			}
+				if (this->m_pLaserLeft->IsActive())
+				{
+					this->m_pLaserLeft->SetAction(CEnemyBoss1Laser::eACTION_TURN);
+				}
+				if (this->m_pLaserRight->IsActive())
+				{
+					this->m_pLaserRight->SetAction(CEnemyBoss1Laser::eACTION_TURN);
+				}
 
-			this->m_eAction = eACTION_WAIT;
+				this->m_eAction = eACTION_WAIT;
+			}
 
 			break;
 
@@ -165,17 +160,49 @@ void CEnemyBoss1Frame::BigLaserFire(float fFrametime)
 
 void CEnemyBoss1Frame::SetRandAttack()
 {
-	// randomize next attack
+	int randAction = 1;
+	//int iRandAction = this->m_pTheApp->RandInt(1, 2);
 
-	switch(1)
+	switch(randAction)
 	{
 	case 1:
-		this->m_eAction = eACTION_SMALL_LASER;
+		if (this->m_pLaserLeft || this->m_pLaserRight)
+		{
+			this->m_eAction = eACTION_SMALL_LASER;
+		}
 		break;
+
 	case 2:
 		this->m_eAction = eACTION_BIG_LASER_CHARGE;
 		break;
 	}
+}
+
+bool CEnemyBoss1Frame::IsSmallLaserReady()
+{
+	if (!this->m_pLaserLeft || !this->m_pLaserRight)
+	{
+		return false;
+	}
+
+	if (this->m_pLaserLeft->IsActive() && this->m_pLaserRight->IsActive() &&
+		this->m_pLaserLeft->GetAction() == CEnemyBoss1Laser::eACTION_WAIT &&
+		this->m_pLaserRight->GetAction() == CEnemyBoss1Laser::eACTION_WAIT)
+	{
+		return true;
+	}
+	else if (this->m_pLaserLeft->IsActive() &&
+		this->m_pLaserLeft->GetAction() == CEnemyBoss1Laser::eACTION_WAIT)
+	{
+		return true;
+	}
+	else if (this->m_pLaserRight->IsActive() &&
+		this->m_pLaserRight->GetAction() == CEnemyBoss1Laser::eACTION_WAIT)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void CEnemyBoss1Frame::MoveEnter(float fFrametime, float fPlayerVelocity)

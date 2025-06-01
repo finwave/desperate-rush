@@ -1,3 +1,4 @@
+#include "Level.h"
 #include "GameSettings.h"
 #include "WeaponBoss1Scatter.h"
 #include "EnemyBoss1Scatter.h"
@@ -6,6 +7,8 @@ CEnemyBoss1Scatter::CEnemyBoss1Scatter(	eTYPE eType,
 										eBEHAVIOUR eBehaviour,
 										eSIDE eSide)
 {
+	this->m_pLevel = NULL;
+
 	this->m_eType = eType;
 	this->m_eBehaviour = eBehaviour;
 	this->m_eSide = eSide;
@@ -35,7 +38,8 @@ CEnemyBoss1Scatter::~CEnemyBoss1Scatter(void)
 {
 }
 
-HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
+HRESULT CEnemyBoss1Scatter::Create(	CLevel* pLevel,
+									CTheApp* pTheApp,
 									IEnemy* pBossFrame,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
@@ -56,6 +60,8 @@ HRESULT CEnemyBoss1Scatter::Create(	CTheApp* pTheApp,
 	{
 		return hres;
 	}
+
+	this->m_pLevel = pLevel;
 
 	// set enemy score
 	this->InitScores();
@@ -465,7 +471,14 @@ void CEnemyBoss1Scatter::SetRandAttack()
 {
 	// randomize next attack
 
-	switch(this->m_pTheApp->RandInt(1,2))
+	int iRandAction = 1;
+
+	if (this->m_pLevel->IsBossBattlePartEnabled(CLevel::BossBattlePart::SCATTER_MOVING))
+	{
+		iRandAction = this->m_pTheApp->RandInt(1, 2);
+	}
+
+	switch(iRandAction)
 	{
 	case 1:
 

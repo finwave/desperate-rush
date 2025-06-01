@@ -2,8 +2,6 @@
 
 #include "EnemyBoss.h"
 #include "EnemyBoss1Laser.h"
-//#include "Player.h"
-//#include "Weapon.h"
 
 class CEnemyBoss1Frame : public CEnemyBoss
 {
@@ -22,12 +20,11 @@ public:
 
 	virtual void Release();
 
-	virtual void UpdateShip(CEnemyBoss1Laser* pLaserLeft,
-							CEnemyBoss1Laser* pLaserRight,
-							bool bShootPossible,
-							float fFrametime);
+	virtual void UpdateShip(bool bShootPossible, float fFrametime);
 
 	virtual void Render();
+
+	void SetLaserObjects(CEnemyBoss1Laser* pLaserLeft, CEnemyBoss1Laser* pLaserRight);
 
 protected:
 
@@ -49,8 +46,13 @@ private:
 	void BigLaserFire(float fFrametime);
 	void SetRandAttack();
 
+	bool IsSmallLaserReady();
+
 	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
 	virtual void Move(float fFrametime, float fPlayerVelocity);
 
 	eACTION			m_eAction;
+
+	CEnemyBoss1Laser* m_pLaserLeft;
+	CEnemyBoss1Laser* m_pLaserRight;
 };

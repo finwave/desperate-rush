@@ -2,6 +2,9 @@
 
 #include "EnemyBoss.h"
 
+// Forward declaration
+class CLevel;
+
 class CEnemyBoss1Scatter : public CEnemyBoss
 {
 public:
@@ -18,7 +21,8 @@ public:
 
 	virtual ~CEnemyBoss1Scatter(void);
 
-	virtual HRESULT Create(	CTheApp* pTheApp,
+	virtual HRESULT Create(	CLevel* pLevel,
+							CTheApp* pTheApp,
 							IEnemy* pBossFrame,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
@@ -80,6 +84,8 @@ private:
 	void InitPosition(D3DXVECTOR3 posFrame);
 
 	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
+
+	CLevel*		m_pLevel;
 
 	// weapons
 

@@ -285,6 +285,8 @@ private:
 		eEXPLOSION_ENEMY_QUIET_2
 	};
 
+	void ReleaseBoss();
+
 	void SwitchGameState(int iNextGameState);
 
 	void ActivateObstacles(CQueue<CObstacle*>* pObstacles, BOOL bEnable);
@@ -546,13 +548,13 @@ private:
 	CEnemyRoller*				m_pEnemyRollerStrike;
 	//CEnemyGuard*				m_pEnemyGuardStrike;
 
-	CEnemyBoss1Core*			m_pEnemyBoss1Core;
-	CEnemyBoss1Frame*			m_pEnemyBoss1Frame;
-	CEnemyBoss1Laser*			m_pEnemyBoss1LaserLeft;
-	CEnemyBoss1Laser*			m_pEnemyBoss1LaserRight;
-	CEnemyBoss1Scatter*			m_pEnemyBoss1ScatterLeft;
-	CEnemyBoss1Scatter*			m_pEnemyBoss1ScatterRight;
-	CEnemyBoss1Cannon*			m_pEnemyBoss1Cannon;
+	CEnemyBoss1Core*			m_pEnemyBossCore;
+	CEnemyBoss1Frame*			m_pEnemyBossFrame;
+	CEnemyBoss1Laser*			m_pEnemyBossLaserLeft;
+	CEnemyBoss1Laser*			m_pEnemyBossLaserRight;
+	CEnemyBoss1Scatter*			m_pEnemyBossScatterLeft;
+	CEnemyBoss1Scatter*			m_pEnemyBossScatterRight;
+	CEnemyBoss1Cannon*			m_pEnemyBossCannon;
 
 	std::vector<CObstacle*>		m_vTemplateAsteroidBig;
 	std::vector<CObstacle*>		m_vTemplateAsteroidMedium;

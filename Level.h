@@ -3,6 +3,7 @@
 #define LEVELS_MAX		3
 
 #include <windows.h>
+#include <vector>
 #include <d3d9.h>
 #include "TheApp.h"
 
@@ -25,6 +26,15 @@ public:
 		eSHIP_TYPE_GUARD
 	};
 
+	enum BossBattlePart
+	{
+		LASER_STATIONARY,
+		LASER_ROTATING,
+		SCATTER_STATIONARY,
+		SCATTER_MOVING,
+		FRONT_CANNON
+	};
+
 	CLevel(void);
 	virtual ~CLevel(void);
 
@@ -42,6 +52,8 @@ public:
 	float GetRandReinforcementAppearTime();
 	float GetRandReinforcementSendTime();
 	float GetRandObstacleTime(int iObstacleDepth);
+
+	bool IsBossBattlePartEnabled(BossBattlePart enumValue);
 
 	inline BOOL IsActive() { return this->m_bActive; }
 	inline void SetActive(bool bSet) { this->m_bActive = bSet; }
@@ -109,7 +121,7 @@ private:
 	float			m_fPlayerBoostMaxEnemy;
 	float			m_fPlayerBoostMaxObstacle;
 
-	//TIMES
+	// TIMES
 
 	float			m_fFirstEnemyLaunch;
 	float			m_fFirstEnemyStrike;
@@ -119,7 +131,7 @@ private:
 
 	float			m_fTimeObstacleStart;
 
-	//ENEMIES
+	// ENEMIES
 
 	int				m_iFleetsLaunch;
 	int				m_iFleetsStrike;
@@ -137,7 +149,11 @@ private:
 	int*			m_pLaunchFleetSize;
 	int*			m_pStrikeFleetSize;
 
-	//OBSTACLES
+	// BOSS
+
+	std::vector<BossBattlePart> m_vBossBattleParts;
+
+	// OBSTACLES
 
 	int				m_iObstacles;
 
@@ -147,7 +163,7 @@ private:
 	bool			m_bObstaclesFirst;
 	bool			m_bObstacleEnemies;
 
-	//BACKGROUNDS
+	// BACKGROUNDS
 
 	int				m_iBackgroundMiddleSpeed;
 	int				m_iBackgroundMiddlePause;
