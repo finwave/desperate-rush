@@ -291,7 +291,6 @@ void CExplosions::Release()
 
 void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 								int iMoveSpeed,
-								float fMovePause,
 								D3DXVECTOR3 pos)
 {
 	switch (eExplosionType)
@@ -302,7 +301,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionPlayer + i)->IsActive() )
 			{
-				(m_pExplosionPlayer + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionPlayer + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -316,7 +315,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionDrone + i)->IsActive() )
 			{
-				(m_pExplosionDrone + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionDrone + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -330,7 +329,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionSniper + i)->IsActive() )
 			{
-				(m_pExplosionSniper + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionSniper + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -344,7 +343,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionRoller + i)->IsActive() )
 			{
-				(m_pExplosionRoller + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionRoller + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -359,7 +358,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionGuard + i)->IsActive() )
 			{
-				(m_pExplosionGuard + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionGuard + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -374,7 +373,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionBoss1Big + i)->IsActive() )
 			{
-				(m_pExplosionBoss1Big + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionBoss1Big + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -388,7 +387,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionBoss1Part + i)->IsActive() )
 			{
-				(m_pExplosionBoss1Part + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionBoss1Part + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -402,7 +401,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionBoss1Chain1 + i)->IsActive() )
 			{
-				(m_pExplosionBoss1Chain1 + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionBoss1Chain1 + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -416,7 +415,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionBoss1Chain2 + i)->IsActive() )
 			{
-				(m_pExplosionBoss1Chain2 + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionBoss1Chain2 + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}
@@ -430,7 +429,7 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 		{
 			if ( !(m_pExplosionBoss1Chain3 + i)->IsActive() )
 			{
-				(m_pExplosionBoss1Chain3 + i)->Init(iMoveSpeed, fMovePause, pos);
+				(m_pExplosionBoss1Chain3 + i)->Init(iMoveSpeed, pos);
 
 				return;
 			}

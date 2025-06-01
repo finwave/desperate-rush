@@ -157,8 +157,6 @@ CTheGame::CTheGame(void)
 	this->m_iMaxEnemies = 0;
 
 	this->m_iExplosionMoveSpeed = 0;
-	this->m_fExplosionMovePause = 0;
-
 	this->m_iExplosionPixelVelocity = 0;
 	this->m_iBackgroundPixelVelocity = 0;
 	this->m_fVelocityTimeMargin = 0.0f;
@@ -2723,7 +2721,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		ActivateObstacles(&this->m_pObstaclesDepth1, TRUE);
 
 		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles() / 2;
-		this->m_fExplosionMovePause = this->m_pLevel->GetBackgroundTopPauseObstacles() * 1.5f;
 
 		this->m_pPlayer->SetVelocityControl(true);
 		this->m_pPlayer->SetVerticalControl(false);
@@ -2748,7 +2745,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxEnemy());
 
 		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies() / 2;
-		this->m_fExplosionMovePause = this->m_pLevel->GetBackgroundTopPauseEnemies() * 1.5f;
 
 		this->m_iMaxEnemies = 0;
 
@@ -2763,7 +2759,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pPlayer->SetBoost(0.0f);
 
 		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedBoss() / 2;
-		this->m_fExplosionMovePause = this->m_pLevel->GetBackgroundTopPauseBoss() * 1.5f;
 
 		this->m_pEnemyBossFrame->SetVisible(TRUE);
 
@@ -5971,7 +5966,6 @@ void CTheGame::PlayerExplosion()
 {
 	this->m_pExplosions->AddExplosion(	CExplosion::eEXPLOSION_TYPE_PLAYER,
 										this->m_iExplosionMoveSpeed,
-										this->m_fExplosionMovePause,
 										this->m_pPlayer->GetPosition());
 }
 
@@ -7510,7 +7504,6 @@ void CTheGame::EnemyExplosion(IEnemy* pEnemy)
 	{
 		m_pExplosions->AddExplosion(explosionType,
 									this->m_iExplosionMoveSpeed,
-									this->m_fExplosionMovePause,
 									pEnemy->GetPosition());
 	}
 }
@@ -7720,7 +7713,6 @@ void CTheGame::BossFrameChainExplosion()
 	{
 		m_pExplosions->AddExplosion(explosionType,
 									this->m_iExplosionMoveSpeed,
-									this->m_fExplosionMovePause,
 									pos);
 	}
 }
@@ -7734,7 +7726,6 @@ void CTheGame::BossFrameBigExplosion()
 	this->m_pExplosions->AddExplosion(
 		CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG,
 		this->m_iExplosionMoveSpeed,
-		this->m_fExplosionMovePause,
 		posBossFrame);
 
 	// create boss scatter explosions
@@ -7785,7 +7776,6 @@ void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 	{
 		m_pExplosions->AddExplosion(explosionType,
 			this->m_iExplosionMoveSpeed,
-			this->m_fExplosionMovePause,
 			pos);
 	}
 
@@ -10927,28 +10917,34 @@ void CTheGame::UpdateVelocityTimeMargin(float fFrametime)
 
 void CTheGame::UpdateVelocityPixels()
 {
-	float velocity = this->m_pPlayer->GetVelocity();
+	UpdateVelocityPixelsBackground();
+	UpdateVelocityPixelsExplosion();
+}
+
+void CTheGame::UpdateVelocityPixelsBackground()
+{
+	float playerVelocity = this->m_pPlayer->GetVelocity();
 
 	float maxVelocity = 100.0f;
 	float subtraction = maxVelocity / 6.0f;
 
-	if (velocity >= maxVelocity)
+	if (playerVelocity >= maxVelocity)
 	{
 		this->m_iBackgroundPixelVelocity = 6;
 	}
-	else if (velocity >= (maxVelocity - 1 * subtraction))
+	else if (playerVelocity >= (maxVelocity - 1 * subtraction))
 	{
 		this->m_iBackgroundPixelVelocity = 5;
 	}
-	else if (velocity >= (maxVelocity - 2 * subtraction))
+	else if (playerVelocity >= (maxVelocity - 2 * subtraction))
 	{
 		this->m_iBackgroundPixelVelocity = 4;
 	}
-	else if (velocity >= (maxVelocity - 3 * subtraction))
+	else if (playerVelocity >= (maxVelocity - 3 * subtraction))
 	{
 		this->m_iBackgroundPixelVelocity = 3;
 	}
-	else if (velocity >= (maxVelocity - 4 * subtraction))
+	else if (playerVelocity >= (maxVelocity - 4 * subtraction))
 	{
 		this->m_iBackgroundPixelVelocity = 2;
 	}
@@ -10957,8 +10953,6 @@ void CTheGame::UpdateVelocityPixels()
 		this->m_iBackgroundPixelVelocity = 1;
 	}
 
-	this->m_iExplosionPixelVelocity = this->m_iBackgroundPixelVelocity + 1;
-
 	if (m_iGameState == GAME_STATE_PLAY_OBSTACLES || m_iGameState == GAME_STATE_WAIT_OBSTACLES)
 	{
 		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 3.0f);
@@ -10966,6 +10960,29 @@ void CTheGame::UpdateVelocityPixels()
 	else
 	{
 		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 4.0f);
+	}
+}
+
+void CTheGame::UpdateVelocityPixelsExplosion()
+{
+	float playerVelocity = this->m_pPlayer->GetVelocity();
+
+	float rangeStep = 30.0f;
+	float range = 1.0f + rangeStep;
+
+	if (m_iGameState == GAME_STATE_PLAY_OBSTACLES || m_iGameState == GAME_STATE_WAIT_OBSTACLES)
+	{
+		this->m_iExplosionPixelVelocity = 2;
+	}
+	else
+	{
+		this->m_iExplosionPixelVelocity = 1;
+	}
+
+	while (range < playerVelocity)
+	{
+		this->m_iExplosionPixelVelocity += 1;
+		range += rangeStep;
 	}
 }
 

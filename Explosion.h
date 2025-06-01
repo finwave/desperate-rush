@@ -34,7 +34,6 @@ public:
 				float fScreenHeight);
 
 	void Init(	int iMoveSpeed,
-				float fMovePause,
 				D3DXVECTOR3 posStart);
 
 	void Update(float fFrametime);
@@ -54,7 +53,6 @@ private:
 	CSprite*			m_pSpritesExplosion;
 
 	D3DXVECTOR3			m_posStart;
-
 	eEXPLOSION_TYPE		m_eExplosionType;
 
 	bool				m_bActive;
@@ -68,9 +66,6 @@ private:
 
 	int					m_iMoveSpeed;
 	int					m_iDefaultSpeed;
-
-	float				m_fMovePause;
-	float				m_fMovePauseMax;
 
 	float				m_fDrawPause;
 	float				m_fDrawPauseMax;

@@ -5,15 +5,15 @@ CExplosion::CExplosion()
 	this->m_pTheApp = NULL;
 	this->m_pSpritesExplosion = NULL;
 
+	this->m_eExplosionType = eEXPLOSION_TYPE::eEXPLOSION_TYPE_NONE;
+
 	this->m_bActive = false;
 
 	this->m_iSpriteIndex = 0;
 	this->m_iSpriteCount = 0;
 
 	this->m_iMoveSpeed = 0;
-
-	this->m_fMovePause = 0.0f;
-	this->m_fMovePauseMax = 0.0f;
+	this->m_iDefaultSpeed = 0;
 
 	this->m_fDrawPause = 0.0f;
 	this->m_fDrawPauseMax = 0.0f;
@@ -52,7 +52,6 @@ void CExplosion::Create(CTheApp* pTheApp,
 }
 
 void CExplosion::Init(	int iMoveSpeed,
-						float fMovePause,
 						D3DXVECTOR3 posStart)
 {
 	this->m_iPosY = 0;
@@ -62,9 +61,6 @@ void CExplosion::Init(	int iMoveSpeed,
 
 	this->m_iMoveSpeed = iMoveSpeed;
 	this->m_iDefaultSpeed = iMoveSpeed;
-
-	this->m_fMovePause = fMovePause;
-	this->m_fMovePauseMax = fMovePause;
 
 	this->InitPosition(posStart);
 
@@ -78,26 +74,7 @@ void CExplosion::Update(float fFrametime)
 	{
 		// update explosion position
 
-		if(this->m_fMovePause <= 0.0f)
-		{
-			if(this->m_fMovePauseMax > 0.0f)
-			{
-				while(this->m_fMovePause <= 0.0f)
-				{
-					this->m_fMovePause += this->m_fMovePauseMax;
-					this->m_iPosY += this->m_iMoveSpeed;
-				}
-			}
-			else
-			{
-				this->m_fMovePause = this->m_fMovePauseMax;
-				this->m_iPosY += this->m_iMoveSpeed;
-			}
-		}
-		else
-		{
-			this->m_fMovePause -= fFrametime;
-		}
+		this->m_iPosY += this->m_iMoveSpeed;
 
 		// update explosion index
 

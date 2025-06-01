@@ -441,6 +441,8 @@ private:
 
 	void UpdateVelocityTimeMargin(float fFrametime);
 	void UpdateVelocityPixels();
+	void UpdateVelocityPixelsBackground();
+	void UpdateVelocityPixelsExplosion();
 	void UpdateBackgroundVelocity();
 	void UpdateExplosionVelocity();
 
@@ -704,8 +706,6 @@ private:
 	int							m_iMaxEnemies;
 
 	int							m_iExplosionMoveSpeed;
-	int							m_fExplosionMovePause;
-
 	int							m_iExplosionPixelVelocity;
 	int							m_iBackgroundPixelVelocity;
 	float						m_fVelocityTimeMargin;

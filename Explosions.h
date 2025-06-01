@@ -45,7 +45,6 @@ public:
 
 	void AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 						int iMoveSpeed,
-						float fMovePause,
 						D3DXVECTOR3 pos);
 
 	void Clear();
