@@ -122,7 +122,7 @@ void CLevel::ReadLevel(void)
 			this->m_iBackgroundTopPauseBoss = 2;
 
 			// boss battle parts
-			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_STATIONARY);
+			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
 			this->m_vBossBattleParts.push_back(BossBattlePart::SCATTER_STATIONARY);
 
 			break;
