@@ -2767,10 +2767,14 @@ void CTheGame::SwitchGameState(int iNextGameState)
 	case GAME_STATE_VELOCITY_DECREASE:
 
 		this->m_pPlayer->SetVelocityControl(false);
+		this->m_pPlayer->SetVerticalControl(true);
 
 		break;
 
 	case GAME_STATE_SPEED_CHANGE:
+
+		this->m_pPlayer->SetVelocityControl(false);
+		this->m_pPlayer->SetVerticalControl(true);
 
 		this->m_bEnemyReinforcementSending = false;
 		this->m_fEnemyReinforcementSendCounter = 0.0f;

@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "PlayerController.h"
 
 CPlayerController::CPlayerController(CTheApp* pTheApp,
@@ -89,22 +90,20 @@ void CPlayerController::UpdatePlayer(float fFrametime, CPlayer* pPlayer)
 		{
 			pPlayer->DecreaseBoost(fFrametime);
 
-			/*
-			if (pPlayer->IsVelocityControl())
-			{
-				pPlayer->DecreaseBoost(fFrametime);
-			}
-			*/
-
 			if (pPlayer->IsVerticalControl())
 			{
 				fMovementBorder = -this->m_fScreenHeight + (this->m_fPlayerHeight / 2);
-				pos.y -= frameVelocity;
+			}
+			else
+			{
+				fMovementBorder = CGameSettings::PLAYER_SHIP_START_POS_Y;
+			}
 
-				if (pos.y < fMovementBorder)
-				{
-					pos.y = fMovementBorder;
-				}
+			pos.y -= frameVelocity;
+
+			if (pos.y < fMovementBorder)
+			{
+				pos.y = fMovementBorder;
 			}
 		}
 
