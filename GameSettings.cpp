@@ -21,7 +21,7 @@ float CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MAX = 1.0f;
 
 // PLAYER
 
-int CGameSettings::PLAYER_LIVES = 4;
+int CGameSettings::PLAYER_LIVES = 3;
 int CGameSettings::PLAYER_HEALTH = 100;
 float CGameSettings::PLAYER_WIDTH = 23.0f;
 float CGameSettings::PLAYER_HEIGHT = 34.0f;
