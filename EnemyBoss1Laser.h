@@ -15,17 +15,16 @@ public:
 		eSIDE_RIGHT
 	};
 
+	enum eACTION
+	{
+		eACTION_READY,
+		eACTION_SHOOT_WEAPON
+	};
+
 	enum eDIRECTION
 	{
 		eDIRECTION_FRONT,
 		eDIRECTION_DIAGONAL
-	};
-
-	enum eACTION
-	{
-		eACTION_WAIT,
-		eACTION_TURN,
-		eACTION_SHOOT
 	};
 
 	CEnemyBoss1Laser(	eTYPE eType,
@@ -36,6 +35,7 @@ public:
 
 	virtual HRESULT Create(	CLevel* pLevel,
 							CTheApp* pTheApp,
+							IEnemy* pBossFrame,
 							LPD3DXMESH mesh,
 							std::vector<D3DMATERIAL9*> materials,
 							std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -43,10 +43,8 @@ public:
 
 	virtual void Release();
 
-	void UpdateShip(IEnemy* pBossFrame,
-					bool bShootPossible,
-					bool leftActive,
-					float fFrametime);
+	void UpdateShip(float fFrametime, bool bShootPossible);
+	void UpdatePosition();
 
 	virtual void Render();
 
@@ -67,17 +65,13 @@ public:
 						float fLaserSpeed,
 						int iLaserDamage);
 
-	void InitPosition(D3DXVECTOR3 pos);
 	void SetAction(eACTION eAction);
 
-	inline eACTION GetAction() { return this->m_eAction; }
-	inline eDIRECTION GetDirection() { return this->m_eDirection; }
+	inline bool IsReady() { return this->IsActive() && (this->m_eAction == eACTION::eACTION_READY); }
+	inline bool IsShooting() { return this->IsActive() && (this->m_eAction == eACTION::eACTION_SHOOT_WEAPON); }
 
-	inline bool GetRotateLaser() { return this->m_bRotateLaser; }
-	inline void SetRotateLaser(bool bRotate) { this->m_bRotateLaser = bRotate; }
-
-	inline int GetShootMulti() { return this->m_iShootMulti; }
-	inline void SetShootMulti(int iShootMulti) { this->m_iShootMulti = iShootMulti; }
+	inline void SetDirection(eDIRECTION value) { this->m_eDirection = value; }
+	inline void SetShootAmountMax(int value) { this->m_iShootAmountMax = value; }
 
 protected:
 
@@ -87,43 +81,20 @@ protected:
 
 private:
 
-	void RandomTurn();
 	void ShootWeapons(D3DXVECTOR3 framePos);
-	void RotateLaser(IEnemy* pBossFrame, float fFrametime);
 
 	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
 
 	CLevel*		m_pLevel;
-
-	// weapons
-
 	CWeapon*	m_pLaser;
+	IEnemy*		m_pBossFrame;
 
 	eSIDE		m_eSide;
 	eACTION		m_eAction;
-	eDIRECTION	m_eDirection;
 
-	/** TIMERS **/
+	eDIRECTION m_eDirection;
 
-	// fixed time between single multi-shots
-	// starts to turn open and attack
-	float		m_fShootMultiTime;
-
-	// timer to calculate next single multi-shot
-	float		m_fShootMultiTimer;
-
-	// value to indicate max number of bullets
-	// to be shot in one multi-shot session
-	int			m_iShootMultiMax;
-	int			m_iShootMulti;
-
-	// value to indicate the number of shots 
-	// being shot in the current multi-shot session
-	int			m_iShootMultiCount;
-
-	bool		m_bRotateLaser;
-
-	float		m_fAngleZ;
-	float		m_fAngleMaxZ;
-	float		m_fStationaryAngleTimer;
+	float m_fShootBulletTimer;
+	int m_iShootAmountCounter;
+	int m_iShootAmountMax;
 };

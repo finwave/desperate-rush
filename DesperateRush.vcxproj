@@ -177,6 +177,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
   <ItemGroup>
     <ClCompile Include="C3DObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Controllers\EnemyBossSideLasersController.cpp" />
     <ClCompile Include="Controllers\PlayerBlastController.cpp" />
     <ClCompile Include="Controllers\ShipAfterburnController.cpp" />
     <ClCompile Include="HighscoreLetterWheel.cpp" />
@@ -261,6 +262,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="btBulletCollisionCommon.h" />
     <ClInclude Include="C3DObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Controllers\EnemyBossSideLasersController.h" />
     <ClInclude Include="Controllers\PlayerBlastController.h" />
     <ClInclude Include="Controllers\ShipAfterburnController.h" />
     <ClInclude Include="HighscoreLetterWheel.h" />

@@ -10,26 +10,19 @@ CEnemyBoss1Laser::CEnemyBoss1Laser(	eTYPE eType,
 	this->m_eType = eType;
 	this->m_eBehaviour = eBehaviour;
 	this->m_eSide = eSide;
-	this->m_eAction = eACTION_WAIT;
-	this->m_eDirection = eDIRECTION_FRONT;
+
+	this->m_eAction = eACTION_READY;
+	this->m_eDirection = eDIRECTION::eDIRECTION_FRONT;
 
 	this->m_pLevel = NULL;
 	this->m_pLaser = NULL;
+	this->m_pBossFrame = NULL;
 
-	this->m_fShootMultiTime = 0.0f;
-	this->m_fShootMultiTimer = 0.0f;
+	this->m_fShootBulletTimer = 0.0f;
+	this->m_iShootAmountCounter = 0;
+	this->m_iShootAmountMax = 0;
 
-	this->m_iShootMultiMax = 0;
-	this->m_iShootMulti = 0;
-	this->m_iShootMultiCount = 0;
-
-	this->m_bRotateLaser = true;
-
-	this->m_fAngleZ = 0.0f;
-	this->m_fAngleMaxZ = 0.0f;
-	this->m_fStationaryAngleTimer = 0.0f;
-
-	this->GenerateRandomShootTime();
+	GenerateRandomShootTime();
 }
 
 CEnemyBoss1Laser::~CEnemyBoss1Laser(void)
@@ -38,6 +31,7 @@ CEnemyBoss1Laser::~CEnemyBoss1Laser(void)
 
 HRESULT CEnemyBoss1Laser::Create(	CLevel* pLevel,
 									CTheApp* pTheApp,
+									IEnemy* pBossFrame,
 									LPD3DXMESH mesh,
 									std::vector<D3DMATERIAL9*> materials,
 									std::vector<LPDIRECT3DTEXTURE9> textures,
@@ -59,6 +53,7 @@ HRESULT CEnemyBoss1Laser::Create(	CLevel* pLevel,
 	}
 
 	this->m_pLevel = pLevel;
+	this->m_pBossFrame = pBossFrame;
 
 	// sound effect volume
 	int iVolume = pTheApp->GetConfig().GetVolumeSoundEffect();
@@ -92,10 +87,6 @@ void CEnemyBoss1Laser::Init(CTheApp* pTheApp,
 	this->m_fSpeed = 0.0f;
 	this->m_fSpeedDefault = this->m_fSpeed;
 
-	this->m_fShootMultiTime = 0.09f;
-	this->m_iShootMultiMax = 35;
-	this->m_fAngleMaxZ = 0.6f;
-
 	IEnemy::Init(pTheApp, pSpriteAfterburn, iVolumeSoundEffect);
 }
 
@@ -111,85 +102,48 @@ void CEnemyBoss1Laser::Release()
 	CEnemyBoss::Release();
 }
 
-void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
-	bool bShootPossible,
-	bool leftActive,
-	float fFrametime)
+void CEnemyBoss1Laser::UpdateShip(float fFrametime, bool bShootPossible)
 {
-	if (this->m_bRotateLaser)
-	{
-		this->RotateLaser(pBossFrame, fFrametime);
-	}
-
-	this->InitPosition(pBossFrame->GetPosition());
+	UpdatePosition();
 
 	if (!this->m_bEnter)
 	{
 		switch (this->m_eAction)
 		{
-		case eACTION_TURN:
+		case eACTION_SHOOT_WEAPON:
 
-			if (leftActive)
+			if (bShootPossible)
 			{
-				if (this->m_eSide == eSIDE_LEFT)
+				// current multi-shoot session is not finished
+				if (this->m_iShootAmountCounter < this->m_iShootAmountMax)
 				{
-					this->RandomTurn();
+					// fire next multi-shoot bullet
+					if (this->m_fShootBulletTimer <= 0.0f)
+					{
+						// shoot next bullet
+						ShootWeapons(m_pBossFrame->GetPosition());
+						// reset single shot timer
+						this->m_fShootBulletTimer = this->m_pTheApp->RandFloat(0.075f, 0.15f);
+						// increase the count of fired bullets
+						this->m_iShootAmountCounter++;
+					}
+					else
+					{
+						// update single shot timer
+						this->m_fShootBulletTimer -= fFrametime;
+					}
+				}
+				// current multi-shoot session is finished
+				else
+				{
+					// wait for the next attack command
+					SetAction(eACTION_READY);
 				}
 			}
 			else
 			{
-				this->RandomTurn();
-			}
-
-			SetAction(eACTION_SHOOT);
-
-			break;
-
-		case eACTION_SHOOT:
-
-			if (!m_bRotateLaser)
-			{
-				if (bShootPossible)
-				{
-					// current multi-shoot session is not finished
-					if (this->m_iShootMultiCount < this->m_iShootMulti)
-					{
-						// fire next multi-shoot bullet
-						if (this->m_fShootMultiTimer <= 0.0f)
-						{
-							// shoot next bullet
-							this->ShootWeapons(pBossFrame->GetPosition());
-							// reset single shot timer
-							this->m_fShootMultiTimer = this->m_fShootMultiTime;
-							// increase the count of fired bullets
-							this->m_iShootMultiCount++;
-						}
-						else
-						{
-							// update single shot timer
-							this->m_fShootMultiTimer -= fFrametime;
-						}
-					}
-					// current multi-shoot session is finished
-					else
-					{
-						// reset fired bullets count
-						this->m_iShootMultiCount = 0;
-						// reset sound effect
-						this->m_eSoundFiring = eSOUND_FIRING_NORMAL_1;
-						// wait for the next attack command
-						SetAction(eACTION_WAIT);
-					}
-				}
-				else
-				{
-					// reset fired bullets count
-					this->m_iShootMultiCount = 0;
-					// reset sound effect
-					this->m_eSoundFiring = eSOUND_FIRING_NORMAL_1;
-					// wait for the next attack command
-					SetAction(eACTION_WAIT);
-				}
+				// wait for the next attack command
+				SetAction(eACTION_READY);
 			}
 
 			break;
@@ -199,24 +153,32 @@ void CEnemyBoss1Laser::UpdateShip(IEnemy* pBossFrame,
 	IEnemy::Update(fFrametime, 0.0f);
 }
 
-void CEnemyBoss1Laser::SetAction(eACTION eAction)
+void CEnemyBoss1Laser::UpdatePosition()
 {
-	switch (eAction)
+	D3DXVECTOR3 pos = m_pBossFrame->GetPosition();
+
+	pos.z -= 7.0f;
+
+	switch (this->m_eSide)
 	{
-	case eACTION::eACTION_SHOOT:
+	// left laser
+	case eSIDE_LEFT:
 
-		this->m_fShootMultiTimer = 0.0f;
+		pos.x -= 35.0f;
+		pos.y += 27.0f;
 
-		if (this->m_eSide == eSIDE_LEFT)
-		{
-			this->m_iShootMulti = this->m_pTheApp->RandInt(
-				10, this->m_iShootMultiMax);
-		}
+		break;
+
+	// right laser
+	case eSIDE_RIGHT:
+
+		pos.x += 35.0f;
+		pos.y += 27.0f;
 
 		break;
 	}
 
-	this->m_eAction = eAction;
+	SetPosition(pos);
 }
 
 void CEnemyBoss1Laser::Render()
@@ -224,66 +186,20 @@ void CEnemyBoss1Laser::Render()
 	IEnemy::Render(this->m_pTheApp->GetDevice());
 }
 
-void CEnemyBoss1Laser::RandomTurn()
+void CEnemyBoss1Laser::SetAction(eACTION eAction)
 {
-	int iRand = this->m_pTheApp->RandInt(1, 6);
-
-	switch (iRand)
+	switch (eAction)
 	{
-	case 1:
+	case eACTION_SHOOT_WEAPON:
 
-		if (this->m_eDirection == eDIRECTION_DIAGONAL)
-		{
-			this->m_bRotateLaser = true;
-		}
-
-		break;
-
-	case 2:
-
-		if (this->m_eDirection == eDIRECTION_FRONT)
-		{
-			this->m_bRotateLaser = true;
-		}
-
-		break;
-
-	case 3:
-
-		if (this->m_eDirection == eDIRECTION_FRONT)
-		{
-			this->m_bRotateLaser = true;
-		}
-
-		break;
-
-	case 4:
-
-		if (this->m_eDirection == eDIRECTION_DIAGONAL)
-		{
-			this->m_bRotateLaser = true;
-		}
-
-		break;
-
-	case 5:
-
-		if (this->m_eDirection == eDIRECTION_DIAGONAL)
-		{
-			this->m_bRotateLaser = true;
-		}
-
-		break;
-
-	case 6:
-
-		if (this->m_eDirection == eDIRECTION_FRONT)
-		{
-			this->m_bRotateLaser = true;
-		}
+		this->m_fShootBulletTimer = 0.0f;
+		this->m_iShootAmountCounter = 0;
+		this->m_eSoundFiring = eSOUND_FIRING_NORMAL_1;
 
 		break;
 	}
+
+	this->m_eAction = eAction;
 }
 
 void CEnemyBoss1Laser::ShootWeapons(D3DXVECTOR3 framePos)
@@ -307,7 +223,7 @@ void CEnemyBoss1Laser::ShootWeapons(D3DXVECTOR3 framePos)
 
 		switch (this->m_eDirection)
 		{
-		case eDIRECTION_FRONT:
+		case eDIRECTION::eDIRECTION_FRONT:
 
 			switch (this->m_eSide)
 			{
@@ -328,7 +244,7 @@ void CEnemyBoss1Laser::ShootWeapons(D3DXVECTOR3 framePos)
 
 			break;
 
-		case eDIRECTION_DIAGONAL:
+		case eDIRECTION::eDIRECTION_DIAGONAL:
 
 			switch (this->m_eSide)
 			{
@@ -374,28 +290,25 @@ void CEnemyBoss1Laser::ShootWeapons(D3DXVECTOR3 framePos)
 
 		// play sound effect
 
-		if (this->m_eSoundFiring == eSOUND_FIRING_NORMAL_1)
+		DWORD dwSoundIndex = SOUND_SHOOT_BOSS_1_LASER_SMALL_1;
+
+		switch (this->m_eSoundFiring)
 		{
-			this->m_pTheApp->GetWave(SOUND_SHOOT_BOSS_1_LASER_SMALL_1).Play(
-				FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
-		}
-		else if (this->m_eSoundFiring == eSOUND_FIRING_NORMAL_2)
-		{
-			this->m_pTheApp->GetWave(SOUND_SHOOT_BOSS_1_LASER_SMALL_3).Play(
-				FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
-		}
-		else if (this->m_eSoundFiring == eSOUND_FIRING_QUIET_1)
-		{
-			this->m_pTheApp->GetWave(SOUND_SHOOT_BOSS_1_LASER_SMALL_2).Play(
-				FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
-		}
-		else if (this->m_eSoundFiring == eSOUND_FIRING_QUIET_2)
-		{
-			this->m_pTheApp->GetWave(SOUND_SHOOT_BOSS_1_LASER_SMALL_4).Play(
-				FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
+		case eSOUND_FIRING_NORMAL_2:
+			dwSoundIndex = SOUND_SHOOT_BOSS_1_LASER_SMALL_3;
+			break;
+		case eSOUND_FIRING_QUIET_1:
+			dwSoundIndex = SOUND_SHOOT_BOSS_1_LASER_SMALL_2;
+			break;
+		case eSOUND_FIRING_QUIET_2:
+			dwSoundIndex = SOUND_SHOOT_BOSS_1_LASER_SMALL_4;
+			break;
 		}
 
-		this->ChangeFiringSound();
+		this->m_pTheApp->GetWave(dwSoundIndex).Play(
+			FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
+
+		ChangeFiringSound();
 	}
 }
 
@@ -411,6 +324,7 @@ HRESULT CEnemyBoss1Laser::InitWeapons(	CTheApp* pTheApp,
 	HRESULT hres;
 
 	this->m_pLaser = new CWeaponBoss1Laser();
+
 	if( !this->m_pLaser )
 	{
 		return E_OUTOFMEMORY;
@@ -431,6 +345,7 @@ HRESULT CEnemyBoss1Laser::InitWeapons(	CTheApp* pTheApp,
 	}
 
 	hres = this->m_pLaser->CreateCollisionMesh();
+
 	if( FAILED(hres) )
 	{
 		return hres;
@@ -450,6 +365,7 @@ HRESULT CEnemyBoss1Laser::InitWeapons(	CTheApp* pTheApp,
 	HRESULT hres;
 
 	this->m_pLaser = new CWeaponBoss1Laser();
+
 	if( !this->m_pLaser )
 	{
 		return E_OUTOFMEMORY;
@@ -469,109 +385,13 @@ HRESULT CEnemyBoss1Laser::InitWeapons(	CTheApp* pTheApp,
 	}
 
 	hres = this->m_pLaser->CreateCollisionMesh();
+
 	if( FAILED(hres) )
 	{
 		return hres;
 	}
 
 	return S_OK;
-}
-
-void CEnemyBoss1Laser::RotateLaser(IEnemy* pBossFrame, float fFrametime)
-{
-	// rotation speed
-	float fRotationSpeed = fFrametime + 0.005f;
-
-	if (this->m_pLevel->IsBossBattlePartEnabled(CLevel::BossBattlePart::LASER_STATIONARY) && (this->m_eDirection == eDIRECTION_FRONT))
-	{
-		this->m_fStationaryAngleTimer += fRotationSpeed;
-
-		if (this->m_fStationaryAngleTimer >= this->m_fAngleMaxZ)
-		{
-			this->m_fStationaryAngleTimer = 0.0f;
-			this->m_bRotateLaser = false;
-		}
-
-		return;
-	}
-
-	this->SetRotateY(pBossFrame->GetAngleY());
-
-	switch(this->m_eDirection)
-	{
-	// lasers are in closed position
-	case eDIRECTION_DIAGONAL:
-
-		// update rotation angle
-		this->m_fAngleZ -= fRotationSpeed;
-
-		// reached max rotation
-		if(this->m_fAngleZ <= 0.0f)
-		{
-			this->m_fAngleZ = 0.0f;
-
-			this->m_eDirection = eDIRECTION_FRONT;
-			this->m_bRotateLaser = false;
-		}
-
-		break;
-
-	// lasers are in open position
-	case eDIRECTION_FRONT:
-
-		// update rotation angle
-		this->m_fAngleZ += fRotationSpeed;
-
-		// reached max rotation
-		if(this->m_fAngleZ >= this->m_fAngleMaxZ)
-		{
-			this->m_fAngleZ = this->m_fAngleMaxZ;
-
-			this->m_eDirection = eDIRECTION_DIAGONAL;
-			this->m_bRotateLaser = false;
-		}
-
-		break;
-	}
-
-	switch(this->m_eSide)
-	{
-	// left minigun
-	case eSIDE_LEFT:
-		this->SetRotateZ(-this->m_fAngleZ);
-		break;
-
-	// right minigun
-	case eSIDE_RIGHT:
-		this->SetRotateZ(this->m_fAngleZ);
-		break;
-	}
-}
-
-void CEnemyBoss1Laser::InitPosition(D3DXVECTOR3 pos)
-{
-	pos.z -= 7.0f;
-
-	switch(this->m_eSide)
-	{
-	// left laser
-	case eSIDE_LEFT:
-
-		pos.x -= 35.0f;
-		pos.y += 27.0f;
-
-		break;
-
-	// right laser
-	case eSIDE_RIGHT:
-
-		pos.x += 35.0f;
-		pos.y += 27.0f;
-
-		break;
-	}
-
-	this->SetPosition(pos);
 }
 
 void CEnemyBoss1Laser::MoveEnter(float fFrametime, float fPlayerVelocity)

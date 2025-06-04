@@ -3687,6 +3687,8 @@ HRESULT CTheGame::InitLevelBoss()
 	if (this->m_pLevel->IsBossBattlePartEnabled(CLevel::BossBattlePart::LASER_STATIONARY) ||
 		this->m_pLevel->IsBossBattlePartEnabled(CLevel::BossBattlePart::LASER_ROTATING))
 	{
+		// LEFT LASER
+		
 		// create object
 		this->m_pEnemyBossLaserLeft = new CEnemyBoss1Laser(
 			IEnemy::eTYPE_BOSS_1_LASER_LEFT,
@@ -3699,7 +3701,7 @@ HRESULT CTheGame::InitLevelBoss()
 		}
 
 		hres = this->m_pEnemyBossLaserLeft->Create(
-			this->m_pLevel, this->m_pTheApp,
+			this->m_pLevel, this->m_pTheApp, this->m_pEnemyBossFrame, 
 			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
 			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
 			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_LEFT),
@@ -3727,12 +3729,14 @@ HRESULT CTheGame::InitLevelBoss()
 		}
 
 		// initialize position
-		this->m_pEnemyBossLaserLeft->InitPosition(this->m_pEnemyBossFrame->GetPosition());
+		this->m_pEnemyBossLaserLeft->UpdatePosition();
 		// set sound effect volume
 		this->m_pEnemyBossLaserLeft->SetVolumeSoundEffect(this->m_iVolumeSoundEffect);
 		// set activity
 		this->m_pEnemyBossLaserLeft->SetActive(TRUE);
 
+		// RIGHT LASER
+		
 		// create object
 		this->m_pEnemyBossLaserRight = new CEnemyBoss1Laser(
 			IEnemy::eTYPE_BOSS_1_LASER_RIGHT,
@@ -3745,7 +3749,7 @@ HRESULT CTheGame::InitLevelBoss()
 		}
 
 		hres = this->m_pEnemyBossLaserRight->Create(
-			this->m_pLevel, this->m_pTheApp,
+			this->m_pLevel, this->m_pTheApp, this->m_pEnemyBossFrame,
 			this->m_pResourceGame->GetMesh(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
 			this->m_pResourceGame->GetMaterial(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
 			this->m_pResourceGame->GetTexture(CResources::MODEL_GAME_BOSS_1_LASER_RIGHT),
@@ -3773,14 +3777,15 @@ HRESULT CTheGame::InitLevelBoss()
 		}
 
 		// initialize position
-		this->m_pEnemyBossLaserRight->InitPosition(this->m_pEnemyBossFrame->GetPosition());
+		this->m_pEnemyBossLaserRight->UpdatePosition();
 		// set sound effect volume
 		this->m_pEnemyBossLaserRight->SetVolumeSoundEffect(this->m_iVolumeSoundEffect);
 		// set activity
 		this->m_pEnemyBossLaserRight->SetActive(TRUE);
 
-		// set boss frame small laser
-		this->m_pEnemyBossFrame->SetLaserObjects(this->m_pEnemyBossLaserLeft, this->m_pEnemyBossLaserRight);
+		// BOSS SIDE LASERS CONTROLLER
+
+		this->m_pEnemyBossFrame->CreateSideLasersController(this->m_pLevel, this->m_pEnemyBossLaserLeft, this->m_pEnemyBossLaserRight);
 	}
 
 	// CREATE BOSS SCATTER LEFT/RIGHT
@@ -10339,40 +10344,12 @@ void CTheGame::UpdateBoss(float fFrametime)
 
 	if (this->m_pEnemyBossFrame->IsActive())
 	{
-		bool bLeftLaserActive = (this->m_pEnemyBossLaserLeft && this->m_pEnemyBossLaserLeft->IsActive());
-
 		// update boss frame
-		this->m_pEnemyBossFrame->UpdateShip(bShootPossible, fFrametime);
+		this->m_pEnemyBossFrame->UpdateShip(fFrametime, bShootPossible);
 
 		// update boss core
 		this->m_pEnemyBossCore->UpdateShip(
 			this->m_pEnemyBossFrame->GetHealth(), fFrametime);
-
-		// update left laser
-		if (this->m_pEnemyBossLaserLeft && this->m_pEnemyBossLaserLeft->IsActive())
-		{
-			this->m_pEnemyBossLaserLeft->UpdateShip(this->m_pEnemyBossFrame, 
-				bShootPossible, bLeftLaserActive, fFrametime);
-		}
-
-		// update right laser
-		if (this->m_pEnemyBossLaserRight && this->m_pEnemyBossLaserRight->IsActive())
-		{
-			if (bLeftLaserActive)
-			{
-				if (this->m_pEnemyBossLaserRight->GetAction() == CEnemyBoss1Laser::eACTION_TURN)
-				{
-					this->m_pEnemyBossLaserRight->SetRotateLaser(
-						this->m_pEnemyBossLaserLeft->GetRotateLaser());
-				}
-
-				this->m_pEnemyBossLaserRight->SetShootMulti(
-					this->m_pEnemyBossLaserLeft->GetShootMulti());
-			}
-
-			this->m_pEnemyBossLaserRight->UpdateShip(
-				this->m_pEnemyBossFrame, bShootPossible, bLeftLaserActive, fFrametime);
-		}
 
 		// update left scatter
 		if (this->m_pEnemyBossScatterLeft && this->m_pEnemyBossScatterLeft->IsActive())

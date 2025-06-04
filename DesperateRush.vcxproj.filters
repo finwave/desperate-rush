@@ -258,6 +258,9 @@
     <ClCompile Include="Controllers\PlayerBlastController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Controllers\EnemyBossSideLasersController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -513,6 +516,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Controllers\PlayerBlastController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controllers\EnemyBossSideLasersController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

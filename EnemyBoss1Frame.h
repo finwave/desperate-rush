@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EnemyBoss.h"
-#include "EnemyBoss1Laser.h"
+#include "Controllers/EnemyBossSideLasersController.h"
 
 class CEnemyBoss1Frame : public CEnemyBoss
 {
@@ -20,11 +20,13 @@ public:
 
 	virtual void Release();
 
-	virtual void UpdateShip(bool bShootPossible, float fFrametime);
+	virtual void UpdateShip(float fFrametime, bool bShootPossible);
 
 	virtual void Render();
 
-	void SetLaserObjects(CEnemyBoss1Laser* pLaserLeft, CEnemyBoss1Laser* pLaserRight);
+	void CreateSideLasersController(CLevel* pLevel,
+									CEnemyBoss1Laser* pLaserLeft,
+									CEnemyBoss1Laser* pLaserRight);
 
 protected:
 
@@ -42,17 +44,13 @@ private:
 		eACTION_BIG_LASER_FIRE
 	};
 
+	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
+	virtual void Move(float fFrametime, float fPlayerVelocity);
+
 	void BigLaserCharge();
 	void BigLaserFire(float fFrametime);
 	void SetRandAttack();
 
-	bool IsSmallLaserReady();
-
-	virtual void MoveEnter(float fFrametime, float fPlayerVelocity);
-	virtual void Move(float fFrametime, float fPlayerVelocity);
-
-	eACTION			m_eAction;
-
-	CEnemyBoss1Laser* m_pLaserLeft;
-	CEnemyBoss1Laser* m_pLaserRight;
+	eACTION m_eAction;
+	CEnemyBossSideLasersController* m_pEnemyBossSideLasersController;
 };
