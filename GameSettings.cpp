@@ -19,6 +19,16 @@ float CGameSettings::VOLUME_BOSS_CANNON = 0.9f;
 float CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MIN = 0.8f;
 float CGameSettings::VOLUME_BOSS_CHAIN_EXPLOSION_MAX = 1.0f;
 
+// BACKGROUND SCROLLING
+
+float CGameSettings::SCROLLING_PLAYER_VELOCITY_MAX = 130.0f;
+
+float CGameSettings::SCROLLING_BACKGROUND_TOP_MIN = 0.0f;
+float CGameSettings::SCROLLING_BACKGROUND_TOP_MAX = 8.0f;
+
+float CGameSettings::SCROLLING_EXPLOSION_MIN = 1.0f;
+float CGameSettings::SCROLLING_EXPLOSION_MAX = 6.0f;
+
 // PLAYER
 
 int CGameSettings::PLAYER_LIVES = 3;

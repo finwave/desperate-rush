@@ -1899,7 +1899,7 @@ void CTheGame::Render(void)
 
 		this->RenderStatistics(fFrametime);
 
-		if(!this->m_pPlayer->IsMinBoost())
+		if (!this->m_pPlayer->IsMinBoost())
 		{
 			this->m_pPlayer->DecreaseBoost(fFrametime);
 		}
@@ -1973,86 +1973,88 @@ void CTheGame::Render(void)
 		this->RenderPlayerCannon(fFrametime, false);
 
 		// change background speed step by step
-		if(	bBackgroundSpeedChange && this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
+		if (bBackgroundSpeedChange && this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
 		{
-			if(fBackgroundSpeedChangePause > 0.0f)
+			int iBackgroundTopSpeed = 0;
+			int iBackgroundTopPause = 0;
+
+			switch (this->m_iGameStateNext)
+			{
+			case GAME_STATE_PLAY_ENEMIES:
+
+				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
+				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
+
+				break;
+
+			case GAME_STATE_PLAY_OBSTACLES:
+
+				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
+				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
+
+				break;
+
+			case GAME_STATE_BOSS_INTRO:
+
+				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedBoss();
+				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseBoss();
+
+				break;
+			}
+
+			if (fBackgroundSpeedChangePause > 0.0f)
 			{
 				fBackgroundSpeedChangePause -= fFrametime;
+
+				if (fBackgroundSpeedChangePause <= 0.0f)
+				{
+					// background speed change is finished
+					if ((this->m_pSpriteBackgroundTop->GetSpeed() == iBackgroundTopSpeed) &&
+						(this->m_pSpriteBackgroundTop->GetMaxPause() == iBackgroundTopPause))
+					{
+						this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
+						bBackgroundSpeedChange = false;
+					}
+				}
 			}
 			else
 			{
 				fBackgroundSpeedChangePause = 0.30f;
 
-				int iBackgroundTopSpeed = 0;
-				int iBackgroundTopPause = 0;
-
-				switch(this->m_iGameStateNext)
-				{
-				case GAME_STATE_PLAY_ENEMIES:
-
-					iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
-					iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
-
-					break;
-
-				case GAME_STATE_PLAY_OBSTACLES:
-
-					iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
-					iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
-
-					break;
-
-				case GAME_STATE_BOSS_INTRO:
-
-					iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedBoss();
-					iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseBoss();
-
-					break;
-				}
-
 				// increase "top" speed
-				if(this->m_pSpriteBackgroundTop->GetSpeed() < iBackgroundTopSpeed)
+				if (this->m_pSpriteBackgroundTop->GetSpeed() < iBackgroundTopSpeed)
 				{
 					bBackgroundSpeedChangeAfterburn = true;
 					this->m_pSpriteBackgroundTop->IncreaseSpeed();
 				}
 				// decrease "top" speed
-				else if(this->m_pSpriteBackgroundTop->GetSpeed() > iBackgroundTopSpeed)
+				else if (this->m_pSpriteBackgroundTop->GetSpeed() > iBackgroundTopSpeed)
 				{
 					bBackgroundSpeedChangeAfterburn = false;
 					this->m_pSpriteBackgroundTop->DecreaseSpeed();
 				}
+
 				// increase "top" pause
-				if(this->m_pSpriteBackgroundTop->GetMaxPause() < iBackgroundTopPause)
+				if (this->m_pSpriteBackgroundTop->GetMaxPause() < iBackgroundTopPause)
 				{
-					bBackgroundSpeedChangeAfterburn = false;
 					this->m_pSpriteBackgroundTop->IncreaseMaxPause();
 				}
 				// decrease "top" pause
-				else if(this->m_pSpriteBackgroundTop->GetMaxPause() > iBackgroundTopPause)
+				else if (this->m_pSpriteBackgroundTop->GetMaxPause() > iBackgroundTopPause)
 				{
-					bBackgroundSpeedChangeAfterburn = true;
 					this->m_pSpriteBackgroundTop->DecreaseMaxPause();
 				}
-
-				// background speed change is finished
-				if(	(this->m_pSpriteBackgroundTop->GetSpeed() == iBackgroundTopSpeed) && 
-					(this->m_pSpriteBackgroundTop->GetMaxPause() == iBackgroundTopPause))
-				{
-					bBackgroundSpeedChange = false;
-					this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
-				}
 			}
 
-			if(bBackgroundSpeedChangeAfterburn)
+			if (bBackgroundSpeedChangeAfterburn)
 			{
 				this->m_pPlayer->RenderAfterburn(fFrametime);
-			}
 
-			if(this->m_bPlayAfterburnSound && bBackgroundSpeedChangeAfterburn)
-			{
-				this->PlaySoundPlayerAfterburn();
-				this->m_bPlayAfterburnSound = false;
+				if (this->m_bPlayAfterburnSound)
+				{
+					this->PlaySoundPlayerAfterburn();
+					this->m_bPlayAfterburnSound = false;
+				}
 			}
 		}
 		// go to next game state
@@ -10904,67 +10906,20 @@ void CTheGame::UpdateVelocityPixels()
 
 void CTheGame::UpdateVelocityPixelsBackground()
 {
-	float playerVelocity = this->m_pPlayer->GetVelocity();
+	float multiplier = this->m_pPlayer->GetVelocity() / CGameSettings::SCROLLING_PLAYER_VELOCITY_MAX;
+	float exactPixelVelocity = CGameSettings::SCROLLING_BACKGROUND_TOP_MIN;
+	exactPixelVelocity += multiplier * (CGameSettings::SCROLLING_BACKGROUND_TOP_MAX - CGameSettings::SCROLLING_BACKGROUND_TOP_MIN);
 
-	float maxVelocity = 100.0f;
-	float subtraction = maxVelocity / 6.0f;
-
-	if (playerVelocity >= maxVelocity)
-	{
-		this->m_iBackgroundPixelVelocity = 6;
-	}
-	else if (playerVelocity >= (maxVelocity - 1 * subtraction))
-	{
-		this->m_iBackgroundPixelVelocity = 5;
-	}
-	else if (playerVelocity >= (maxVelocity - 2 * subtraction))
-	{
-		this->m_iBackgroundPixelVelocity = 4;
-	}
-	else if (playerVelocity >= (maxVelocity - 3 * subtraction))
-	{
-		this->m_iBackgroundPixelVelocity = 3;
-	}
-	else if (playerVelocity >= (maxVelocity - 4 * subtraction))
-	{
-		this->m_iBackgroundPixelVelocity = 2;
-	}
-	else
-	{
-		this->m_iBackgroundPixelVelocity = 1;
-	}
-
-	if (m_iGameState == GAME_STATE_PLAY_OBSTACLES || m_iGameState == GAME_STATE_WAIT_OBSTACLES)
-	{
-		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 3.0f);
-	}
-	else
-	{
-		this->m_iBackgroundPixelVelocity = (int)((float)this->m_iBackgroundPixelVelocity / 4.0f);
-	}
+	this->m_iBackgroundPixelVelocity = std::round(exactPixelVelocity);
 }
 
 void CTheGame::UpdateVelocityPixelsExplosion()
 {
-	float playerVelocity = this->m_pPlayer->GetVelocity();
+	float multiplier = this->m_pPlayer->GetVelocity() / CGameSettings::SCROLLING_PLAYER_VELOCITY_MAX;
+	float exactPixelVelocity = CGameSettings::SCROLLING_EXPLOSION_MIN;
+	exactPixelVelocity += multiplier * (CGameSettings::SCROLLING_EXPLOSION_MAX - CGameSettings::SCROLLING_EXPLOSION_MIN);
 
-	float rangeStep = 30.0f;
-	float range = 1.0f + rangeStep;
-
-	if (m_iGameState == GAME_STATE_PLAY_OBSTACLES || m_iGameState == GAME_STATE_WAIT_OBSTACLES)
-	{
-		this->m_iExplosionPixelVelocity = 2;
-	}
-	else
-	{
-		this->m_iExplosionPixelVelocity = 1;
-	}
-
-	while (range < playerVelocity)
-	{
-		this->m_iExplosionPixelVelocity += 1;
-		range += rangeStep;
-	}
+	this->m_iExplosionPixelVelocity = std::round(exactPixelVelocity);
 }
 
 void CTheGame::UpdateBackgroundVelocity()

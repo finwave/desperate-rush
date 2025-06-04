@@ -83,6 +83,21 @@ void CLevel::ReadLevel(void)
 	this->m_vBossBattleParts.clear();
 	this->m_iLevelNumber++;
 
+	this->m_fPlayerBoostMaxEnemy = 100.0f;
+	this->m_fPlayerBoostMaxObstacle = 100.0f;
+
+	this->m_fObstacleMinMarginY = 45.0f;
+	this->m_fObstacleMaxMarginY = 150.0f;
+
+	this->m_iBackgroundMiddleSpeed = 1;
+	this->m_iBackgroundMiddlePause = 5;
+	this->m_iBackgroundTopSpeedEnemies = 5;
+	this->m_iBackgroundTopPauseEnemies = 0;
+	this->m_iBackgroundTopSpeedObstacles = 4;
+	this->m_iBackgroundTopPauseObstacles = 0;
+	this->m_iBackgroundTopSpeedBoss = 1;
+	this->m_iBackgroundTopPauseBoss = 2;
+
 	if(this->m_iLevelNumber <= 3)
 	{
 		switch( this->m_iLevelNumber )
@@ -91,8 +106,6 @@ void CLevel::ReadLevel(void)
 
 			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 0.0f;
-			this->m_fPlayerBoostMaxEnemy = 100.0f;
-			this->m_fPlayerBoostMaxObstacle = 100.0f;
 			this->m_fFirstEnemyLaunch = -0.2f;
 			this->m_fFirstEnemyStrike = 0.0f;
 			this->m_fTimeEnemyLaunch = 0.0f;
@@ -108,18 +121,8 @@ void CLevel::ReadLevel(void)
 			this->m_bLaunchFirst = true;
 			this->m_bStrikeFirst = false;
 			this->m_iObstacles = 0;
-			this->m_fObstacleMinMarginY = 45.0f;
-			this->m_fObstacleMaxMarginY = 150.0f;
 			this->m_bObstaclesFirst = false;
 			this->m_bObstacleEnemies = false;
-			this->m_iBackgroundMiddleSpeed = 1;
-			this->m_iBackgroundMiddlePause = 5;
-			this->m_iBackgroundTopSpeedEnemies = 5;
-			this->m_iBackgroundTopPauseEnemies = 0;
-			this->m_iBackgroundTopSpeedObstacles = 1;
-			this->m_iBackgroundTopPauseObstacles = 0;
-			this->m_iBackgroundTopSpeedBoss = 1;
-			this->m_iBackgroundTopPauseBoss = 2;
 
 			// boss battle parts
 			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
@@ -131,8 +134,6 @@ void CLevel::ReadLevel(void)
 
 			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 0.0f;
-			this->m_fPlayerBoostMaxEnemy = 100.0f;
-			this->m_fPlayerBoostMaxObstacle = 100.0f;
 			this->m_fFirstEnemyLaunch = 0.0f;
 			this->m_fFirstEnemyStrike = 0.0f;
 			this->m_fTimeEnemyLaunch = 0.0f;
@@ -148,18 +149,8 @@ void CLevel::ReadLevel(void)
 			this->m_bLaunchFirst = false;
 			this->m_bStrikeFirst = true;
 			this->m_iObstacles = 20;
-			this->m_fObstacleMinMarginY = 45.0f;
-			this->m_fObstacleMaxMarginY = 150.0f;
 			this->m_bObstaclesFirst = true;
 			this->m_bObstacleEnemies = true;
-			this->m_iBackgroundMiddleSpeed = 1;
-			this->m_iBackgroundMiddlePause = 5;
-			this->m_iBackgroundTopSpeedEnemies = 5;
-			this->m_iBackgroundTopPauseEnemies = 0;
-			this->m_iBackgroundTopSpeedObstacles = 1;
-			this->m_iBackgroundTopPauseObstacles = 0;
-			this->m_iBackgroundTopSpeedBoss = 1;
-			this->m_iBackgroundTopPauseBoss = 2;
 
 			// boss battle parts
 			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
@@ -172,8 +163,6 @@ void CLevel::ReadLevel(void)
 
 			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 30.0f;
-			this->m_fPlayerBoostMaxEnemy = 100.0f;
-			this->m_fPlayerBoostMaxObstacle = 100.0f;
 			this->m_fFirstEnemyLaunch = -0.2f;
 			this->m_fFirstEnemyStrike = 0.0f;
 			this->m_fTimeEnemyLaunch = 0.0f;
@@ -189,18 +178,8 @@ void CLevel::ReadLevel(void)
 			this->m_bLaunchFirst = false;
 			this->m_bStrikeFirst = true;
 			this->m_iObstacles = 30;
-			this->m_fObstacleMinMarginY = 45.0f;
-			this->m_fObstacleMaxMarginY = 150.0f;
 			this->m_bObstaclesFirst = false;
 			this->m_bObstacleEnemies = true;
-			this->m_iBackgroundMiddleSpeed = 1;
-			this->m_iBackgroundMiddlePause = 5;
-			this->m_iBackgroundTopSpeedEnemies = 5;
-			this->m_iBackgroundTopPauseEnemies = 0;
-			this->m_iBackgroundTopSpeedObstacles = 2;
-			this->m_iBackgroundTopPauseObstacles = 1;
-			this->m_iBackgroundTopSpeedBoss = 1;
-			this->m_iBackgroundTopPauseBoss = 2;
 
 			// boss battle parts
 			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
