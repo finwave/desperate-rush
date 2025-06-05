@@ -2144,8 +2144,7 @@ void CTheGame::Render(void)
 				if(this->m_fBossWarningStartTimer <= 0.0f)
 				{
 					// play sound effect
-					this->m_pTheApp->GetWave(SOUND_BOSS_INTRO_WARNING).Play(
-						FALSE, 0, this->m_pTheApp->GetVolumeSoundEffect());
+					this->m_pTheApp->GetWave(SOUND_BOSS_INTRO_WARNING).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 				}
 			}
 
@@ -4491,14 +4490,12 @@ void CTheGame::PlaySoundPlayerAfterburn()
 
 void CTheGame::PlaySoundPlayerCannonCharge()
 {
-	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_CHARGE).Play(
-		FALSE, 0, this->m_iVolumePlayerCannon);
+	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_CHARGE).Play(FALSE, 0, this->m_iVolumePlayerCannon);
 }
 
 void CTheGame::PlaySoundPlayerCannonBeam()
 {
-	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_BEAM).Play(
-		FALSE, 0, this->m_iVolumePlayerCannon);
+	this->m_pTheApp->GetWave(SOUND_SHOOT_PLAYER_CANNON_BEAM).Play(FALSE, 0, this->m_iVolumePlayerCannon);
 }
 
 void CTheGame::PlaySoundFirePlayerMinigun()
@@ -4531,16 +4528,12 @@ void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 		{
 		case IEnemy::eSOUND_FIRING_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_DRONE_1).Play(	FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_DRONE_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 
 		case IEnemy::eSOUND_FIRING_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_DRONE_2).Play(	FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_DRONE_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 		}
 		break;
@@ -4551,16 +4544,12 @@ void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 		{
 		case IEnemy::eSOUND_FIRING_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_SNIPER_1).Play(FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_SNIPER_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 
 		case IEnemy::eSOUND_FIRING_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_SNIPER_2).Play(FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_SNIPER_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 		}
 		break;
@@ -4571,16 +4560,12 @@ void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 		{
 		case IEnemy::eSOUND_FIRING_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_ROLLER_1).Play(FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_ROLLER_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 
 		case IEnemy::eSOUND_FIRING_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_ROLLER_2).Play(FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_ROLLER_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 		}
 		break;
@@ -4591,16 +4576,12 @@ void CTheGame::PlaySoundFireEnemy(IEnemy* pEnemy)
 		{
 		case IEnemy::eSOUND_FIRING_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_GUARD_1).Play(	FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_GUARD_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 
 		case IEnemy::eSOUND_FIRING_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_SHOOT_GUARD_2).Play(	FALSE,
-																NEXT_FREE_DUPLICATE,
-																this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_SHOOT_GUARD_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			break;
 		}
 		break;
@@ -4616,16 +4597,12 @@ void CTheGame::PlaySoundHitPlayer()
 	{
 	case CPlayer::eHIT_SOUND_NORMAL:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_PLAYER_1).Play(	FALSE,
-															NEXT_FREE_DUPLICATE,
-															this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_PLAYER_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 
 	case CPlayer::eHIT_SOUND_QUIET:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_PLAYER_2).Play(	FALSE,
-															NEXT_FREE_DUPLICATE,
-															this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_PLAYER_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 	}
 
@@ -4638,16 +4615,12 @@ void CTheGame::PlaySoundHitEnemy(IEnemy* pEnemy)
 	{
 	case IEnemy::eSOUND_HIT_NORMAL:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_ENEMY_1).Play(	FALSE,
-															NEXT_FREE_DUPLICATE,
-															this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_ENEMY_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 
 	case IEnemy::eSOUND_HIT_QUIET:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_ENEMY_2).Play(	FALSE,
-															NEXT_FREE_DUPLICATE,
-															this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_ENEMY_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 	}
 
@@ -4660,16 +4633,12 @@ void CTheGame::PlaySoundHitBoss(IEnemy* pEnemy)
 	{
 	case IEnemy::eSOUND_HIT_NORMAL:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_BOSS_1).Play(FALSE,
-														NEXT_FREE_DUPLICATE,
-														this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_BOSS_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 
 	case IEnemy::eSOUND_HIT_QUIET:
 
-		this->m_pTheApp->GetWave(SOUND_HIT_BOSS_2).Play(FALSE,
-														NEXT_FREE_DUPLICATE,
-														this->m_iVolumeSoundEffect);
+		this->m_pTheApp->GetWave(SOUND_HIT_BOSS_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 		break;
 	}
 
@@ -4686,36 +4655,28 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 		{
 		case eEXPLOSION_ENEMY_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_1).Play(	FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_1;
 
 			break;
 
 		case eEXPLOSION_ENEMY_NORMAL_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_2).Play(	FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_3).Play(	FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_3).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_4).Play(	FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_DRONE_4).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
 
 			break;
@@ -4729,36 +4690,28 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 		{
 		case eEXPLOSION_ENEMY_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_1).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_1;
 
 			break;
 
 		case eEXPLOSION_ENEMY_NORMAL_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_2).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_3).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_3).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_4).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_SNIPER_4).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
 
 			break;
@@ -4772,9 +4725,7 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 		{
 		case eEXPLOSION_ENEMY_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_1).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_1;
 
@@ -4782,9 +4733,7 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 
 		case eEXPLOSION_ENEMY_NORMAL_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_2).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_2;
 
@@ -4792,18 +4741,14 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 
 		case eEXPLOSION_ENEMY_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_3).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_3).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_4).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_ROLLER_4).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
 
 			break;
@@ -4817,36 +4762,28 @@ void CTheGame::PlaySoundExplosionEnemy(IEnemy* pEnemy)
 		{
 		case eEXPLOSION_ENEMY_NORMAL_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_1).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_1).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_1;
 
 			break;
 
 		case eEXPLOSION_ENEMY_NORMAL_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_2).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_2).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_QUIET_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_1:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_3).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_3).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_2;
 
 			break;
 
 		case eEXPLOSION_ENEMY_QUIET_2:
 
-			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_4).Play(FALSE,
-																	NEXT_FREE_DUPLICATE,
-																	this->m_iVolumeSoundEffect);
+			this->m_pTheApp->GetWave(SOUND_EXPLOSION_GUARD_4).Play(FALSE, NEXT_FREE_DUPLICATE, this->m_iVolumeSoundEffect);
 			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
 
 			break;
@@ -5268,8 +5205,7 @@ void CTheGame::PlayerDestroyed()
 	this->m_ePlayerCannonState = ePLAYER_CANNON_STATE_READY;
 
 	// play sound effect
-	this->m_pTheApp->GetWave(SOUND_EXPLOSION_PLAYER).Play(	FALSE, 0,
-															this->m_iVolumeSoundEffect);
+	this->m_pTheApp->GetWave(SOUND_EXPLOSION_PLAYER).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 
 	this->CheckGameOver();
 }
@@ -5371,8 +5307,7 @@ void CTheGame::PlayerBlastDeactive()
 				// enemy explosion
 				this->BossPartExplosion(this->m_pEnemyBossLaserLeft);
 				// play sound effect
-				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play
-				(FALSE, 0, this->m_iVolumeSoundEffect);
+				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 			}
 			else
 			{
@@ -5388,8 +5323,7 @@ void CTheGame::PlayerBlastDeactive()
 				// enemy explosion
 				this->BossPartExplosion(this->m_pEnemyBossLaserRight);
 				// play sound effect
-				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play
-				(FALSE, 0, this->m_iVolumeSoundEffect);
+				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 			}
 			else
 			{
@@ -5405,8 +5339,7 @@ void CTheGame::PlayerBlastDeactive()
 				// enemy explosion
 				this->BossPartExplosion(this->m_pEnemyBossScatterLeft);
 				// play sound effect
-				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play
-				(FALSE, 0, this->m_iVolumeSoundEffect);
+				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 			}
 			else
 			{
@@ -5422,8 +5355,7 @@ void CTheGame::PlayerBlastDeactive()
 				// enemy explosion
 				this->BossPartExplosion(this->m_pEnemyBossScatterRight);
 				// play sound effect
-				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play
-				(FALSE, 0, this->m_iVolumeSoundEffect);
+				this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 			}
 			else
 			{
@@ -5649,13 +5581,13 @@ void CTheGame::PlayerShooting(float fFrametime)
 			if (this->m_pPlayer->GetMinigunMode() == 0)
 			{
 				// play minigun rotation sound
-				this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_DIAGONAL).Play(FALSE, 0, m_iVolumePlayerMinigunTurn);
+				this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_DIAGONAL).Play(FALSE, 0, this->m_iVolumePlayerMinigunTurn);
 				this->m_pPlayer->SetMinigunMode(1);
 			}
 			else if (this->m_pPlayer->GetMinigunMode() == 1)
 			{
 				// play minigun rotation sound
-				this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_FRONT).Play(FALSE, 0, m_iVolumePlayerMinigunTurn);
+				this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_FRONT).Play(FALSE, 0, this->m_iVolumePlayerMinigunTurn);
 				this->m_pPlayer->SetMinigunMode(0);
 			}
 
@@ -5944,7 +5876,7 @@ bool CTheGame::PlayerResetMiniguns()
 	if(this->m_pPlayer->GetMinigunMode() == 1)
 	{
 		// play minigun rotation sound
-		this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_FRONT).Play(FALSE, 0, m_iVolumePlayerMinigunTurn);
+		this->m_pTheApp->GetWave(SOUND_PLAYER_MINIGUN_TURN_FRONT).Play(FALSE, 0, this->m_iVolumePlayerMinigunTurn);
 		this->m_pPlayer->SetMinigunMode(0);
 
 		// start minigun rotations
@@ -8429,8 +8361,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// enemy explosion
 								this->BossPartExplosion(this->m_pEnemyBossLaserLeft);
 								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-									FALSE, 0, this->m_iVolumeSoundEffect);
+								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 							}
 							else
 							{
@@ -8457,8 +8388,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// enemy explosion
 								this->BossPartExplosion(this->m_pEnemyBossLaserRight);
 								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-									FALSE, 0, this->m_iVolumeSoundEffect);
+								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 							}
 							else
 							{
@@ -8485,8 +8415,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// enemy explosion
 								this->BossPartExplosion(this->m_pEnemyBossScatterLeft);
 								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-									FALSE, 0, this->m_iVolumeSoundEffect);
+								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 							}
 							else
 							{
@@ -8513,8 +8442,7 @@ void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 								// enemy explosion
 								this->BossPartExplosion(this->m_pEnemyBossScatterRight);
 								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-									FALSE, 0, this->m_iVolumeSoundEffect);
+								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 							}
 							else
 							{
@@ -9097,8 +9025,7 @@ void CTheGame::CollisionBulletVsBoss()
 											// enemy explosion
 											this->BossPartExplosion(this->m_pEnemyBossLaserLeft);
 											// play sound effect
-											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-												FALSE, 0, this->m_iVolumeSoundEffect);
+											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 										}
 										else
 										{
@@ -9148,8 +9075,7 @@ void CTheGame::CollisionBulletVsBoss()
 											// enemy explosion
 											this->BossPartExplosion(this->m_pEnemyBossLaserRight);
 											// play sound effect
-											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-												FALSE, 0, this->m_iVolumeSoundEffect);
+											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 										}
 										else
 										{
@@ -9199,8 +9125,7 @@ void CTheGame::CollisionBulletVsBoss()
 											// enemy explosion
 											this->BossPartExplosion(this->m_pEnemyBossScatterLeft);
 											// play sound effect
-											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-												FALSE, 0, this->m_iVolumeSoundEffect);
+											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 										}
 										else
 										{
@@ -9250,8 +9175,7 @@ void CTheGame::CollisionBulletVsBoss()
 											// enemy explosion
 											this->BossPartExplosion(this->m_pEnemyBossScatterRight);
 											// play sound effect
-											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(
-												FALSE, 0, this->m_iVolumeSoundEffect);
+											this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 										}
 										else
 										{
