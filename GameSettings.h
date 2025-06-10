@@ -149,6 +149,9 @@ public:
 
 	// BOSSES
 
+	static float	BOSS_WARNING_START_TIME;
+	static float	BOSS_WARNING_END_TIME;
+
 	static float	ENEMY_BOSS_FRAME_WIDTH;
 	static float	ENEMY_BOSS_FRAME_HEIGHT;
 	static int		ENEMY_BOSS_FRAME_HEALTH;

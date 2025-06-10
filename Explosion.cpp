@@ -69,49 +69,50 @@ void CExplosion::Init(	int iMoveSpeed,
 
 void CExplosion::Update(float fFrametime)
 {
-	// explosion is active, can be updated
-	if(this->m_bActive)
+	if (!this->m_bActive)
 	{
-		// update explosion position
+		return;
+	}
 
-		this->m_iPosY += this->m_iMoveSpeed;
+	// update explosion position
 
-		// update explosion index
+	this->m_iPosY += this->m_iMoveSpeed;
 
-		if(this->m_fDrawPause <= 0.0f)
+	// update explosion index
+
+	if(this->m_fDrawPause <= 0.0f)
+	{
+		while(this->m_fDrawPause <= 0.0f)
 		{
-			while(this->m_fDrawPause <= 0.0f)
-			{
-				this->m_fDrawPause += this->m_fDrawPauseMax;
-				this->m_iSpriteIndex++;
+			this->m_fDrawPause += this->m_fDrawPauseMax;
+			this->m_iSpriteIndex++;
 
-				// counter went over the last index
-				if(this->m_iSpriteIndex == this->m_iSpriteCount)
-				{
-					// deactivate explosion
-					this->m_bActive = false;
-					return;
-				}
+			// counter went over the last index
+			if(this->m_iSpriteIndex == this->m_iSpriteCount)
+			{
+				// deactivate explosion
+				this->m_bActive = false;
+				return;
 			}
 		}
-		else
-		{
-			this->m_fDrawPause -= fFrametime;
-		}
+	}
+	else
+	{
+		this->m_fDrawPause -= fFrametime;
 	}
 }
 
 void CExplosion::Render()
 {
-	// explosion is active, can be rendered
-	if(this->m_bActive)
+	if (!this->m_bActive)
 	{
-		int posY = this->m_iPosStartY + this->m_iPosY;
-
-		// draw explosion
-		(this->m_pSpritesExplosion + m_iSpriteIndex)->Draw(	this->m_iPosStartX, 
-															posY);
+		return;
 	}
+
+	int posY = this->m_iPosStartY + this->m_iPosY;
+
+	// draw explosion
+	(this->m_pSpritesExplosion + m_iSpriteIndex)->Draw(this->m_iPosStartX, posY);
 }
 
 void CExplosion::InitPosition(D3DXVECTOR3 posStart)

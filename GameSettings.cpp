@@ -143,6 +143,9 @@ float CGameSettings::ENEMY_STRIKE_SPEED_MULTIPLIER_MAX = 1.0f;
 
 // BOSSES
 
+float CGameSettings::BOSS_WARNING_START_TIME = 0.05f;
+float CGameSettings::BOSS_WARNING_END_TIME = 0.05f;
+
 float CGameSettings::ENEMY_BOSS_FRAME_WIDTH = 85.0f;
 float CGameSettings::ENEMY_BOSS_FRAME_HEIGHT = 123.0f;
 int CGameSettings::ENEMY_BOSS_FRAME_HEALTH = 1500;

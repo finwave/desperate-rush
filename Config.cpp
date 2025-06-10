@@ -31,44 +31,44 @@ CConfig::CConfig(void)
 
 CConfig::~CConfig(void)
 {
-	if(this->m_strUp)
+	if (this->m_strUp)
 	{
-		delete [] this->m_strUp;
+		delete[] this->m_strUp;
 		this->m_strUp = NULL;
 	}
-	if(this->m_strDown)
+	if (this->m_strDown)
 	{
-		delete [] this->m_strDown;
+		delete[] this->m_strDown;
 		this->m_strDown = NULL;
 	}
-	if(this->m_strLeft)
+	if (this->m_strLeft)
 	{
-		delete [] this->m_strLeft;
+		delete[] this->m_strLeft;
 		this->m_strLeft = NULL;
 	}
-	if(this->m_strRight)
+	if (this->m_strRight)
 	{
-		delete [] this->m_strRight;
+		delete[] this->m_strRight;
 		this->m_strRight = NULL;
 	}
-	if(this->m_strFireMode)
+	if (this->m_strFireMode)
 	{
-		delete [] this->m_strFireMode;
+		delete[] this->m_strFireMode;
 		this->m_strFireMode = NULL;
 	}
-	if(this->m_strMinigun)
+	if (this->m_strMinigun)
 	{
-		delete [] this->m_strMinigun;
+		delete[] this->m_strMinigun;
 		this->m_strMinigun = NULL;
 	}
-	if(this->m_strCannon)
+	if (this->m_strCannon)
 	{
-		delete [] this->m_strCannon;
+		delete[] this->m_strCannon;
 		this->m_strCannon = NULL;
 	}
-	if(this->m_strBlast)
+	if (this->m_strBlast)
 	{
-		delete [] this->m_strBlast;
+		delete[] this->m_strBlast;
 		this->m_strBlast = NULL;
 	}
 }
@@ -80,247 +80,210 @@ std::string CConfig::GetWorkingDir()
 	return std::string(buf) + '\\';
 }
 
+std::string CConfig::ReadNextConfigValue()
+{
+	std::string strData = "";
+	char nextChar = this->m_FileStreamIn.get();
+
+	while (nextChar != '\n')
+	{
+		strData += nextChar;
+		nextChar = this->m_FileStreamIn.get();
+	}
+
+	return strData;
+}
+
 void CConfig::Load(void)
 {
+	this->m_bSuccess = false;
+
 	const fs::path applicationPath = fs::path(m_sApplicationPath, std::locale(""));
 	fs::current_path(applicationPath);
 
 	char nextChar;
-	char* strData = NULL;
+	std::string strData;
+
 	bool readLine = false;
 	int iLineIndex = 1;
-	int i = 0;
 
-	this->m_bSuccess = false;
-
-	std::ifstream fileIn;
-	fileIn.open("config.cfg");
+	this->m_FileStreamIn.open("config.cfg");
 
 	// file exists
-	if(fileIn.is_open() && !(fileIn.bad()))
+	if (this->m_FileStreamIn.is_open() && !(this->m_FileStreamIn.bad()))
 	{
-		strData = new char[3];
-
 		// file not reached end
-		while(!fileIn.eof())
+		while (!this->m_FileStreamIn.eof())
 		{
 			// get the next character from file
-			nextChar = fileIn.get();
+			nextChar = this->m_FileStreamIn.get();
 
 			// next character is '='
-			if(nextChar == '=')
+			if (nextChar == '=')
 			{
 				readLine = true;
 			}
 
 			// read rest of the data from the current line
-			if(readLine)
+			if (readLine)
 			{
-				switch(iLineIndex)
+				switch (iLineIndex)
 				{
-					case 1:
+				case 1:
 
-						strData = new char[100];
-						nextChar = fileIn.get();
+					strData = ReadNextConfigValue();
 
-						while(nextChar != '\n')
-						{
-							strData[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					if (strData.size() > 0)
+					{
+						this->m_iVolumeMusic = atoi(strData.c_str());
+					}
+					else
+					{
+						this->m_iVolumeMusic = 100;
+					}
 
-						this->m_iVolumeMusic = atoi(strData);
+					break;
 
-						delete [] strData;
-						strData = NULL;
+				case 2:
 
-						i = 0;
+					strData = ReadNextConfigValue();
 
-						break;
+					if (strData.size() > 0)
+					{
+						this->m_iVolumeSoundEffect = atoi(strData.c_str());
+					}
+					else
+					{
+						this->m_iVolumeSoundEffect = 100;
+					}
 
-					case 2:
+					break;
 
-						strData = new char[100];
-						nextChar = fileIn.get();
+				case 3:
 
-						while(nextChar != '\n')
-						{
-							strData[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					strData = ReadNextConfigValue();
 
-						this->m_iVolumeSoundEffect = atoi(strData);
+					if (strData.size() > 0)
+					{
+						this->m_eAntialiasing = (eANTIALIASING)atoi(strData.c_str());
+					}
+					else
+					{
+						DefaultAntialiasingParameter();
+					}
 
-						delete [] strData;
-						strData = NULL;
+					break;
 
-						i = 0;
+				case 4:
 
-						break;
+					strData = ReadNextConfigValue();
 
-					case 3:
+					if (strData.size() > 0)
+					{
+						this->m_eSpecularLighting = (eSPECULAR_LIGHTING)atoi(strData.c_str());
+					}
+					else
+					{
+						this->m_eSpecularLighting = eSPECULAR_LIGHTING_ON;
+					}
 
-						strData = new char[100];
-						nextChar = fileIn.get();
+					break;
 
-						while(nextChar != '\n')
-						{
-							strData[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+				case 5:
 
-						this->m_eAntialiasing = (eANTIALIASING)atoi(strData);
+					strData = ReadNextConfigValue();
 
-						delete [] strData;
-						strData = NULL;
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strUp = TextUtils::ConstCharToChar(charData, this->m_strUp);
+					}
 
-						i = 0;
+					break;
 
-						break;
+				case 6:
 
-					case 4:
+					strData = ReadNextConfigValue();
 
-						strData = new char[100];
-						nextChar = fileIn.get();
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strDown = TextUtils::ConstCharToChar(charData, this->m_strDown);
+					}
 
-						while(nextChar != '\n')
-						{
-							strData[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					break;
 
-						this->m_eSpecularLighting = (eSPECULAR_LIGHTING)atoi(strData);
+				case 7:
 
-						delete [] strData;
-						strData = NULL;
+					strData = ReadNextConfigValue();
 
-						i = 0;
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strLeft = TextUtils::ConstCharToChar(charData, this->m_strLeft);
+					}
 
-						break;
+					break;
 
-					case 5:
+				case 8:
 
-						nextChar = fileIn.get();
+					strData = ReadNextConfigValue();
 
-						while(nextChar != '\n')
-						{
-							this->m_strUp[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strRight = TextUtils::ConstCharToChar(charData, this->m_strRight);
+					}
 
-						i = 0;
+					break;
 
-						break;
+				case 9:
 
-					case 6:
+					strData = ReadNextConfigValue();
 
-						nextChar = fileIn.get();
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strFireMode = TextUtils::ConstCharToChar(charData, this->m_strFireMode);
+					}
 
-						while(nextChar != '\n')
-						{
-							this->m_strDown[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					break;
 
-						i = 0;
+				case 10:
 
-						break;
+					strData = ReadNextConfigValue();
 
-					case 7:
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strMinigun = TextUtils::ConstCharToChar(charData, this->m_strMinigun);
+					}
 
-						nextChar = fileIn.get();
+					break;
 
-						while(nextChar != '\n')
-						{
-							this->m_strLeft[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+				case 11:
 
-						i = 0;
+					strData = ReadNextConfigValue();
 
-						break;
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strCannon = TextUtils::ConstCharToChar(charData, this->m_strCannon);
+					}
 
-					case 8:
+					break;
 
-						nextChar = fileIn.get();
+				case 12:
 
-						while(nextChar != '\n')
-						{
-							this->m_strRight[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
+					strData = ReadNextConfigValue();
 
-						i = 0;
+					if (strData.size() > 0)
+					{
+						const char* charData = strData.c_str();
+						this->m_strBlast = TextUtils::ConstCharToChar(charData, this->m_strBlast);
+					}
 
-						break;
-
-					case 9:
-
-						nextChar = fileIn.get();
-
-						while(nextChar != '\n')
-						{
-							this->m_strFireMode[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
-
-						i = 0;
-
-						break;
-
-					case 10:
-
-						nextChar = fileIn.get();
-
-						while(nextChar != '\n')
-						{
-							this->m_strMinigun[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
-
-						i = 0;
-
-						break;
-
-					case 11:
-
-						nextChar = fileIn.get();
-
-						while(nextChar != '\n')
-						{
-							this->m_strCannon[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
-
-						i = 0;
-
-						break;
-
-					case 12:
-
-						nextChar = fileIn.get();
-
-						while(nextChar != '\n')
-						{
-							this->m_strBlast[i] = nextChar;
-							nextChar = fileIn.get();
-							i++;
-						}
-
-						i = 0;
-
-						break;
+					break;
 				}
 
 				readLine = false;
@@ -328,14 +291,10 @@ void CConfig::Load(void)
 			}
 		}
 
-		fileIn.close();
+		this->m_FileStreamIn.close();
 
 		// checks if loaded values are valid
-		this->CheckAudio();
-		this->CheckAntialiasing();
-		this->CheckSpecularLighting();
-		this->CheckControls();
-
+		CheckAll();
 		SetVkeys();
 
 		this->m_bSuccess = true;
@@ -356,86 +315,86 @@ void CConfig::Save(void)
 	fileOut.open("config.cfg");
 
 	// file opened successfully
-	if(fileOut.is_open())
-    {
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=";
-		fileOut<<this->m_iVolumeMusic;
-		fileOut<<"\n";
-		fileOut<<"sound effect=";
-		fileOut<<this->m_iVolumeSoundEffect;
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"antialiasing=";
-		fileOut<<this->m_eAntialiasing;
-		fileOut<<"\n";
-		fileOut<<"specular lighting=";
-		fileOut<<this->m_eSpecularLighting;
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=";
-		fileOut<<this->m_strUp[0];
-		fileOut<<this->m_strUp[1];
-		fileOut<<this->m_strUp[2];
-		fileOut<<this->m_strUp[3];
-		fileOut<<"\n";
-		fileOut<<"down=";
-		fileOut<<this->m_strDown[0];
-		fileOut<<this->m_strDown[1];
-		fileOut<<this->m_strDown[2];
-		fileOut<<this->m_strDown[3];
-		fileOut<<"\n";
-		fileOut<<"left=";
-		fileOut<<this->m_strLeft[0];
-		fileOut<<this->m_strLeft[1];
-		fileOut<<this->m_strLeft[2];
-		fileOut<<this->m_strLeft[3];
-		fileOut<<"\n";
-		fileOut<<"right=";
-		fileOut<<this->m_strRight[0];
-		fileOut<<this->m_strRight[1];
-		fileOut<<this->m_strRight[2];
-		fileOut<<this->m_strRight[3];
-		fileOut<<"\n";
-		fileOut<<"fire mode=";
-		fileOut<<this->m_strFireMode[0];
-		fileOut<<this->m_strFireMode[1];
-		fileOut<<this->m_strFireMode[2];
-		fileOut<<this->m_strFireMode[3];
-		fileOut<<"\n";
-		fileOut<<"minigun=";
-		fileOut<<this->m_strMinigun[0];
-		fileOut<<this->m_strMinigun[1];
-		fileOut<<this->m_strMinigun[2];
-		fileOut<<this->m_strMinigun[3];
-		fileOut<<"\n";
-		fileOut<<"cannon=";
-		fileOut<<this->m_strCannon[0];
-		fileOut<<this->m_strCannon[1];
-		fileOut<<this->m_strCannon[2];
-		fileOut<<this->m_strCannon[3];
-		fileOut<<"\n";
-		fileOut<<"bomb=";
-		fileOut<<this->m_strBlast[0];
-		fileOut<<this->m_strBlast[1];
-		fileOut<<this->m_strBlast[2];
-		fileOut<<this->m_strBlast[3];
-		fileOut<<"\n";
+	if (fileOut.is_open())
+	{
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "GAME CONFIGURATION";
+		fileOut << "\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "AUDIO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "music=";
+		fileOut << this->m_iVolumeMusic;
+		fileOut << "\n";
+		fileOut << "sound effect=";
+		fileOut << this->m_iVolumeSoundEffect;
+		fileOut << "\n\n";
+		fileOut << "VIDEO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "antialiasing=";
+		fileOut << this->m_eAntialiasing;
+		fileOut << "\n";
+		fileOut << "specular lighting=";
+		fileOut << this->m_eSpecularLighting;
+		fileOut << "\n\n";
+		fileOut << "CONTROLS";
+		fileOut << "\n";
+		fileOut << "--------";
+		fileOut << "\n\n";
+		fileOut << "up=";
+		fileOut << this->m_strUp[0];
+		fileOut << this->m_strUp[1];
+		fileOut << this->m_strUp[2];
+		fileOut << this->m_strUp[3];
+		fileOut << "\n";
+		fileOut << "down=";
+		fileOut << this->m_strDown[0];
+		fileOut << this->m_strDown[1];
+		fileOut << this->m_strDown[2];
+		fileOut << this->m_strDown[3];
+		fileOut << "\n";
+		fileOut << "left=";
+		fileOut << this->m_strLeft[0];
+		fileOut << this->m_strLeft[1];
+		fileOut << this->m_strLeft[2];
+		fileOut << this->m_strLeft[3];
+		fileOut << "\n";
+		fileOut << "right=";
+		fileOut << this->m_strRight[0];
+		fileOut << this->m_strRight[1];
+		fileOut << this->m_strRight[2];
+		fileOut << this->m_strRight[3];
+		fileOut << "\n";
+		fileOut << "fire mode=";
+		fileOut << this->m_strFireMode[0];
+		fileOut << this->m_strFireMode[1];
+		fileOut << this->m_strFireMode[2];
+		fileOut << this->m_strFireMode[3];
+		fileOut << "\n";
+		fileOut << "minigun=";
+		fileOut << this->m_strMinigun[0];
+		fileOut << this->m_strMinigun[1];
+		fileOut << this->m_strMinigun[2];
+		fileOut << this->m_strMinigun[3];
+		fileOut << "\n";
+		fileOut << "cannon=";
+		fileOut << this->m_strCannon[0];
+		fileOut << this->m_strCannon[1];
+		fileOut << this->m_strCannon[2];
+		fileOut << this->m_strCannon[3];
+		fileOut << "\n";
+		fileOut << "bomb=";
+		fileOut << this->m_strBlast[0];
+		fileOut << this->m_strBlast[1];
+		fileOut << this->m_strBlast[2];
+		fileOut << this->m_strBlast[3];
+		fileOut << "\n";
 
 		fileOut.close();
 		m_bSuccess = true;
@@ -446,6 +405,14 @@ void CConfig::Save(void)
 	{
 		m_bSuccess = false;
 	}
+}
+
+void CConfig::CheckAll()
+{
+	CheckAudio();
+	CheckAntialiasing();
+	CheckSpecularLighting();
+	CheckControls();
 }
 
 void CConfig::DefaultAll(void)
@@ -466,62 +433,62 @@ void CConfig::DefaultAudio()
 	fileOut.open("config.cfg");
 
 	// file created successfully
-	if(fileOut.is_open())
+	if (fileOut.is_open())
 	{
 		// writes all default values to 'config.cfg' file
 
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=100";
-		fileOut<<"\n";
-		fileOut<<"sound effect=100";
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"antialiasing=";
-		fileOut<<this->m_eAntialiasing;
-		fileOut<<"\n";
-		fileOut<<"specular lighting=";
-		fileOut<<this->m_eSpecularLighting;
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=";
-		fileOut<<this->m_strUp;
-		fileOut<<"\n";
-		fileOut<<"down=";
-		fileOut<<this->m_strDown;
-		fileOut<<"\n";
-		fileOut<<"left=";
-		fileOut<<this->m_strLeft;
-		fileOut<<"\n";
-		fileOut<<"right=";
-		fileOut<<this->m_strRight;
-		fileOut<<"\n";
-		fileOut<<"fire mode=";
-		fileOut<<this->m_strFireMode;
-		fileOut<<"\n";
-		fileOut<<"minigun=";
-		fileOut<<this->m_strMinigun;
-		fileOut<<"\n";
-		fileOut<<"cannon=";
-		fileOut<<this->m_strCannon;
-		fileOut<<"\n";
-		fileOut<<"blast=";
-		fileOut<<this->m_strBlast;
-		fileOut<<"\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "GAME CONFIGURATION";
+		fileOut << "\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "AUDIO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "music=100";
+		fileOut << "\n";
+		fileOut << "sound effect=100";
+		fileOut << "\n\n";
+		fileOut << "VIDEO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "antialiasing=";
+		fileOut << this->m_eAntialiasing;
+		fileOut << "\n";
+		fileOut << "specular lighting=";
+		fileOut << this->m_eSpecularLighting;
+		fileOut << "\n\n";
+		fileOut << "CONTROLS";
+		fileOut << "\n";
+		fileOut << "--------";
+		fileOut << "\n\n";
+		fileOut << "up=";
+		fileOut << this->m_strUp;
+		fileOut << "\n";
+		fileOut << "down=";
+		fileOut << this->m_strDown;
+		fileOut << "\n";
+		fileOut << "left=";
+		fileOut << this->m_strLeft;
+		fileOut << "\n";
+		fileOut << "right=";
+		fileOut << this->m_strRight;
+		fileOut << "\n";
+		fileOut << "fire mode=";
+		fileOut << this->m_strFireMode;
+		fileOut << "\n";
+		fileOut << "minigun=";
+		fileOut << this->m_strMinigun;
+		fileOut << "\n";
+		fileOut << "cannon=";
+		fileOut << this->m_strCannon;
+		fileOut << "\n";
+		fileOut << "blast=";
+		fileOut << this->m_strBlast;
+		fileOut << "\n";
 
 		fileOut.close();
 
@@ -538,7 +505,7 @@ void CConfig::DefaultAudio()
 	}
 }
 
-void CConfig::DefaultAntialiasing()
+void CConfig::DefaultAntialiasingParameter()
 {
 	this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_0X;
 
@@ -558,69 +525,74 @@ void CConfig::DefaultAntialiasing()
 	{
 		this->m_eAntialiasing = eANTIALIASING::eANTIALIASING_2X;
 	}
+}
+
+void CConfig::DefaultAntialiasing()
+{
+	DefaultAntialiasingParameter();
 
 	std::ofstream fileOut;
 	fileOut.open("config.cfg");
 
 	// file created successfully
-	if(fileOut.is_open())
+	if (fileOut.is_open())
 	{
 		// writes all default values to 'config.cfg' file
 
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=";
-		fileOut<<this->m_iVolumeMusic;
-		fileOut<<"\n";
-		fileOut<<"sound effect=";
-		fileOut<<this->m_iVolumeSoundEffect;
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "GAME CONFIGURATION";
+		fileOut << "\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "AUDIO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "music=";
+		fileOut << this->m_iVolumeMusic;
+		fileOut << "\n";
+		fileOut << "sound effect=";
+		fileOut << this->m_iVolumeSoundEffect;
+		fileOut << "\n\n";
+		fileOut << "VIDEO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
 		fileOut << "antialiasing=";
 		fileOut << this->m_eAntialiasing;
-		fileOut<<"\n";
-		fileOut<<"specular lighting=";
-		fileOut<<this->m_eSpecularLighting;
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=";
-		fileOut<<this->m_strUp;
-		fileOut<<"\n";
-		fileOut<<"down=";
-		fileOut<<this->m_strDown;
-		fileOut<<"\n";
-		fileOut<<"left=";
-		fileOut<<this->m_strLeft;
-		fileOut<<"\n";
-		fileOut<<"right=";
-		fileOut<<this->m_strRight;
-		fileOut<<"\n";
-		fileOut<<"fire mode=";
-		fileOut<<this->m_strFireMode;
-		fileOut<<"\n";
-		fileOut<<"minigun=";
-		fileOut<<this->m_strMinigun;
-		fileOut<<"\n";
-		fileOut<<"cannon=";
-		fileOut<<this->m_strCannon;
-		fileOut<<"\n";
-		fileOut<<"blast=";
-		fileOut<<this->m_strBlast;
-		fileOut<<"\n";
+		fileOut << "\n";
+		fileOut << "specular lighting=";
+		fileOut << this->m_eSpecularLighting;
+		fileOut << "\n\n";
+		fileOut << "CONTROLS";
+		fileOut << "\n";
+		fileOut << "--------";
+		fileOut << "\n\n";
+		fileOut << "up=";
+		fileOut << this->m_strUp;
+		fileOut << "\n";
+		fileOut << "down=";
+		fileOut << this->m_strDown;
+		fileOut << "\n";
+		fileOut << "left=";
+		fileOut << this->m_strLeft;
+		fileOut << "\n";
+		fileOut << "right=";
+		fileOut << this->m_strRight;
+		fileOut << "\n";
+		fileOut << "fire mode=";
+		fileOut << this->m_strFireMode;
+		fileOut << "\n";
+		fileOut << "minigun=";
+		fileOut << this->m_strMinigun;
+		fileOut << "\n";
+		fileOut << "cannon=";
+		fileOut << this->m_strCannon;
+		fileOut << "\n";
+		fileOut << "blast=";
+		fileOut << this->m_strBlast;
+		fileOut << "\n";
 
 		fileOut.close();
 
@@ -639,63 +611,63 @@ void CConfig::DefaultSpecularLighting()
 	fileOut.open("config.cfg");
 
 	// file created successfully
-	if(fileOut.is_open())
+	if (fileOut.is_open())
 	{
 		// writes all default values to 'config.cfg' file
 
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=";
-		fileOut<<this->m_iVolumeMusic;
-		fileOut<<"\n";
-		fileOut<<"sound effect=";
-		fileOut<<this->m_iVolumeSoundEffect;
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"antialiasing=";
-		fileOut<<this->m_eAntialiasing;
-		fileOut<<"\n";
-		fileOut<<"specular lighting=1";
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=";
-		fileOut<<this->m_strUp;
-		fileOut<<"\n";
-		fileOut<<"down=";
-		fileOut<<this->m_strDown;
-		fileOut<<"\n";
-		fileOut<<"left=";
-		fileOut<<this->m_strLeft;
-		fileOut<<"\n";
-		fileOut<<"right=";
-		fileOut<<this->m_strRight;
-		fileOut<<"\n";
-		fileOut<<"fire mode=";
-		fileOut<<this->m_strFireMode;
-		fileOut<<"\n";
-		fileOut<<"minigun=";
-		fileOut<<this->m_strMinigun;
-		fileOut<<"\n";
-		fileOut<<"cannon=";
-		fileOut<<this->m_strCannon;
-		fileOut<<"\n";
-		fileOut<<"blast=";
-		fileOut<<this->m_strBlast;
-		fileOut<<"\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "GAME CONFIGURATION";
+		fileOut << "\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "AUDIO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "music=";
+		fileOut << this->m_iVolumeMusic;
+		fileOut << "\n";
+		fileOut << "sound effect=";
+		fileOut << this->m_iVolumeSoundEffect;
+		fileOut << "\n\n";
+		fileOut << "VIDEO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "antialiasing=";
+		fileOut << this->m_eAntialiasing;
+		fileOut << "\n";
+		fileOut << "specular lighting=1";
+		fileOut << "\n\n";
+		fileOut << "CONTROLS";
+		fileOut << "\n";
+		fileOut << "--------";
+		fileOut << "\n\n";
+		fileOut << "up=";
+		fileOut << this->m_strUp;
+		fileOut << "\n";
+		fileOut << "down=";
+		fileOut << this->m_strDown;
+		fileOut << "\n";
+		fileOut << "left=";
+		fileOut << this->m_strLeft;
+		fileOut << "\n";
+		fileOut << "right=";
+		fileOut << this->m_strRight;
+		fileOut << "\n";
+		fileOut << "fire mode=";
+		fileOut << this->m_strFireMode;
+		fileOut << "\n";
+		fileOut << "minigun=";
+		fileOut << this->m_strMinigun;
+		fileOut << "\n";
+		fileOut << "cannon=";
+		fileOut << this->m_strCannon;
+		fileOut << "\n";
+		fileOut << "blast=";
+		fileOut << this->m_strBlast;
+		fileOut << "\n";
 
 		fileOut.close();
 
@@ -717,56 +689,56 @@ void CConfig::DefaultControls()
 	fileOut.open("config.cfg");
 
 	// file created successfully
-	if(fileOut.is_open())
+	if (fileOut.is_open())
 	{
 		// writes default control values to 'config.cfg' file
 
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"GAME CONFIGURATION";
-		fileOut<<"\n\n";
-		fileOut<<"*******************";
-		fileOut<<"\n\n";
-		fileOut<<"AUDIO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"music=";
-		fileOut<<this->m_iVolumeMusic;
-		fileOut<<"\n";
-		fileOut<<"sound effect=";
-		fileOut<<this->m_iVolumeSoundEffect;
-		fileOut<<"\n\n";
-		fileOut<<"VIDEO";
-		fileOut<<"\n";
-		fileOut<<"-----";
-		fileOut<<"\n\n";
-		fileOut<<"antialiasing=";
-		fileOut<<this->m_eAntialiasing;
-		fileOut<<"\n";
-		fileOut<<"specular lighting=";
-		fileOut<<this->m_eSpecularLighting;
-		fileOut<<"\n\n";
-		fileOut<<"CONTROLS";
-		fileOut<<"\n";
-		fileOut<<"--------";
-		fileOut<<"\n\n";
-		fileOut<<"up=0x26";
-		fileOut<<"\n";
-		fileOut<<"down=0x28";
-		fileOut<<"\n";
-		fileOut<<"left=0x25";
-		fileOut<<"\n";
-		fileOut<<"right=0x27";
-		fileOut<<"\n";
-		fileOut<<"fire mode=0x10";
-		fileOut<<"\n";
-		fileOut<<"minigun=0x11";
-		fileOut<<"\n";
-		fileOut<<"cannon=0x0D";
-		fileOut<<"\n";
-		fileOut<<"blast=0x20";
-		fileOut<<"\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "GAME CONFIGURATION";
+		fileOut << "\n\n";
+		fileOut << "*******************";
+		fileOut << "\n\n";
+		fileOut << "AUDIO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "music=";
+		fileOut << this->m_iVolumeMusic;
+		fileOut << "\n";
+		fileOut << "sound effect=";
+		fileOut << this->m_iVolumeSoundEffect;
+		fileOut << "\n\n";
+		fileOut << "VIDEO";
+		fileOut << "\n";
+		fileOut << "-----";
+		fileOut << "\n\n";
+		fileOut << "antialiasing=";
+		fileOut << this->m_eAntialiasing;
+		fileOut << "\n";
+		fileOut << "specular lighting=";
+		fileOut << this->m_eSpecularLighting;
+		fileOut << "\n\n";
+		fileOut << "CONTROLS";
+		fileOut << "\n";
+		fileOut << "--------";
+		fileOut << "\n\n";
+		fileOut << "up=0x26";
+		fileOut << "\n";
+		fileOut << "down=0x28";
+		fileOut << "\n";
+		fileOut << "left=0x25";
+		fileOut << "\n";
+		fileOut << "right=0x27";
+		fileOut << "\n";
+		fileOut << "fire mode=0x10";
+		fileOut << "\n";
+		fileOut << "minigun=0x11";
+		fileOut << "\n";
+		fileOut << "cannon=0x0D";
+		fileOut << "\n";
+		fileOut << "blast=0x20";
+		fileOut << "\n";
 
 		fileOut.close();
 
@@ -794,13 +766,11 @@ void CConfig::DefaultControls()
 
 void CConfig::CheckAudio()
 {
-	if(	(this->m_iVolumeMusic < 0) || 
-		(this->m_iVolumeMusic > 100))
+	if ((this->m_iVolumeMusic < 0) || (this->m_iVolumeMusic > 100))
 	{
 		this->DefaultAudio();
 	}
-	if(	(this->m_iVolumeSoundEffect < 0) || 
-		(this->m_iVolumeSoundEffect > 100))
+	else if ((this->m_iVolumeSoundEffect < 0) || (this->m_iVolumeSoundEffect > 100))
 	{
 		this->DefaultAudio();
 	}
@@ -808,8 +778,7 @@ void CConfig::CheckAudio()
 
 void CConfig::CheckAntialiasing()
 {
-	if(	(this->m_eAntialiasing < 0) || 
-		(this->m_eAntialiasing > 4))
+	if ((this->m_eAntialiasing < 0) || (this->m_eAntialiasing > 4))
 	{
 		this->DefaultAntialiasing();
 	}
@@ -817,8 +786,7 @@ void CConfig::CheckAntialiasing()
 
 void CConfig::CheckSpecularLighting()
 {
-	if(	(this->m_eSpecularLighting < 0) || 
-		(this->m_eSpecularLighting > 1))
+	if ((this->m_eSpecularLighting < 0) || (this->m_eSpecularLighting > 1))
 	{
 		this->DefaultSpecularLighting();
 	}
@@ -839,64 +807,47 @@ void CConfig::CheckControls()
 
 	// checks next control value if still valid
 
-	if(bValid)
+	if (!this->m_keyReference.CheckValidValue(this->m_strUp))
 	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strUp))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strDown))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strLeft))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strRight))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strFireMode))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strMinigun))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strCannon))
-		{
-			bValid = false;
-		}
-	}
-	if(bValid)
-	{
-		if(!this->m_keyReference.CheckValidValue(this->m_strBlast))
-		{
-			bValid = false;
-		}
+		bValid = false;
 	}
 
-	if(!bValid)
+	if (!this->m_keyReference.CheckValidValue(this->m_strDown))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strLeft))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strRight))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strFireMode))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strMinigun))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strCannon))
+	{
+		bValid = false;
+	}
+
+	if (!this->m_keyReference.CheckValidValue(this->m_strBlast))
+	{
+		bValid = false;
+	}
+
+	if (!bValid)
 	{
 		this->DefaultControls();
 	}
@@ -904,54 +855,54 @@ void CConfig::CheckControls()
 
 void CConfig::RemoveDuplicate(int iButton)
 {
-	switch(iButton)
+	switch (iButton)
 	{
 	// compare up to others
 	case 1:
 
-		if(	(m_strUp[2] == m_strDown[2]) && 
+		if ((m_strUp[2] == m_strDown[2]) &&
 			(m_strUp[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strLeft[2]) && 
+		if ((m_strUp[2] == m_strLeft[2]) &&
 			(m_strUp[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strRight[2]) && 
+		if ((m_strUp[2] == m_strRight[2]) &&
 			(m_strUp[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strFireMode[2]) && 
+		if ((m_strUp[2] == m_strFireMode[2]) &&
 			(m_strUp[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strMinigun[2]) && 
+		if ((m_strUp[2] == m_strMinigun[2]) &&
 			(m_strUp[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strCannon[2]) && 
+		if ((m_strUp[2] == m_strCannon[2]) &&
 			(m_strUp[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strUp[2] == m_strBlast[2]) && 
+		if ((m_strUp[2] == m_strBlast[2]) &&
 			(m_strUp[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -963,49 +914,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare down to others
 	case 2:
 
-		if(	(m_strDown[2] == m_strUp[2]) && 
+		if ((m_strDown[2] == m_strUp[2]) &&
 			(m_strDown[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strLeft[2]) && 
+		if ((m_strDown[2] == m_strLeft[2]) &&
 			(m_strDown[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strRight[2]) && 
+		if ((m_strDown[2] == m_strRight[2]) &&
 			(m_strDown[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strFireMode[2]) && 
+		if ((m_strDown[2] == m_strFireMode[2]) &&
 			(m_strDown[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strMinigun[2]) && 
+		if ((m_strDown[2] == m_strMinigun[2]) &&
 			(m_strDown[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strCannon[2]) && 
+		if ((m_strDown[2] == m_strCannon[2]) &&
 			(m_strDown[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strDown[2] == m_strBlast[2]) && 
+		if ((m_strDown[2] == m_strBlast[2]) &&
 			(m_strDown[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1017,49 +968,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare left to others
 	case 3:
 
-		if(	(m_strLeft[2] == m_strUp[2]) && 
+		if ((m_strLeft[2] == m_strUp[2]) &&
 			(m_strLeft[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strDown[2]) && 
+		if ((m_strLeft[2] == m_strDown[2]) &&
 			(m_strLeft[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strRight[2]) && 
+		if ((m_strLeft[2] == m_strRight[2]) &&
 			(m_strLeft[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strFireMode[2]) && 
+		if ((m_strLeft[2] == m_strFireMode[2]) &&
 			(m_strLeft[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strMinigun[2]) && 
+		if ((m_strLeft[2] == m_strMinigun[2]) &&
 			(m_strLeft[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strCannon[2]) && 
+		if ((m_strLeft[2] == m_strCannon[2]) &&
 			(m_strLeft[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strLeft[2] == m_strBlast[2]) && 
+		if ((m_strLeft[2] == m_strBlast[2]) &&
 			(m_strLeft[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1071,49 +1022,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare right to others
 	case 4:
 
-		if(	(m_strRight[2] == m_strUp[2]) && 
+		if ((m_strRight[2] == m_strUp[2]) &&
 			(m_strRight[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strDown[2]) && 
+		if ((m_strRight[2] == m_strDown[2]) &&
 			(m_strRight[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strLeft[2]) && 
+		if ((m_strRight[2] == m_strLeft[2]) &&
 			(m_strRight[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strFireMode[2]) && 
+		if ((m_strRight[2] == m_strFireMode[2]) &&
 			(m_strRight[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strMinigun[2]) && 
+		if ((m_strRight[2] == m_strMinigun[2]) &&
 			(m_strRight[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strCannon[2]) && 
+		if ((m_strRight[2] == m_strCannon[2]) &&
 			(m_strRight[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strRight[2] == m_strBlast[2]) && 
+		if ((m_strRight[2] == m_strBlast[2]) &&
 			(m_strRight[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1125,49 +1076,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare fire mode to others
 	case 5:
 
-		if(	(m_strFireMode[2] == m_strUp[2]) && 
+		if ((m_strFireMode[2] == m_strUp[2]) &&
 			(m_strFireMode[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strDown[2]) && 
+		if ((m_strFireMode[2] == m_strDown[2]) &&
 			(m_strFireMode[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strLeft[2]) && 
+		if ((m_strFireMode[2] == m_strLeft[2]) &&
 			(m_strFireMode[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strRight[2]) && 
+		if ((m_strFireMode[2] == m_strRight[2]) &&
 			(m_strFireMode[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strMinigun[2]) && 
+		if ((m_strFireMode[2] == m_strMinigun[2]) &&
 			(m_strFireMode[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strCannon[2]) && 
+		if ((m_strFireMode[2] == m_strCannon[2]) &&
 			(m_strFireMode[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strFireMode[2] == m_strBlast[2]) && 
+		if ((m_strFireMode[2] == m_strBlast[2]) &&
 			(m_strFireMode[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1179,49 +1130,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare minigun to others
 	case 6:
 
-		if(	(m_strMinigun[2] == m_strUp[2]) && 
+		if ((m_strMinigun[2] == m_strUp[2]) &&
 			(m_strMinigun[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strDown[2]) && 
+		if ((m_strMinigun[2] == m_strDown[2]) &&
 			(m_strMinigun[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strLeft[2]) && 
+		if ((m_strMinigun[2] == m_strLeft[2]) &&
 			(m_strMinigun[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strRight[2]) && 
+		if ((m_strMinigun[2] == m_strRight[2]) &&
 			(m_strMinigun[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strFireMode[2]) && 
+		if ((m_strMinigun[2] == m_strFireMode[2]) &&
 			(m_strMinigun[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strCannon[2]) && 
+		if ((m_strMinigun[2] == m_strCannon[2]) &&
 			(m_strMinigun[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
 			m_strCannon[3] = ' ';
 		}
 
-		if(	(m_strMinigun[2] == m_strBlast[2]) && 
+		if ((m_strMinigun[2] == m_strBlast[2]) &&
 			(m_strMinigun[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1233,49 +1184,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare cannon to others
 	case 7:
 
-		if(	(m_strCannon[2] == m_strUp[2]) && 
+		if ((m_strCannon[2] == m_strUp[2]) &&
 			(m_strCannon[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strDown[2]) && 
+		if ((m_strCannon[2] == m_strDown[2]) &&
 			(m_strCannon[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strLeft[2]) && 
+		if ((m_strCannon[2] == m_strLeft[2]) &&
 			(m_strCannon[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strRight[2]) && 
+		if ((m_strCannon[2] == m_strRight[2]) &&
 			(m_strCannon[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strFireMode[2]) && 
+		if ((m_strCannon[2] == m_strFireMode[2]) &&
 			(m_strCannon[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strMinigun[2]) && 
+		if ((m_strCannon[2] == m_strMinigun[2]) &&
 			(m_strCannon[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strCannon[2] == m_strBlast[2]) && 
+		if ((m_strCannon[2] == m_strBlast[2]) &&
 			(m_strCannon[3] == m_strBlast[3]))
 		{
 			m_strBlast[2] = ' ';
@@ -1287,49 +1238,49 @@ void CConfig::RemoveDuplicate(int iButton)
 	// compare bomb to others
 	case 8:
 
-		if(	(m_strBlast[2] == m_strUp[2]) && 
+		if ((m_strBlast[2] == m_strUp[2]) &&
 			(m_strBlast[3] == m_strUp[3]))
 		{
 			m_strUp[2] = ' ';
 			m_strUp[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strDown[2]) && 
+		if ((m_strBlast[2] == m_strDown[2]) &&
 			(m_strBlast[3] == m_strDown[3]))
 		{
 			m_strDown[2] = ' ';
 			m_strDown[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strLeft[2]) && 
+		if ((m_strBlast[2] == m_strLeft[2]) &&
 			(m_strBlast[3] == m_strLeft[3]))
 		{
 			m_strLeft[2] = ' ';
 			m_strLeft[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strRight[2]) && 
+		if ((m_strBlast[2] == m_strRight[2]) &&
 			(m_strBlast[3] == m_strRight[3]))
 		{
 			m_strRight[2] = ' ';
 			m_strRight[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strFireMode[2]) && 
+		if ((m_strBlast[2] == m_strFireMode[2]) &&
 			(m_strBlast[3] == m_strFireMode[3]))
 		{
 			m_strFireMode[2] = ' ';
 			m_strFireMode[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strMinigun[2]) && 
+		if ((m_strBlast[2] == m_strMinigun[2]) &&
 			(m_strBlast[3] == m_strMinigun[3]))
 		{
 			m_strMinigun[2] = ' ';
 			m_strMinigun[3] = ' ';
 		}
 
-		if(	(m_strBlast[2] == m_strCannon[2]) && 
+		if ((m_strBlast[2] == m_strCannon[2]) &&
 			(m_strBlast[3] == m_strCannon[3]))
 		{
 			m_strCannon[2] = ' ';
@@ -1340,59 +1291,54 @@ void CConfig::RemoveDuplicate(int iButton)
 	}
 }
 
-bool CConfig::ButtonEmpty(void)
+bool CConfig::IsInputButtonEmpty(void)
 {
 	bool empty = false;
 
-	if(	(m_strUp[2] == ' ') && 
-		(m_strUp[3] == ' '))
+	if (IsInputButtonEmpty(m_strUp))
 	{
 		empty = true;
 	}
-
-	else if((m_strDown[2] == ' ') && 
-			(m_strDown[3] == ' '))
+	else if (IsInputButtonEmpty(m_strDown))
 	{
 		empty = true;
 	}
-
-	else if((m_strLeft[2] == ' ') && 
-			(m_strLeft[3] == ' '))
+	else if (IsInputButtonEmpty(m_strLeft))
 	{
 		empty = true;
 	}
-
-	else if((m_strRight[2] == ' ') && 
-			(m_strRight[3] == ' '))
+	else if (IsInputButtonEmpty(m_strRight))
 	{
 		empty = true;
 	}
-
-	else if((m_strFireMode[2] == ' ') && 
-			(m_strFireMode[3] == ' '))
+	else if (IsInputButtonEmpty(m_strFireMode))
 	{
 		empty = true;
 	}
-
-	else if((m_strMinigun[2] == ' ') && 
-			(m_strMinigun[3] == ' '))
+	else if (IsInputButtonEmpty(m_strMinigun))
 	{
 		empty = true;
 	}
-
-	else if((m_strCannon[2] == ' ') && 
-			(m_strCannon[3] == ' '))
+	else if (IsInputButtonEmpty(m_strCannon))
 	{
 		empty = true;
 	}
-
-	else if((m_strBlast[2] == ' ') && 
-			(m_strBlast[3] == ' '))
+	else if (IsInputButtonEmpty(m_strBlast))
 	{
 		empty = true;
 	}
 
 	return empty;
+}
+
+bool CConfig::IsInputButtonEmpty(char* inputButton)
+{
+	if ((inputButton[2] == ' ') && (inputButton[3] == ' '))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void CConfig::SetVkeys(void)
@@ -1409,6 +1355,5 @@ void CConfig::SetVkeys(void)
 
 long CConfig::HexStringToInt(char* strHex)
 {
-	long int value = strtol(strHex, NULL, 16);
-	return value;
+	return strtol(strHex, NULL, 16);
 }

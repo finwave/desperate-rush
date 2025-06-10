@@ -74,10 +74,12 @@ public:
 
 	void Load();
 	void Save();
+
+	void CheckAll();
 	void DefaultControls();
 
 	/**
-	 * CheckDuplicate
+	 * RemoveDuplicate
 	 * checks if a control button value described by given parameter
 	 * is the same as any other current control button value
 	 * if so changes that other button value to empty
@@ -85,7 +87,7 @@ public:
 	 */
 	void RemoveDuplicate(int button);
 
-	bool ButtonEmpty();
+	bool IsInputButtonEmpty();
 
 	inline eANTIALIASING GetAntialiasing() { return this->m_eAntialiasing; }
 	inline void SetAntialiasing(eANTIALIASING eAntialiasing) { this->m_eAntialiasing = eAntialiasing; }
@@ -96,16 +98,22 @@ public:
 private:
 
 	std::string GetWorkingDir();
+	std::string ReadNextConfigValue();
 
 	void DefaultAll();
 	void DefaultAudio();
+
+	void DefaultAntialiasingParameter();
 	void DefaultAntialiasing();
+
 	void DefaultSpecularLighting();
 
 	void CheckAudio();
 	void CheckAntialiasing();
 	void CheckSpecularLighting();
 	void CheckControls();
+
+	bool IsInputButtonEmpty(char* inputButton);
 
 	/**
 	 * SetVkey
@@ -126,6 +134,7 @@ private:
 	eSPECULAR_LIGHTING	m_eSpecularLighting;
 
 	std::string			m_sApplicationPath;
+	std::ifstream		m_FileStreamIn;
 	bool				m_bSuccess;
 
 	// members holding music and sound effect volume values

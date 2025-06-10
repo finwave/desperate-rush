@@ -1214,351 +1214,442 @@ HRESULT CTheGame::Create(	CTheApp* pTheApp,
 	return S_OK;
 }
 
+void CTheGame::RunGameStateInitLevel()
+{
+	this->m_pLevel->ReadLevel();
+
+	this->m_iLoadLevelAsteroidStep = 0;
+	this->m_iLoadLevelAsteroidCollisionMeshStep = 0;
+	this->m_iLoadLevelStep = 0;
+
+	SwitchGameState(GAME_STATE_LOAD_LEVEL);
+}
+
+void CTheGame::RunGameStateLoadLevel()
+{
+	bool increaseStep = true;
+
+	switch (this->m_iLoadLevelStep)
+	{
+	case LOAD_LEVEL_DEFAULT_VALUES:
+
+		this->m_bFadeIn = true;
+		this->m_bFadeOut = true;
+
+		break;
+
+	case LOAD_LEVEL_DYNAMIC_LIGHT:
+
+		this->m_pState->GetLights()->InitGameMain(this->m_pLevel->GetLevelNumber());
+		this->m_pState->GetLights()->SetGameMain(true);
+
+		break;
+
+	case LOAD_LEVEL_RESET_ENEMY_VALUES_1:
+
+		this->m_iFleetLaunch = 0;
+		this->m_iFleetStrike = 0;
+		this->m_bFleetLaunch = false;
+		this->m_bFleetStrike = false;
+		this->m_bEnemyReinforcementSending = false;
+
+		this->m_iReinforcementsMax = 0;
+		this->m_iReinforcementCount = 0;
+		this->m_iReinforcementLeft = 0;
+
+		this->m_fEnemyReinforcementSendTime = this->m_pLevel->GetRandReinforcementAppearTime();
+		this->m_fEnemyReinforcementSendCounter = 0.0f;
+
+		this->m_fEnemyReinforcementCounterDepth2 = 0.0f;
+		this->m_fEnemyReinforcementCounterDepth3 = 0.0f;
+		this->m_fEnemyReinforcementCounterDepth4 = 0.0f;
+		this->m_fEnemyReinforcementCounterDepth5 = 0.0f;
+
+		this->m_fEnemyReinforcementRandTimeDepth2 = this->m_pLevel->GetRandReinforcementSendTime();
+		this->m_fEnemyReinforcementRandTimeDepth3 = this->m_pLevel->GetRandReinforcementSendTime();
+		this->m_fEnemyReinforcementRandTimeDepth4 = this->m_pLevel->GetRandReinforcementSendTime();
+		this->m_fEnemyReinforcementRandTimeDepth5 = this->m_pLevel->GetRandReinforcementSendTime();
+
+		break;
+
+	case LOAD_LEVEL_CLEAR_ENEMIES:
+
+		this->ClearLaunchEnemies();
+		this->ClearStrikeEnemies();
+		this->m_pReinforcements.Clear();
+
+		break;
+
+	case LOAD_LEVEL_CLEAR_OBSTACLES:
+
+		this->ClearLevelObstacles();
+		this->m_pObstacleEnemies.Clear();
+
+		break;
+
+	case LOAD_LEVEL_CLEAR_BULLETS:
+
+		ClearBullets();
+
+		break;
+
+	case LOAD_LEVEL_CLEAR_EXPLOSIONS:
+
+		this->m_pExplosions->Clear();
+
+		break;
+
+	case LOAD_LEVEL_CLEAR_PARTICLES:
+
+		//this->m_pParticles.Clear();
+
+		break;
+
+	case LOAD_LEVEL_PREPARE_ENEMIES_LAUNCH:
+
+		this->PrepareLaunchEnemies();
+
+		break;
+
+	case LOAD_LEVEL_PREPARE_ENEMIES_STRIKE:
+
+		this->PrepareStrikeEnemies();
+
+		break;
+
+	case LOAD_LEVEL_PREPARE_ENEMIES_FLEET:
+
+		this->PrepareReinforcements();
+
+		break;
+
+	case LOAD_LEVEL_INIT_OBSTACLES:
+
+		this->InitLevelObstacles();
+
+		switch (this->m_pLevel->GetLevelNumber())
+		{
+		case 2:
+		case 3:
+
+			if (this->m_iLoadLevelAsteroidStep < LOAD_LEVEL_ASTEROID_MAX)
+			{
+				increaseStep = false;
+			}
+
+			break;
+		}
+
+		break;
+
+	case LOAD_LEVEL_COLLISION_MESH_OBSTACLES:
+
+		this->CreateCollisionMeshObstacles();
+
+		switch (this->m_pLevel->GetLevelNumber())
+		{
+		case 2:
+		case 3:
+
+			if (this->m_iLoadLevelAsteroidCollisionMeshStep < LOAD_LEVEL_ASTEROID_MAX)
+			{
+				increaseStep = false;
+			}
+
+			break;
+		}
+
+		break;
+
+	case LOAD_LEVEL_PREPARE_OBSTACLES:
+
+		this->PrepareObstacles();
+
+		break;
+
+	case LOAD_LEVEL_RESET_ENEMY_VALUES_2:
+
+		// launch enemies count
+		this->m_iEnemiesLaunch = 0;
+		// strike enemies count
+		this->m_iEnemiesStrike = 0;
+		// reset passed obstacles count
+		this->m_iObstaclesPassed = 0;
+
+		// enemy launch counter
+		this->m_fEnemyLaunchCounter = this->m_pLevel->GetFirstEnemyLaunch();
+		// enemy strike counter
+		this->m_fEnemyStrikeCounter = this->m_pLevel->GetFirstEnemyStrike();
+
+		this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
+		this->m_fEnemyExplosionSoundTimer = 0.0f;
+
+		break;
+
+	case LOAD_LEVEL_INIT_BOSS:
+
+		this->InitLevelBoss();
+
+		break;
+
+	case LOAD_LEVEL_RESET_BOSS_VALUES:
+
+		this->m_bBossWarning = true;
+
+		this->m_fBossWarningStartTimer = CGameSettings::BOSS_WARNING_START_TIME;
+		this->m_fBossWarningEndTimer = CGameSettings::BOSS_WARNING_END_TIME;
+		this->m_fBossWarningTextTimer = 0.015f;
+		this->m_iBossWarningTextIndex = 0;
+		this->m_bBossWarningFadeOut = false;
+
+		this->m_bBossDestroyed = false;
+
+		break;
+
+	case LOAD_LEVEL_BACKGROUND:
+
+		this->LoadSpritesBackground();
+
+		break;
+
+	case LOAD_LEVEL_SET_PLAYER_VALUES:
+
+		// reset player cannon values
+		this->PlayerResetCannon();
+		// reset player's hit sound timer
+		this->m_pPlayer->ResetHitSoundTimer();
+		// reset player's velocity values
+		this->m_pPlayer->SetLevelStartVelocityControls();
+
+		break;
+
+	case LOAD_LEVEL_MUSIC:
+	{
+		this->LoadMusicLevel();
+		this->LoadMusicGameOver();
+		this->LoadMusicGameOutro();
+	}
+	break;
+
+	case LOAD_LEVEL_MUSIC_BOSS:
+	{
+		int iVolumeMusic = this->m_pTheApp->GetVolumeMusic();
+
+		this->LoadMusicBoss();
+
+		// set music volume of each music player
+
+		if (this->m_pTheApp->GetMusicPlayerGeneral().IsCreated())
+		{
+			this->m_pTheApp->GetMusicPlayerGeneral().SetVolume(iVolumeMusic);
+		}
+
+		if (this->m_pTheApp->GetMusicPlayerGameBoss().IsCreated())
+		{
+			this->m_pTheApp->GetMusicPlayerGameBoss().SetVolume(iVolumeMusic);
+		}
+
+		if (this->m_pTheApp->GetMusicPlayerGameOver().IsCreated())
+		{
+			this->m_pTheApp->GetMusicPlayerGameOver().SetVolume(this->m_iVolumeMusicGameOver);
+		}
+
+		if (this->m_pTheApp->GetMusicPlayerGameOutro().IsCreated())
+		{
+			this->m_pTheApp->GetMusicPlayerGameOutro().SetVolume(iVolumeMusic);
+		}
+
+	}
+	break;
+
+	case LOAD_LEVEL_INTRO:
+
+		SwitchGameState(GAME_STATE_LEVEL_INTRO);
+
+		break;
+	}
+
+	if (increaseStep)
+	{
+		this->m_iLoadLevelStep++;
+	}
+
+	if (this->m_iLoadLevelStep == LOAD_LEVEL_STEPS_MAX)
+	{
+		this->m_pTheApp->SetLoadingScreen(false);
+	}
+	else
+	{
+		this->m_pState->UpdateLoadingBar(1);
+	}
+}
+
+void CTheGame::RunGameCollisionLogic(float fFrametime)
+{
+	CollisionPlayerVsBoss();
+	CollisionPlayerVsEnemy();
+	CollisionPlayerCannonVsBoss(fFrametime);
+	CollisionPlayerCannonVsEnemy(fFrametime);
+	CollisionPlayerCannonVsBossBullet();
+	CollisionPlayerCannonVsEnemyBullet();
+	CollisionPlayerVsObstacle();
+	CollisionEnemyVsObstacle();
+	CollisionEnemyVsEnemy();
+	CollisionBulletVsBoss();
+	CollisionBulletVsEnemy();
+	CollisionBulletVsPlayer();
+	CollisionBulletVsObstacle();
+	CollisionBulletVsBorder();
+}
+
+void CTheGame::RunGameClearLogic()
+{
+	ClearEnemies();
+	ClearObstacles();
+	ClearBullets();
+	ClearParticles();
+}
+
+void CTheGame::RunGameUpdateLogic(float fFrametime)
+{
+	PlayerShooting(fFrametime);
+	EnemyShooting();
+
+	UpdatePlayer(fFrametime);
+	UpdateBoss(fFrametime, false);
+	UpdateEnemies();
+	UpdateReinforcements(fFrametime);
+	UpdateBullets(fFrametime);
+	UpdateExplosions(fFrametime);
+
+	// update blast shaking
+	if (m_iGameState == GAME_STATE_BLAST_ACTIVE)
+	{
+		if ((this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) ||
+			(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION))
+		{
+			UpdateBossShake(fFrametime);
+		}
+		else
+		{
+			UpdateEnemiesShake(fFrametime);
+		}
+	}
+
+	if (this->m_iGameState != GAME_STATE_SPEED_CHANGE)
+	{
+		UpdateVelocityTimeMargin(fFrametime);
+		UpdateVelocityPixels();
+		UpdateBackgroundVelocity();
+		UpdateExplosionVelocity();
+	}
+
+	UpdateTime(fFrametime);
+}
+
+void CTheGame::RunGameRenderLogic(float fFrametime)
+{
+	RenderBackgrounds();
+
+	RenderPlayer(fFrametime);
+	RenderBoss(fFrametime);
+	RenderActiveEnemies(fFrametime);
+	RenderReinforcements(fFrametime);
+	RenderObstacleEnemies(fFrametime);
+	RenderObstacles(fFrametime);
+	RenderBullets(fFrametime);
+	RenderParticles(fFrametime);
+	RenderExplosions();
+
+	RenderPlayerCannon(fFrametime);
+
+	RenderStatistics(fFrametime);
+	RenderBossWarning(fFrametime);
+
+	RenderEndSuccess(fFrametime);
+	RenderEndFailed();
+
+	// render screen fade in/out
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_LEVEL_OUTRO:
+	case GAME_STATE_QUIT:
+		this->m_pState->GetFading()->RenderFading(true);
+		break;
+	default:
+		this->m_pState->GetFading()->RenderFading();
+		break;
+	}
+}
+
 void CTheGame::Render(void)
 {
-	const float fFrametime = this->m_pTheApp->GetFrameTime();
-
 	static int iCountBossChainExplosions = 0;
 	static float fPauseBossChainExplosion = 0.0f;
 	static float fPauseBossPartExplosion = 0.0f;
 	static float fPauseBossBigExplosion = 0.0f;
 
-	static bool bBackgroundSpeedChange;
-
 	static float fBackgroundSpeedChangePause = 0.0f;
 	static bool bBackgroundSpeedChangeReinforcements = true;
 	static bool bBackgroundSpeedChangeObstacles = true;
 	static bool bBackgroundSpeedChangeAfterburn;
+	static bool bBackgroundSpeedChange;
 
 	// these local static variables are used in game outro state
 	static float fPauseOutroMinigunsRotation = 1.0f;
 
 	/* INIT AND LOAD LEVEL */
 
-	if(this->m_iGameState == GAME_STATE_INIT_LEVEL)
+	if (this->m_iGameState == GAME_STATE_INIT_LEVEL)
 	{
-		this->m_pLevel->ReadLevel();
+		iCountBossChainExplosions = 0;
+		fPauseBossChainExplosion = 0.0f;
+		fPauseBossPartExplosion = 0.0f;
+		fPauseBossBigExplosion = 0.0f;
 
-		this->m_iLoadLevelAsteroidStep = 0;
-		this->m_iLoadLevelAsteroidCollisionMeshStep = 0;
-		this->m_iLoadLevelStep = 0;
+		fBackgroundSpeedChangePause = 0.0f;
+		bBackgroundSpeedChangeReinforcements = true;
+		bBackgroundSpeedChangeObstacles = true;
 
-		SwitchGameState(GAME_STATE_LOAD_LEVEL);
+		fPauseOutroMinigunsRotation = 1.0f;
 
+		RunGameStateInitLevel();
 		return;
 	}
-	else if(this->m_iGameState == GAME_STATE_LOAD_LEVEL)
+	else if (this->m_iGameState == GAME_STATE_LOAD_LEVEL)
 	{
-		bool increaseStep = true;
-
-		switch(this->m_iLoadLevelStep)
-		{
-		case LOAD_LEVEL_DEFAULT_VALUES:
-
-			iCountBossChainExplosions = 0;
-			fPauseBossChainExplosion = 0.0f;
-			fPauseBossPartExplosion = 0.0f;
-			fPauseBossBigExplosion = 0.0f;
-
-			fBackgroundSpeedChangePause = 0.0f;
-			bBackgroundSpeedChangeReinforcements = true;
-			bBackgroundSpeedChangeObstacles = true;
-
-			fPauseOutroMinigunsRotation = 1.0f;
-
-			this->m_bFadeIn = true;
-			this->m_bFadeOut = true;
-
-			break;
-
-		case LOAD_LEVEL_DYNAMIC_LIGHT:
-
-			this->m_pState->GetLights()->InitGameMain(this->m_pLevel->GetLevelNumber());
-			this->m_pState->GetLights()->SetGameMain(true);
-
-			break;
-
-		case LOAD_LEVEL_RESET_ENEMY_VALUES_1:
-
-			this->m_iFleetLaunch = 0;
-			this->m_iFleetStrike = 0;
-			this->m_bFleetLaunch = false;
-			this->m_bFleetStrike = false;
-			this->m_bEnemyReinforcementSending = false;
-
-			this->m_iReinforcementsMax = 0;
-			this->m_iReinforcementCount = 0;
-			this->m_iReinforcementLeft = 0;
-
-			this->m_fEnemyReinforcementSendTime = this->m_pLevel->GetRandReinforcementAppearTime();
-			this->m_fEnemyReinforcementSendCounter = 0.0f;
-
-			this->m_fEnemyReinforcementCounterDepth2 = 0.0f;
-			this->m_fEnemyReinforcementCounterDepth3 = 0.0f;
-			this->m_fEnemyReinforcementCounterDepth4 = 0.0f;
-			this->m_fEnemyReinforcementCounterDepth5 = 0.0f;
-
-			this->m_fEnemyReinforcementRandTimeDepth2 = this->m_pLevel->GetRandReinforcementSendTime();
-			this->m_fEnemyReinforcementRandTimeDepth3 = this->m_pLevel->GetRandReinforcementSendTime();
-			this->m_fEnemyReinforcementRandTimeDepth4 = this->m_pLevel->GetRandReinforcementSendTime();
-			this->m_fEnemyReinforcementRandTimeDepth5 = this->m_pLevel->GetRandReinforcementSendTime();
-
-			break;
-
-		case LOAD_LEVEL_CLEAR_ENEMIES:
-
-			this->ClearLaunchEnemies();
-			this->ClearStrikeEnemies();
-			this->m_pReinforcements.Clear();
-
-			break;
-
-		case LOAD_LEVEL_CLEAR_OBSTACLES:
-
-			this->ClearLevelObstacles();
-			this->m_pObstacleEnemies.Clear();
-
-			break;
-
-		case LOAD_LEVEL_CLEAR_BULLETS:
-			
-			this->ClearBullets(true);
-
-			break;
-
-		case LOAD_LEVEL_CLEAR_EXPLOSIONS:
-
-			this->m_pExplosions->Clear();
-
-			break;
-
-		case LOAD_LEVEL_CLEAR_PARTICLES:
-
-			//this->m_pParticles.Clear();
-
-			break;
-
-		case LOAD_LEVEL_PREPARE_ENEMIES_LAUNCH:
-			
-			this->PrepareLaunchEnemies();
-
-			break;
-
-		case LOAD_LEVEL_PREPARE_ENEMIES_STRIKE:
-
-			this->PrepareStrikeEnemies();
-
-			break;
-
-		case LOAD_LEVEL_PREPARE_ENEMIES_FLEET:
-			
-			this->PrepareReinforcements();
-
-			break;
-
-		case LOAD_LEVEL_INIT_OBSTACLES:
-			
-			this->InitLevelObstacles();
-
-			switch(this->m_pLevel->GetLevelNumber())
-			{
-			case 2:
-			case 3:
-
-				if(this->m_iLoadLevelAsteroidStep < LOAD_LEVEL_ASTEROID_MAX)
-				{
-					increaseStep = false;
-				}
-
-				break;
-			}
-
-			break;
-
-		case LOAD_LEVEL_COLLISION_MESH_OBSTACLES:
-
-			this->CreateCollisionMeshObstacles();
-
-			switch(this->m_pLevel->GetLevelNumber())
-			{
-			case 2:
-			case 3:
-
-				if(this->m_iLoadLevelAsteroidCollisionMeshStep < LOAD_LEVEL_ASTEROID_MAX)
-				{
-					increaseStep = false;
-				}
-
-				break;
-			}
-
-			break;
-
-		case LOAD_LEVEL_PREPARE_OBSTACLES:
-			
-			this->PrepareObstacles();
-
-			break;
-
-		case LOAD_LEVEL_RESET_ENEMY_VALUES_2:
-
-			// launch enemies count
-			this->m_iEnemiesLaunch = 0;
-			// strike enemies count
-			this->m_iEnemiesStrike = 0;
-			// reset passed obstacles count
-			this->m_iObstaclesPassed = 0;
-
-			// enemy launch counter
-			this->m_fEnemyLaunchCounter = this->m_pLevel->GetFirstEnemyLaunch();
-			// enemy strike counter
-			this->m_fEnemyStrikeCounter = this->m_pLevel->GetFirstEnemyStrike();
-
-			this->m_eExplosionEnemy = eEXPLOSION_ENEMY_NORMAL_1;
-			this->m_fEnemyExplosionSoundTimer = 0.0f;
-
-			break;
-
-		case LOAD_LEVEL_INIT_BOSS:
-			
-			this->InitLevelBoss();
-
-			break;
-
-		case LOAD_LEVEL_RESET_BOSS_VALUES:
-
-			this->m_bBossWarning = true;
-
-			this->m_fBossWarningStartTimer = 0.65f;
-			this->m_fBossWarningEndTimer = 0.6f;
-			this->m_fBossWarningTextTimer = 0.015f;
-			this->m_iBossWarningTextIndex = 0;
-			this->m_bBossWarningFadeOut = false;
-			
-			this->m_bBossDestroyed = false;
-
-			break;
-
-		case LOAD_LEVEL_BACKGROUND:
-
-			this->LoadSpritesBackground();
-
-			break;
-
-		case LOAD_LEVEL_SET_PLAYER_VALUES:
-
-			// reset player cannon values
-			this->PlayerResetCannon();
-			// reset player's hit sound timer
-			this->m_pPlayer->ResetHitSoundTimer();
-			// reset player's velocity values
-			this->m_pPlayer->SetLevelStartVelocityControls();
-
-			break;
-
-		case LOAD_LEVEL_MUSIC:
-		{
-			this->LoadMusicLevel();
-			this->LoadMusicGameOver();
-			this->LoadMusicGameOutro();
-		}
-			break;
-
-		case LOAD_LEVEL_MUSIC_BOSS:
-		{
-			int iVolumeMusic = this->m_pTheApp->GetVolumeMusic();
-
-			this->LoadMusicBoss();
-
-			// set music volume of each music player
-
-			if (this->m_pTheApp->GetMusicPlayerGeneral().IsCreated())
-			{
-				this->m_pTheApp->GetMusicPlayerGeneral().SetVolume(iVolumeMusic);
-			}
-
-			if (this->m_pTheApp->GetMusicPlayerGameBoss().IsCreated())
-			{
-				this->m_pTheApp->GetMusicPlayerGameBoss().SetVolume(iVolumeMusic);
-			}
-
-			if (this->m_pTheApp->GetMusicPlayerGameOver().IsCreated())
-			{
-				this->m_pTheApp->GetMusicPlayerGameOver().SetVolume(this->m_iVolumeMusicGameOver);
-			}
-
-			if (this->m_pTheApp->GetMusicPlayerGameOutro().IsCreated())
-			{
-				this->m_pTheApp->GetMusicPlayerGameOutro().SetVolume(iVolumeMusic);
-			}
-			
-		}
-			break;
-
-		case LOAD_LEVEL_INTRO:
-
-			SwitchGameState(GAME_STATE_LEVEL_INTRO);
-
-			break;
-		}
-
-		if(increaseStep)
-		{
-			this->m_iLoadLevelStep++;
-		}
-
-		if(this->m_iLoadLevelStep == LOAD_LEVEL_STEPS_MAX)
-		{
-			this->m_pTheApp->SetLoadingScreen(false);
-		}
-		else
-		{
-			this->m_pState->UpdateLoadingBar(1);
-		}
-
+		RunGameStateLoadLevel();
 		return;
 	}
 
-	this->CheckMusicEnd();
-	this->ResetSoundExplosionEnemy(fFrametime);
+	const float fFrametime = this->m_pTheApp->GetFrameTime();
+
+	CheckMusicEnd();
+	ResetSoundExplosionEnemy(fFrametime);
 	this->m_pPlayer->ResetHitSound(fFrametime);
 
-	this->CheckExtraLife();
-	this->CheckQuitGame(fFrametime);
-	
-	this->RenderBackgrounds();
+	CheckExtraLife();
+	CheckQuitGame(fFrametime);
 
-	switch(this->m_iGameState)
+	switch (this->m_iGameState)
 	{
 	case GAME_STATE_LEVEL_INTRO:
 
-		this->RenderObstacles(fFrametime, false);
-		this->RenderStatistics(fFrametime);
-
 		// fades in, player enters the level and level title is shown
-		if(this->m_bLevelIntro)
-		{	
+		if (this->m_bLevelIntro)
+		{
 			// update fade-in
-			if(this->m_bFadeIn)
+			if (this->m_bFadeIn)
 			{
-				if(!this->m_pState->GetFading()->UpdateFading())
+				if (!this->m_pState->GetFading()->UpdateFading())
 				{
 					this->m_bFadeIn = false;
-					this->PlaySoundPlayerAfterburn();
+					PlaySoundPlayerAfterburn();
 				}
-
-				this->m_pState->GetFading()->RenderFading();
-			}
-			else
-			{
-				// fade-in has finished,
-				// player can enter current level
-				this->UpdatePlayer(fFrametime);
-				this->RenderPlayer(fFrametime);
 			}
 
 			// player enter movement is finished, show level title
-			if(!this->m_bPlayerEnter)
+			if (!this->m_bPlayerEnter)
 			{
 				// display level title "move in" event
 				if (this->m_eLevelTitleEvent == eLEVEL_TITLE_EVENT::Appear)
@@ -1567,7 +1658,7 @@ void CTheGame::Render(void)
 					{
 						this->m_eLevelTitleEvent = eLEVEL_TITLE_EVENT::Stay;
 						// start level music
-						this->PlayMusicLevel();
+						PlayMusicLevel();
 					}
 				}
 				// display level title "stay" event
@@ -1581,7 +1672,7 @@ void CTheGame::Render(void)
 				// display level title "move out" event
 				else if (this->m_eLevelTitleEvent == eLEVEL_TITLE_EVENT::Disappear)
 				{
-					if (!RenderLevelTitleDisappear(fFrametime) && !RenderMissionInfo())
+					if (!RenderLevelTitleDisappear(fFrametime))
 					{
 						this->m_bLevelIntro = false;
 					}
@@ -1590,10 +1681,7 @@ void CTheGame::Render(void)
 		}
 		else
 		{
-			this->UpdatePlayer(fFrametime);
-			this->RenderPlayer(fFrametime);
-
-			if( this->m_pLevel->IsObstaclesFirst() )
+			if (this->m_pLevel->IsObstaclesFirst())
 			{
 				SwitchGameState(GAME_STATE_PLAY_OBSTACLES);
 			}
@@ -1602,11 +1690,11 @@ void CTheGame::Render(void)
 				SwitchGameState(GAME_STATE_PLAY_ENEMIES);
 			}
 
-			if( this->m_pLevel->GetLaunchFirst() )
+			if (this->m_pLevel->GetLaunchFirst())
 			{
 				this->m_bFleetLaunch = true;
 			}
-			else if( this->m_pLevel->GetStrikeFirst() )
+			else if (this->m_pLevel->GetStrikeFirst())
 			{
 				this->m_bFleetStrike = true;
 			}
@@ -1616,13 +1704,13 @@ void CTheGame::Render(void)
 
 		break;
 
-	// enemy attacks
+		// enemy attacks
 	case GAME_STATE_PLAY_ENEMIES:
 
 		// send enemy reinforcements
-		if(this->m_fEnemyReinforcementSendCounter >= this->m_fEnemyReinforcementSendTime)
+		if (this->m_fEnemyReinforcementSendCounter >= this->m_fEnemyReinforcementSendTime)
 		{
-			if(!this->m_bEnemyReinforcementSending)
+			if (!this->m_bEnemyReinforcementSending)
 			{
 				this->m_bEnemyReinforcementSending = true;
 			}
@@ -1633,27 +1721,9 @@ void CTheGame::Render(void)
 		}
 
 		// no more enemy fleets left
-		if(!this->m_bFleetLaunch && !this->m_bFleetStrike)
+		if (!this->m_bFleetLaunch && !this->m_bFleetStrike)
 		{
-			this->CollisionBulletVsBorder();
-
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateEnemies();
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-
-			if(this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
+			if (this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
 			{
 				SwitchGameState(GAME_STATE_VELOCITY_DECREASE);
 			}
@@ -1661,243 +1731,44 @@ void CTheGame::Render(void)
 		// enemy fleets still left
 		else
 		{
-			if(this->m_bFleetLaunch)
+			if (this->m_bFleetLaunch)
 			{
 				// send a new launch enemy
-				this->EnemyLaunch(fFrametime);
+				EnemyLaunch(fFrametime);
 			}
-			else if(this->m_bFleetStrike)
+			else if (this->m_bFleetStrike)
 			{
 				// send a new strike enemy
-				this->EnemyStrike(fFrametime);
+				EnemyStrike(fFrametime);
 			}
-
-			this->PlayerShooting(fFrametime);
-			this->EnemyShooting();
-
-			this->CollisionPlayerVsEnemy();
-			this->CollisionPlayerCannonVsEnemy(fFrametime);
-			this->CollisionPlayerCannonVsEnemyBullet();
-			this->CollisionBulletVsBorder();
-			this->CollisionBulletVsPlayer();
-			this->CollisionBulletVsEnemy();
-
-			this->ClearEnemies();
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateEnemies();
-			this->UpdateReinforcements(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderActiveEnemies(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-			this->RenderObstacles(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
 		}
-
-		this->RenderStatistics(fFrametime);
 
 		break;
 
-	// level has obstacles and maybe enemies
+		// level has obstacles and maybe enemies
 	case GAME_STATE_PLAY_OBSTACLES:
 
 		// player has passed all the generated obstacles
-		if(m_pObstaclesDepth1.IsEmpty() || (this->m_iObstaclesPassed == m_iObstaclesMax))
+		if (m_pObstaclesDepth1.IsEmpty() || (this->m_iObstaclesPassed == m_iObstaclesMax))
 		{
-			this->PlayerShooting(fFrametime);
-			this->EnemyShooting();
-
-			this->CollisionPlayerVsObstacle();
-			this->CollisionEnemyVsObstacle();
-			this->CollisionPlayerVsEnemy();
-			this->CollisionPlayerCannonVsEnemy(fFrametime);
-			this->CollisionPlayerCannonVsEnemyBullet();
-			this->CollisionBulletVsObstacle();
-			this->CollisionBulletVsPlayer();
-			this->CollisionBulletVsEnemy();
-			this->CollisionBulletVsBorder();
-
-			this->ClearObstacles();
-			this->ClearEnemies();
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateEnemies();
-			this->UpdateReinforcements(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderObstacles(fFrametime, false);
-			this->RenderObstacleEnemies(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-
 			SwitchGameState(GAME_STATE_WAIT_OBSTACLES);
 		}
-		else
-		{
-			this->PlayerShooting(fFrametime);
-			this->EnemyShooting();
-
-			this->CollisionPlayerVsObstacle();
-			this->CollisionEnemyVsObstacle();
-			this->CollisionPlayerVsEnemy();
-			this->CollisionPlayerCannonVsEnemy(fFrametime);
-			this->CollisionPlayerCannonVsEnemyBullet();
-			this->CollisionBulletVsObstacle();
-			this->CollisionBulletVsPlayer();
-			this->CollisionBulletVsEnemy();
-			this->CollisionBulletVsBorder();
-
-			this->ClearObstacles();
-			this->ClearEnemies();
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateEnemies();
-			this->UpdateReinforcements(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderObstacles(fFrametime, false);
-			this->RenderObstacleEnemies(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-		}
-
-		this->RenderStatistics(fFrametime);
 
 		break;
 
-	// wait for all the obstacles to pass by
+		// wait for all the obstacles to pass by
 	case GAME_STATE_WAIT_OBSTACLES:
 
-		if( this->m_pObstaclesDepth1.IsEmpty() && this->m_pObstaclesDepth2.IsEmpty() &&
+		if (this->m_pObstaclesDepth1.IsEmpty() && this->m_pObstaclesDepth2.IsEmpty() &&
 			this->m_pObstaclesDepth3.IsEmpty() && this->m_pObstaclesDepth4.IsEmpty() &&
-			this->m_pObstaclesDepth5.IsEmpty() && this->m_pObstacleEnemies.IsEmpty() )
+			this->m_pObstaclesDepth5.IsEmpty() && this->m_pObstacleEnemies.IsEmpty())
 		{
-			this->PlayerShooting(fFrametime);
-			this->EnemyShooting();
-
-			this->CollisionPlayerCannonVsEnemyBullet();
-			this->CollisionBulletVsPlayer();
-			this->CollisionBulletVsBorder();
-
-			this->ClearObstacles();
-			this->ClearEnemies();
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateReinforcements(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderObstacles(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-
 			SwitchGameState(GAME_STATE_VELOCITY_DECREASE);
 		}
-		else
-		{
-			this->PlayerShooting(fFrametime);
-			this->EnemyShooting();
-
-			this->CollisionPlayerVsObstacle();
-			this->CollisionEnemyVsObstacle();
-			this->CollisionPlayerVsEnemy();
-			this->CollisionPlayerCannonVsEnemy(fFrametime);
-			this->CollisionPlayerCannonVsEnemyBullet();
-			this->CollisionBulletVsObstacle();
-			this->CollisionBulletVsPlayer();
-			this->CollisionBulletVsEnemy();
-			this->CollisionBulletVsBorder();
-
-			this->ClearObstacles();
-			this->ClearEnemies();
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateEnemies();
-			this->UpdateReinforcements(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderObstacles(fFrametime, false);
-			this->RenderObstacleEnemies(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-		}
-
-		this->RenderStatistics(fFrametime);
 
 		break;
 
 	case GAME_STATE_VELOCITY_DECREASE:
-
-		this->PlayerShooting(fFrametime);
-		this->EnemyShooting();
-
-		this->CollisionPlayerVsEnemy();
-		this->CollisionPlayerCannonVsEnemy(fFrametime);
-		this->CollisionPlayerCannonVsEnemyBullet();
-		this->CollisionBulletVsPlayer();
-		this->CollisionBulletVsEnemy();
-		this->CollisionBulletVsBorder();
-
-		this->ClearObstacles();
-		this->ClearEnemies();
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		this->UpdatePlayer(fFrametime);
-		this->UpdateReinforcements(fFrametime);
-		this->UpdateBullets(fFrametime);
-		this->UpdateExplosions(fFrametime);
-
-		this->RenderObstacles(fFrametime, false);
-		this->RenderReinforcements(fFrametime, false);
-
-		this->RenderPlayer(fFrametime);
-		this->RenderBullets(fFrametime, false);
-		this->RenderExplosions();
-		this->RenderParticles(fFrametime, false);
-		this->RenderPlayerCannon(fFrametime, false);
-
-		this->RenderStatistics(fFrametime);
 
 		if (!this->m_pPlayer->IsMinBoost())
 		{
@@ -1946,31 +1817,8 @@ void CTheGame::Render(void)
 
 		break;
 
-	// background speed changes
+		// background speed changes
 	case GAME_STATE_SPEED_CHANGE:
-
-		this->PlayerShooting(fFrametime);
-
-		this->CollisionBulletVsPlayer();
-
-		this->ClearObstacles();
-		this->ClearEnemies();
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		this->UpdatePlayer(fFrametime);
-		this->UpdateReinforcements(fFrametime);
-		this->UpdateBullets(fFrametime);
-		this->UpdateExplosions(fFrametime);
-
-		this->RenderObstacles(fFrametime, false);
-		this->RenderReinforcements(fFrametime, false);
-
-		this->RenderPlayer(fFrametime);
-		this->RenderBullets(fFrametime, false);
-		this->RenderExplosions();
-		this->RenderParticles(fFrametime, false);
-		this->RenderPlayerCannon(fFrametime, false);
 
 		// change background speed step by step
 		if (bBackgroundSpeedChange && this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
@@ -2065,20 +1913,18 @@ void CTheGame::Render(void)
 
 			this->m_bPlayAfterburnSound = true;
 
-			this->NormalSpeedReinforcement();
-			this->NormalSpeedObstacle();
+			NormalSpeedReinforcement();
+			NormalSpeedObstacle();
 
 			SwitchGameState(this->m_iGameStateNext);
 		}
 
-		this->RenderStatistics(fFrametime);
-
 		// change sent reinforcements / obstacles speed
-		switch(this->m_iGameStatePrevious)
+		switch (this->m_iGameStatePrevious)
 		{
 		case GAME_STATE_PLAY_ENEMIES:
 
-			if(bBackgroundSpeedChangeReinforcements)
+			if (bBackgroundSpeedChangeReinforcements)
 			{
 				bBackgroundSpeedChangeReinforcements = false;
 				//this->IncreaseSpeedReinforcement();
@@ -2088,10 +1934,10 @@ void CTheGame::Render(void)
 
 		case GAME_STATE_WAIT_OBSTACLES:
 
-			if(bBackgroundSpeedChangeObstacles)
+			if (bBackgroundSpeedChangeObstacles)
 			{
 				bBackgroundSpeedChangeObstacles = false;
-				this->IncreaseSpeedObstacle();
+				IncreaseSpeedObstacle();
 			}
 
 			break;
@@ -2101,84 +1947,42 @@ void CTheGame::Render(void)
 
 	case GAME_STATE_BOSS_INTRO:
 
-		this->PlayerShooting(fFrametime);
-
 		// fade-out level music
-		if(this->m_bFadeOutMusic)
+		if (this->m_bFadeOutMusic)
 		{
-			if( !this->FadeOutMusicLevel(fFrametime) )
+			if (!this->FadeOutMusicLevel(fFrametime))
 			{
 				this->m_bFadeOutMusic = false;
 				// stop and free level music
-				this->StopMusicLevel();
+				StopMusicLevel();
 			}
 		}
 
-		if(this->m_bBossWarning)
+		if (this->m_bBossWarning)
 		{
-			this->CollisionBulletVsBorder();
-
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-
-			if(this->m_fBossWarningStartTimer <= 0.0f)
-			{
-				this->RenderBossWarning(fFrametime, false);
-			}
-			else
+			if (this->m_fBossWarningStartTimer > 0.0f)
 			{
 				this->m_fBossWarningStartTimer -= fFrametime;
 
-				if(this->m_fBossWarningStartTimer <= 0.0f)
+				if (this->m_fBossWarningStartTimer <= 0.0f)
 				{
 					// play sound effect
 					this->m_pTheApp->GetWave(SOUND_BOSS_INTRO_WARNING).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 				}
 			}
-
-			if(!this->m_bBossWarning)
+			// end boss warning
+			else if (this->m_fBossWarningEndTimer <= 0.0f)
 			{
+				this->m_bBossWarning = false;
+
 				// play boss music
-				this->PlayMusicBoss();
+				PlayMusicBoss();
 			}
 		}
 		else
 		{
-			this->CollisionPlayerVsBoss();
-			this->CollisionBulletVsBoss();
-			this->CollisionBulletVsBorder();
-
-			this->ClearBullets(false);
-			this->ClearParticles();
-
-			this->UpdatePlayer(fFrametime);
-			this->UpdateBoss(fFrametime);
-			this->UpdateBullets(fFrametime);
-			this->UpdateExplosions(fFrametime);
-
-			this->RenderBoss(fFrametime, false);
-			this->RenderReinforcements(fFrametime, false);
-
-			this->RenderPlayer(fFrametime);
-			this->RenderBullets(fFrametime, false);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, false);
-			this->RenderPlayerCannon(fFrametime, false);
-
 			// Boss enter scene has ended
-			if( !this->CheckBossEnter() )
+			if (!CheckBossEnter())
 			{
 				this->m_bFadeOutMusic = true;
 				this->m_pTheApp->CheckKeyPushes();
@@ -2187,41 +1991,13 @@ void CTheGame::Render(void)
 			}
 		}
 
-		this->RenderStatistics(fFrametime);
-
 		break;
 
 	case GAME_STATE_BOSS_ACTION:
 
-		this->PlayerShooting(fFrametime);
-
-		this->CollisionPlayerVsBoss();
-		this->CollisionPlayerCannonVsBoss(fFrametime);
-		this->CollisionPlayerCannonVsBossBullet();
-		this->CollisionBulletVsPlayer();
-		this->CollisionBulletVsBoss();
-		this->CollisionBulletVsBorder();
-
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		this->UpdatePlayer(fFrametime);
-		this->UpdateBoss(fFrametime);
-		this->UpdateBullets(fFrametime);
-		this->UpdateExplosions(fFrametime);
-
-		this->RenderBoss(fFrametime, false);
-		this->RenderReinforcements(fFrametime, false);
-
-		this->RenderPlayer(fFrametime);
-		this->RenderBullets(fFrametime, false);
-		this->RenderExplosions();
-		this->RenderParticles(fFrametime, false);
-		this->RenderPlayerCannon(fFrametime, false);
-
-		if( this->m_bBossDestroyed )
+		if (this->m_bBossDestroyed)
 		{
-			switch(this->m_pLevel->GetLevelNumber())
+			switch (this->m_pLevel->GetLevelNumber())
 			{
 			case 1:
 				iCountBossChainExplosions = EXPLOSION_CHAIN_REPEATS_BOSS_1;
@@ -2266,70 +2042,42 @@ void CTheGame::Render(void)
 			SwitchGameState(GAME_STATE_BOSS_CHAIN_EXPLOSION);
 		}
 
-		this->RenderStatistics(fFrametime);
-
 		break;
 
 	case GAME_STATE_BOSS_CHAIN_EXPLOSION:
 
-		this->PlayerShooting(fFrametime);
-
-		this->CollisionPlayerVsBoss();
-		this->CollisionPlayerCannonVsBoss(fFrametime);
-		this->CollisionPlayerCannonVsBossBullet();
-		this->CollisionBulletVsPlayer();
-		this->CollisionBulletVsBoss();
-		this->CollisionBulletVsBorder();
-
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		this->UpdatePlayer(fFrametime);
-		this->UpdateBoss(fFrametime);
-		this->UpdateBullets(fFrametime);
-		this->UpdateExplosions(fFrametime);
-
-		this->RenderBoss(fFrametime, false);
-		this->RenderReinforcements(fFrametime, false);
-
-		this->RenderPlayer(fFrametime);
-		this->RenderBullets(fFrametime, false);
-		this->RenderExplosions();
-		this->RenderParticles(fFrametime, false);
-		this->RenderPlayerCannon(fFrametime, false);
-
 		// boss chain and part explosions
-		if(fPauseBossChainExplosion <= 0.0f)
+		if (fPauseBossChainExplosion <= 0.0f)
 		{
-			if(iCountBossChainExplosions > 0)
+			if (iCountBossChainExplosions > 0)
 			{
 				/* chain explosions */
 
 				iCountBossChainExplosions--;
-				this->BossFrameChainExplosion();
+				BossFrameChainExplosion();
 
 				// play sound effect
-				this->PlaySoundExplosionBossChain();
+				PlaySoundExplosionBossChain();
 
 				// new chain explosion timer value
-				switch(this->m_pLevel->GetLevelNumber())
+				switch (this->m_pLevel->GetLevelNumber())
 				{
 				case 1:
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
-					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_1,
-					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_1);
+						(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_1,
+						(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_1);
 					break;
 
 				case 2:
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
-					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_2,
-					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_2);
+						(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_2,
+						(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_2);
 					break;
 
 				case 3:
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
-					(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_3,
-					(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_3);
+						(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_3,
+						(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_3);
 					break;
 				}
 
@@ -2337,7 +2085,7 @@ void CTheGame::Render(void)
 
 				if (fPauseBossPartExplosion <= 0.0f)
 				{
-					if (this->CheckBossPartExplosion(iCountBossChainExplosions))
+					if (CheckBossPartExplosion(iCountBossChainExplosions))
 					{
 						// new chain explosion timer value
 						fPauseBossPartExplosion = this->m_pTheApp->RandFloat(
@@ -2353,7 +2101,7 @@ void CTheGame::Render(void)
 			// chain explosions finished
 			else
 			{
-				switch(this->m_pLevel->GetLevelNumber())
+				switch (this->m_pLevel->GetLevelNumber())
 				{
 				case 1:
 					fPauseBossBigExplosion = (float)EXPLOSION_BIG_TIMER_BOSS_1;
@@ -2382,55 +2130,32 @@ void CTheGame::Render(void)
 			fPauseBossChainExplosion -= fFrametime;
 		}
 
-		RenderStatistics(fFrametime);
-
 		break;
 
 	case GAME_STATE_BOSS_BIG_EXPLOSION:
 
-		if(this->m_bFadeOutMusic)
+		if (this->m_bFadeOutMusic)
 		{
 			// fade-out boss music
-			if( !this->FadeOutMusicBoss(fFrametime) )
+			if (!FadeOutMusicBoss(fFrametime))
 			{
 				this->m_bFadeOutMusic = false;
 				// stop and free music
-				this->StopMusicBoss();
+				StopMusicBoss();
 			}
 		}
 
-		this->CollisionPlayerCannonVsBossBullet();
-		this->CollisionBulletVsPlayer();
-		this->CollisionBulletVsBorder();
-
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		this->UpdatePlayer(fFrametime);
-		this->UpdateBoss(fFrametime);
-		this->UpdateBullets(fFrametime);
-		this->UpdateExplosions(fFrametime);
-
-		this->RenderBoss(fFrametime, false);
-		this->RenderReinforcements(fFrametime, false);
-
-		this->RenderPlayer(fFrametime);
-		this->RenderBullets(fFrametime, false);
-		this->RenderExplosions();
-		this->RenderParticles(fFrametime, false);
-		this->RenderPlayerCannon(fFrametime, false);
-
-		if(fPauseBossBigExplosion <= 0.0f)
+		if (fPauseBossBigExplosion <= 0.0f)
 		{
 			// reset player miniguns direction
-			if(!this->PlayerResetMiniguns())
+			if (!PlayerResetMiniguns())
 			{
 				// need to leave some positive value to count down,
 				// so that "player move away" gets activated
 				fPauseOutroMinigunsRotation = 0.05f;
 			}
 
-			if(	this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter && !this->m_pPlayer->IsUntouchable())
+			if (this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter && !this->m_pPlayer->IsUntouchable())
 			{
 				SwitchGameState(GAME_STATE_LEVEL_OUTRO);
 			}
@@ -2440,39 +2165,27 @@ void CTheGame::Render(void)
 			fPauseBossBigExplosion -= fFrametime;
 		}
 
-		this->RenderStatistics(fFrametime);
-
 		break;
 
 	case GAME_STATE_LEVEL_OUTRO:
 
-		this->UpdatePlayer(fFrametime);
-
-		this->RenderReinforcements(fFrametime, false);
-		this->RenderPlayer(fFrametime);
-
-		if(fPauseOutroMinigunsRotation <= 0.0f)
+		if (fPauseOutroMinigunsRotation <= 0.0f)
 		{
-			if(!this->m_bPlayerExit)
+			if (!this->m_bPlayerExit)
 			{
 				// player has finished the game
-				if(this->m_pLevel->GetLevelNumber() == LEVELS_MAX)
+				if (this->m_pLevel->GetLevelNumber() == LEVELS_MAX)
 				{
 					SwitchGameState(GAME_STATE_END_SUCCESS);
 				}
 				// go to next level
 				else
 				{
-					// render statistics
-					this->RenderStatistics(fFrametime);
-
 					// update screen fade-out
-					bool bScreenFading = this->m_pState->GetFading()->UpdateFading();
-					// render screen fade-out
-					this->m_pState->GetFading()->RenderFading();
+					this->m_pState->GetFading()->UpdateFading();
 
 					// screen fade-out has finished, move to next level
-					if(!bScreenFading)
+					if (!this->m_pState->GetFading()->IsFadeOut())
 					{
 						this->m_bFadeOut = false;
 						fPauseOutroMinigunsRotation = 1.0f;
@@ -2489,36 +2202,26 @@ void CTheGame::Render(void)
 		{
 			fPauseOutroMinigunsRotation -= fFrametime;
 
-			if(fPauseOutroMinigunsRotation <= 0.0f)
+			if (fPauseOutroMinigunsRotation <= 0.0f)
 			{
 				PlayerSetMoveExit();
 			}
 		}
 
-		this->RenderStatistics(fFrametime);
-		
-		break;
-
-	case GAME_STATE_END_SUCCESS:
-
-		this->RenderStatistics(fFrametime);
-		this->RenderEndSuccess(fFrametime);
-
 		break;
 
 	case GAME_STATE_END_FAILED:
 
-		this->QuitGameAction(fFrametime);
-		this->RenderEndFailed();
+		QuitGameAction(fFrametime);
 
 		break;
 
-	// player blast is active
+		// player blast is active
 	case GAME_STATE_BLAST_ACTIVE:
 
-		if(!this->m_pPlayer->GetBlastController()->IsBlastActive())
+		if (!this->m_pPlayer->GetBlastController()->IsBlastActive())
 		{
-			this->PlayerBlastDeactive();
+			SwitchGameState(GAME_STATE_BLAST_DEACTIVATE);
 		}
 		else
 		{
@@ -2528,83 +2231,56 @@ void CTheGame::Render(void)
 				this->m_pState->GetLights()->UpdateGamePlayerBlast(
 					this->m_pPlayer->GetBlastController()->GetBlastLight());
 			}
-
-			this->UpdatePlayer(fFrametime);
-
-			// update blast shaking
-
-			if( (this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION))
-			{
-				this->UpdateBossShake(true, fFrametime);
-			}
-			else
-			{
-				this->UpdateEnemiesShake(true, fFrametime);
-			}
-
-			this->RenderActiveEnemies(fFrametime, true);
-			this->RenderObstacleEnemies(fFrametime, true);
-			this->RenderReinforcements(fFrametime, true);
-			this->RenderObstacles(fFrametime, true);
-
-			// render boss
-			if( (this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION))
-			{
-				this->RenderBoss(fFrametime, true);
-			}
-
-			this->RenderBullets(fFrametime, true);
-			this->RenderPlayer(fFrametime);
-			this->RenderExplosions();
-			this->RenderParticles(fFrametime, true);
 		}
-
-		this->RenderStatistics(fFrametime);
 
 		break;
 
-	// player quits the game
+	case GAME_STATE_BLAST_DEACTIVATE:
+
+		PlayerBlastDeactivate();
+
+		break;
+
+		// player quits the game
 	case GAME_STATE_QUIT:
 
 		// update fade-out
-		if(this->m_bFadeOut)
+		if (this->m_bFadeOut)
 		{
-			if(!this->m_pState->GetFading()->UpdateFading())
+			if (!this->m_pState->GetFading()->UpdateFading())
 			{
 				this->m_bFadeOut = false;
 			}
 		}
 
 		// music fade-outs
-		if(this->m_bFadeOutMusic)
+		if (this->m_bFadeOutMusic)
 		{
-			if(	(this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) && 
+			if ((this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) &&
 				(this->m_iGameStateEnd != GAME_STATE_END_FAILED))
 			{
 				// fade-out boss music
-				if(	(this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO) || 
-					(this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-					(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
+				if ((this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO) ||
+					(this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) ||
+					(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
 					(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
 				{
-					
-					if( !this->FadeOutMusicBoss(fFrametime) )
+
+					if (!FadeOutMusicBoss(fFrametime))
 					{
 						this->m_bFadeOutMusic = false;
 						// stop and free music
-						this->StopMusicBoss();
+						StopMusicBoss();
 					}
 				}
 				// fade-out level music
 				else
 				{
-					if( !this->FadeOutMusicLevel(fFrametime) )
+					if (!FadeOutMusicLevel(fFrametime))
 					{
 						this->m_bFadeOutMusic = false;
 						// stop and free music
-						this->StopMusicLevel();
+						StopMusicLevel();
 					}
 				}
 			}
@@ -2612,29 +2288,28 @@ void CTheGame::Render(void)
 			{
 				this->m_bFadeOutMusic = false;
 				// stop and free all music
-				this->StopMusicAll();
+				StopMusicAll();
 			}
 		}
 
-		this->QuitGameAction(fFrametime);
-		this->m_pState->GetFading()->RenderFading();
+		QuitGameAction(fFrametime);
 
-		if(!this->m_bFadeOut && !this->m_bFadeOutMusic)
+		if (!this->m_pState->GetFading()->IsFadeOut() && !this->m_bFadeOutMusic)
 		{
 			// deactivate player blast light effect
-			if(this->m_iGameStatePrevious == GAME_STATE_BLAST_ACTIVE)
+			if (this->m_iGameStatePrevious == GAME_STATE_BLAST_ACTIVE)
 			{
 				this->m_pState->GetLights()->SetGamePlayerBlast(false, this->m_pPlayer->GetPosition());
 			}
 
 			this->m_pState->SetState(STATE_MENUS);
 
-			if(this->m_bCheckHighScore)
+			if (this->m_bCheckHighScore)
 			{
-				if(this->m_pPlayer->GetScore() > 0)
+				if (this->m_pPlayer->GetScore() > 0)
 				{
 					// player got a new highscore
-					if(this->m_pTheApp->GetHighScore().IsHighScore(this->m_pPlayer->GetScore()))
+					if (this->m_pTheApp->GetHighScore().IsHighScore(this->m_pPlayer->GetScore()))
 					{
 						this->m_pTheApp->GetHighScore().SetNewScore(this->m_pPlayer->GetScore());
 						this->m_pTheApp->GetHighScore().SetNewLevel(this->m_pLevel->GetLevelNumber());
@@ -2655,15 +2330,10 @@ void CTheGame::Render(void)
 		break;
 	}
 
-	this->UpdateTime(fFrametime);
-
-	if(this->m_iGameState != GAME_STATE_SPEED_CHANGE)
-	{
-		this->UpdateVelocityTimeMargin(fFrametime);
-		this->UpdateVelocityPixels();
-		this->UpdateBackgroundVelocity();
-		this->UpdateExplosionVelocity();
-	}
+	RunGameCollisionLogic(fFrametime);
+	RunGameClearLogic();
+	RunGameUpdateLogic(fFrametime);
+	RunGameRenderLogic(fFrametime);
 }
 
 void CTheGame::SwitchGameState(int iNextGameState)
@@ -2678,13 +2348,13 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_bPlayAfterburnSound = true;
 
 		// set player enter
-		this->PlayerSetMoveEnter(iNextGameState);
+		PlayerSetMoveEnter(iNextGameState);
 		this->m_bPlayerEnter = true;
 
 		// set screen fade-in
 		this->m_pState->GetFading()->SetFadeIn();
 		this->m_pState->GetFading()->SetDefaultFadeStep();
-		//this->m_pState->GetFading()->SetFadeStep(m_FadeInLevelTime);
+		//this->m_pState->GetFading()->SetFadeStep(this->m_FadeInLevelTime);
 
 		int iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
 		int iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
@@ -2790,7 +2460,7 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		// fade out screen
 		this->m_pState->GetFading()->SetFadeOut();
 		this->m_pState->GetFading()->SetDefaultFadeStep();
-		//this->m_pState->GetFading()->SetFadeStep(m_FadeOutLevelTime);
+		//this->m_pState->GetFading()->SetFadeStep(this->m_FadeOutLevelTime);
 
 		break;
 
@@ -2802,7 +2472,7 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		// fade out screen
 		this->m_pState->GetFading()->SetFadeOut();
 		this->m_pState->GetFading()->SetDefaultFadeStep();
-		//this->m_pState->GetFading()->SetFadeStep(m_FadeOutQuitTime);
+		//this->m_pState->GetFading()->SetFadeStep(this->m_FadeOutQuitTime);
 
 		break;
 
@@ -2811,9 +2481,9 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pPlayer->SetActive(FALSE);
 
 		// stop all music
-		this->StopMusicAll();
+		StopMusicAll();
 		// play "game over" music
-		this->PlayMusicGameOver();
+		PlayMusicGameOver();
 		// play "game over" sound effect
 		this->m_pTheApp->GetWave(SOUND_GAME_OVER).Play(FALSE, 0, this->m_iVolumeSoundEffect);
 
@@ -2825,9 +2495,9 @@ void CTheGame::SwitchGameState(int iNextGameState)
 	case GAME_STATE_END_SUCCESS:
 
 		// stop all music
-		this->StopMusicAll();
+		StopMusicAll();
 		// play "game outro" music
-		this->PlayMusicGameOutro();
+		PlayMusicGameOutro();
 
 		this->m_bFadeOutMusic = false;
 		this->m_bCheckHighScore = true;
@@ -2835,10 +2505,21 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		break;
 	}
 
-	this->m_iGameStatePrevious = this->m_iGameState;
+	bool bSavePreviousState = true;
+
+	if (iNextGameState == GAME_STATE_BLAST_DEACTIVATE)
+	{
+		bSavePreviousState = false;
+	}
+
+	if (bSavePreviousState)
+	{
+		this->m_iGameStatePrevious = this->m_iGameState;
+	}
+
 	this->m_iGameState = iNextGameState;
 
-	if (this->m_iGameStatePrevious == -1)
+	if (bSavePreviousState && (this->m_iGameStatePrevious == -1))
 	{
 		this->m_iGameStatePrevious = this->m_iGameState;
 	}
@@ -2892,163 +2573,6 @@ void CTheGame::QuitGameAction(float fFrametime)
 
 			break;
 		}
-
-		// shooting action
-
-		if(	(this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) && 
-			(this->m_iGameStateEnd != GAME_STATE_END_FAILED))
-		{
-			this->PlayerShooting(fFrametime);
-		}
-
-		this->EnemyShooting();
-
-		// collisions
-
-		this->CollisionBulletVsBorder();
-
-		if(	(this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) && 
-			(this->m_iGameStateEnd != GAME_STATE_END_FAILED))
-		{
-			this->CollisionBulletVsPlayer();
-		}
-
-		if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
-		{
-			this->CollisionBulletVsEnemy();
-
-			if(this->m_iGameStateEnd != GAME_STATE_END_FAILED)
-			{
-				this->CollisionPlayerVsEnemy();
-				this->CollisionPlayerCannonVsEnemy(fFrametime);
-				this->CollisionPlayerCannonVsEnemyBullet();
-			}
-		}
-		else if((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || 
-				(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES) )
-		{
-			this->CollisionEnemyVsObstacle();
-			this->CollisionBulletVsObstacle();
-
-			if(this->m_iGameStateEnd != GAME_STATE_END_FAILED)
-			{
-				this->CollisionPlayerVsEnemy();
-				this->CollisionPlayerVsObstacle();
-			}
-		}
-		else if((this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION))
-		{
-			this->CollisionBulletVsBoss();
-
-			if(this->m_iGameStateEnd != GAME_STATE_END_FAILED)
-			{
-				this->CollisionPlayerVsBoss();
-				this->CollisionPlayerCannonVsBoss(fFrametime);
-				this->CollisionPlayerCannonVsBossBullet();
-			}
-		}
-
-		// clearing
-
-		if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
-		{
-			this->ClearEnemies();
-		}
-		
-		if( (this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || 
-			(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES) )
-		{
-			this->ClearEnemies();
-			this->ClearObstacles();
-		}
-
-		this->ClearBullets(false);
-		this->ClearParticles();
-
-		// updates
-
-		this->UpdateBullets(fFrametime);
-
-		if(	(this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) && 
-			(this->m_iGameStateEnd != GAME_STATE_END_FAILED))
-		{
-			this->UpdatePlayer(fFrametime);
-		}
-
-		if(	(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES) || 
-			(this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || 
-			(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
-		{
-			this->UpdateEnemies();
-			this->UpdateReinforcements(fFrametime);
-		}
-
-		else if((this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
-				(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			this->UpdateBoss(fFrametime);
-		}
-
-		this->UpdateExplosions(fFrametime);
-	}
-
-	// renders
-
-	if(this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
-	{
-		this->RenderActiveEnemies(fFrametime, this->m_bFreezeQuit);
-		this->RenderReinforcements(fFrametime, this->m_bFreezeQuit);
-	}
-	else if((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || 
-			(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
-	{
-		this->RenderActiveEnemies(fFrametime, this->m_bFreezeQuit);
-		this->RenderReinforcements(fFrametime, this->m_bFreezeQuit);
-		this->RenderObstacles(fFrametime, this->m_bFreezeQuit);
-	}
-	else if(this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO)
-	{
-		this->RenderBoss(fFrametime, this->m_bFreezeQuit);
-		this->RenderReinforcements(fFrametime, this->m_bFreezeQuit);
-
-		if(this->m_fBossWarningStartTimer <= 0.0f)
-		{
-			this->RenderBossWarning(fFrametime, this->m_bFreezeQuit);
-		}
-	}
-	else if((this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO) || 
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) || 
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) || 
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
-	{
-		this->RenderBoss(fFrametime, this->m_bFreezeQuit);
-		this->RenderReinforcements(fFrametime, this->m_bFreezeQuit);
-	}
-
-	if(	(this->m_iGameStateEnd != GAME_STATE_END_SUCCESS) && 
-		(this->m_iGameStateEnd != GAME_STATE_END_FAILED))
-	{
-		this->RenderPlayer(fFrametime);
-		this->RenderPlayerCannon(fFrametime, this->m_bFreezeQuit);
-	}
-
-	this->RenderBullets(fFrametime, this->m_bFreezeQuit);
-	this->RenderExplosions();
-	this->RenderParticles(fFrametime, this->m_bFreezeQuit);
-
-	this->RenderStatistics(fFrametime);
-
-	if(this->m_iGameStateEnd == GAME_STATE_END_SUCCESS)
-	{
-		this->RenderEndSuccess(fFrametime);
-	}
-	else if(this->m_iGameStateEnd == GAME_STATE_END_FAILED)
-	{
-		this->RenderEndFailed();
 	}
 
 	// Boss enter scene has ended
@@ -3056,7 +2580,7 @@ void CTheGame::QuitGameAction(float fFrametime)
 	{
 		if(this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO)
 		{
-			if( !this->CheckBossEnter() )
+			if(!this->CheckBossEnter())
 			{
 				this->m_iGameStatePrevious = GAME_STATE_BOSS_ACTION;
 				this->m_pTheApp->CheckKeyPushes();
@@ -3926,8 +3450,8 @@ HRESULT CTheGame::InitLevelBoss()
 		return hres;
 	}
 
-	// to make the boss assume it's starting position
-	UpdateBoss(0.0f);
+	// to make the boss assume starting position
+	UpdateBoss(0.0f, true);
 
 	return hres;
 }
@@ -5272,7 +4796,7 @@ void CTheGame::PlayerBlastActive()
 	SwitchGameState(GAME_STATE_BLAST_ACTIVE);
 }
 
-void CTheGame::PlayerBlastDeactive()
+void CTheGame::PlayerBlastDeactivate()
 {
 	// deactivate player blast light effect
 	if (CGameSettings::EFFECT_PLAYER_BLAST_LIGHT)
@@ -5400,15 +4924,20 @@ void CTheGame::PlayerBlastDeactive()
 		this->m_pObstacleEnemies.SetNext();
 	}
 
-	// destroy bullets
-	this->ClearBullets(true);
-
 	// go back to previous game state
 	SwitchGameState(this->m_iGameStatePrevious);
 }
 
 void CTheGame::PlayerShooting(float fFrametime)
 {
+	if (this->m_iGameState == GAME_STATE_QUIT)
+	{
+		if ((this->m_iGameStateEnd == GAME_STATE_END_SUCCESS) || (this->m_iGameStateEnd == GAME_STATE_END_FAILED))
+		{
+			return;
+		}
+	}
+
 	bool bInputMinigun = false;
 	bool bInputFireMode = false;
 	bool bInputCannon = false;
@@ -5460,6 +4989,7 @@ void CTheGame::PlayerShooting(float fFrametime)
 			bCheckKeyboard = false;
 		}
 	}
+
 	if (bCheckKeyboard)
 	{
 		// read minigun button
@@ -5486,6 +5016,7 @@ void CTheGame::PlayerShooting(float fFrametime)
 	{
 		this->m_fMinigunRotationTime -= fFrametime;
 	}
+
 	// minigun firing
 	if (this->m_fMinigunFireTime > 0.0f)
 	{
@@ -5539,18 +5070,8 @@ void CTheGame::PlayerShooting(float fFrametime)
 	// player pushes cannon button
 	if (bInputCannon)
 	{
-		bool bAllowed = false;
-
-		if (PlayerShootPossible())
-		{
-			if (this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_READY)
-			{
-				bAllowed = true;
-			}
-		}
-
 		// cannon can be fired
-		if (bAllowed)
+		if (PlayerShootPossible() && (this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_READY))
 		{
 			// start cannon charge animation
 			this->m_ePlayerCannonState = ePLAYER_CANNON_STATE_CHARGE;
@@ -5740,11 +5261,21 @@ void CTheGame::PlayerShooting(float fFrametime)
 
 bool CTheGame::PlayerShootPossible()
 {
-	if (this->m_pPlayer->IsDestroyed() || this->m_bPlayerEnter ||
-		(this->m_iGameState == GAME_STATE_LEVEL_INTRO) ||
-		(this->m_iGameState == GAME_STATE_LEVEL_OUTRO )||
-		(this->m_iGameState == GAME_STATE_LOAD_LEVEL))
+	if (this->m_pPlayer->IsDestroyed() || this->m_bPlayerEnter)
 	{
+		return false;
+	}
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_LOAD_LEVEL:
+	case GAME_STATE_LEVEL_INTRO:
+	case GAME_STATE_LEVEL_OUTRO:
+	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
+	case GAME_STATE_END_SUCCESS:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
 		return false;
 	}
 
@@ -5756,9 +5287,6 @@ bool CTheGame::PlayerCannonLineOfFireEnemies(IEnemy* pEnemy)
 	bool bHit = false;
 	bool bBossCore = false;
 
-	D3DXVECTOR3 posA = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 posB = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
 	if(pEnemy->GetBehaviour() == IEnemy::eBEHAVIOUR_BOSS) 
 	{
 		if(pEnemy->GetType() == IEnemy::eTYPE_BOSS_1_CORE)
@@ -5767,63 +5295,43 @@ bool CTheGame::PlayerCannonLineOfFireEnemies(IEnemy* pEnemy)
 		}
 	}
 
-	posA = this->m_pPlayer->GetPosition();
+	D3DXVECTOR3 playerPos = this->m_pPlayer->GetPosition();
+	D3DXVECTOR3 enemyPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	if(bBossCore)
 	{
 		// we get boss core position from boss frame position
-		switch(this->m_pLevel->GetLevelNumber())
-		{
-		case 1:
-
-			posB = this->m_pEnemyBossFrame->GetPosition();
-
-			posB.y -= 15.0f;
-			posB.z -= 12.0f;
-
-			break;
-
-		case 2:
-
-			posB = this->m_pEnemyBossFrame->GetPosition();
-
-			posB.y -= 15.0f;
-			posB.z -= 12.0f;
-
-			break;
-
-		case 3:
-
-			posB = this->m_pEnemyBossFrame->GetPosition();
-
-			posB.y -= 15.0f;
-			posB.z -= 12.0f;
-
-			break;
-		}
+		enemyPos = this->m_pEnemyBossFrame->GetPosition();
+		enemyPos.y -= 15.0f;
+		enemyPos.z -= 12.0f;
 	}
 	else
 	{
-		posB = pEnemy->GetPosition();
+		enemyPos = pEnemy->GetPosition();
 	}
 
-	float widthB = pEnemy->GetWidth();
+	float fEnemyWidth = pEnemy->GetWidth();
 
-	float fLeftSide = posB.x - (widthB / 2);
-	float fRightSide = posB.x + (widthB / 2);
+	float fEnemyLeftSide = enemyPos.x - (fEnemyWidth / 2.0f);
+	float fEnemyRightSide = enemyPos.x + (fEnemyWidth / 2.0f);
 
 	if(bBossCore)
 	{
-		fLeftSide = posB.x - 5.0f;
-		fRightSide = posB.x + 5.0f;
+		fEnemyLeftSide = enemyPos.x - 5.0f;
+		fEnemyRightSide = enemyPos.x + 5.0f;
 	}
 
-	if ((posA.x >= fLeftSide) &&
-		(posA.x <= fRightSide))
+	if ((playerPos.x >= fEnemyLeftSide) && (playerPos.x <= fEnemyRightSide))
 	{
-		if (posA.y < posB.y)
+		if (playerPos.y < enemyPos.y)
 		{
-			bHit = true;
+			float fEnemyHeight = pEnemy->GetHeight();
+			float fEnemyBottomY = enemyPos.y - (fEnemyHeight / 2.0f);
+
+			if (fEnemyBottomY <= this->m_fScreenHeight)
+			{
+				bHit = true;
+			}
 		}
 	}
 
@@ -5912,8 +5420,7 @@ void CTheGame::PlayerExplosion()
 										this->m_pPlayer->GetPosition());
 }
 
-IEnemy* CTheGame::GenerateEnemies(	CLevel::eFLEET_TYPE eFleetType,
-									CLevel::eSHIP_TYPE eShipType)
+IEnemy* CTheGame::GenerateEnemies(CLevel::eFLEET_TYPE eFleetType, CLevel::eSHIP_TYPE eShipType)
 {
 	IEnemy* pEnemy = NULL;
 
@@ -6353,7 +5860,7 @@ void CTheGame::PrepareObstacles()
 
 						if (m_iObstaclesMax == obstacles)
 						{
-							addedObstacleMaxPosY = fPosY;
+							addedObstacleMaxPosY = fPosY + 2.0f * this->m_fScreenHeight;
 							generateObstacles = false;
 						}
 					}
@@ -7839,6 +7346,14 @@ bool CTheGame::CheckBossPartExplosion(int iCountBossChainExplosions)
 
 void CTheGame::EnemyShooting()
 {
+	if (this->m_iGameState == GAME_STATE_QUIT)
+	{
+		if ((this->m_iGameStateEnd == GAME_STATE_END_SUCCESS) || (this->m_iGameStateEnd == GAME_STATE_END_FAILED))
+		{
+			return;
+		}
+	}
+
 	if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
 	{
 		// active enemies
@@ -8152,6 +7667,11 @@ float CTheGame::GetCollisionDamagePlayerVsEnemy(IEnemy* pEnemy)
 
 void CTheGame::CollisionPlayerVsBoss()
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
 	if (this->m_pPlayer->IsDestroyed() || this->m_pPlayer->IsUntouchable())
 	{
 		return;
@@ -8185,8 +7705,8 @@ void CTheGame::CollisionPlayerVsBoss()
 	// player is destroyed
 	if (!this->m_pPlayer->IsAlive())
 	{
-		this->PlayerDestroyed();
 		this->PlayerExplosion();
+		this->PlayerDestroyed();
 	}
 }
 
@@ -8227,8 +7747,8 @@ void CTheGame::CollisionPlayerVsEnemy()
 
 						if (!this->m_pPlayer->IsAlive())
 						{
-							this->PlayerDestroyed();
 							this->PlayerExplosion();
+							this->PlayerDestroyed();
 						}
 						else
 						{
@@ -8288,8 +7808,8 @@ void CTheGame::CollisionPlayerVsEnemy()
 
 						if (!this->m_pPlayer->IsAlive())
 						{
-							this->PlayerDestroyed();
 							this->PlayerExplosion();
+							this->PlayerDestroyed();
 						}
 						else
 						{
@@ -8312,149 +7832,156 @@ void CTheGame::CollisionPlayerVsEnemy()
 
 void CTheGame::CollisionPlayerCannonVsBoss(float fFrametime)
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
+	if (this->m_pEnemyBossFrame->IsEnter())
+	{
+		return;
+	}
+
+	if (this->m_iGameState != GAME_STATE_BOSS_ACTION)
+	{
+		return;
+	}
+
 	if (this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
-		// Boss scenario
-		if (this->m_iGameState == GAME_STATE_BOSS_ACTION)
+		// boss frame
+		if (this->m_pEnemyBossFrame->IsActive())
 		{
-			// enter scene has ended, boss can be damaged
-			if (!this->m_pEnemyBossFrame->IsEnter())
+			if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossCore))
 			{
-				// boss frame
-				if (this->m_pEnemyBossFrame->IsActive())
+				// shake boss
+				UpdateBossShake(fFrametime);
+
+				if (this->m_pEnemyBossFrame->IsCannonDamage())
 				{
-					if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossCore))
+					if (this->m_pEnemyBossFrame->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
 					{
-						// shake boss
-						this->UpdateBossShake(false, fFrametime);
-
-						if (this->m_pEnemyBossFrame->IsCannonDamage())
-						{
-							if (this->m_pEnemyBossFrame->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
-							{
-								this->m_bBossDestroyed = true;
-							}
-							else
-							{
-								// increase player score (score increase equals cannon damage)
-								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
-							}
-							// only one hit per cannon fire
-							this->m_pEnemyBossFrame->SetCannonDamage(false);
-						}
+						this->m_bBossDestroyed = true;
 					}
-				}
-#ifdef GAME_BOSS_PARTS_DAMAGE
-				// laser left
-				if (this->m_pEnemyBossLaserLeft && this->m_pEnemyBossLaserLeft->IsActive())
-				{
-					if (this->m_pEnemyBossLaserLeft->IsCannonDamage())
+					else
 					{
-						if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossLaserLeft))
-						{
-							// only one hit per cannon fire
-							this->m_pEnemyBossLaserLeft->SetCannonDamage(false);
-
-							if (this->m_pEnemyBossLaserLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
-							{
-								this->m_pEnemyBossLaserLeft->SetActive(FALSE);
-								// enemy explosion
-								this->BossPartExplosion(this->m_pEnemyBossLaserLeft);
-								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
-							}
-							else
-							{
-								// increase player score (score increase equals cannon damage)
-								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
-							}
-						}
+						// increase player score (score increase equals cannon damage)
+						this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
 					}
+					// only one hit per cannon fire
+					this->m_pEnemyBossFrame->SetCannonDamage(false);
 				}
-
-				// laser right
-				if (this->m_pEnemyBossLaserRight && this->m_pEnemyBossLaserRight->IsActive())
-				{
-					if (this->m_pEnemyBossLaserRight->IsCannonDamage())
-					{
-						if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossLaserRight))
-						{
-							// only one hit per cannon fire
-							this->m_pEnemyBossLaserRight->SetCannonDamage(false);
-
-							if (this->m_pEnemyBossLaserRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
-							{
-								this->m_pEnemyBossLaserRight->SetActive(FALSE);
-								// enemy explosion
-								this->BossPartExplosion(this->m_pEnemyBossLaserRight);
-								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
-							}
-							else
-							{
-								// increase player score (score increase equals cannon damage)
-								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
-							}
-						}
-					}
-				}
-
-				// scatter left
-				if (this->m_pEnemyBossScatterLeft && this->m_pEnemyBossScatterLeft->IsActive())
-				{
-					if (this->m_pEnemyBossScatterLeft->IsCannonDamage())
-					{
-						if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossScatterLeft))
-						{
-							// only one hit per cannon fire
-							this->m_pEnemyBossScatterLeft->SetCannonDamage(false);
-
-							if (this->m_pEnemyBossScatterLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
-							{
-								this->m_pEnemyBossScatterLeft->SetActive(FALSE);
-								// enemy explosion
-								this->BossPartExplosion(this->m_pEnemyBossScatterLeft);
-								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
-							}
-							else
-							{
-								// increase player score (score increase equals cannon damage)
-								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
-							}
-						}
-					}
-				}
-
-				// scatter right
-				if (this->m_pEnemyBossScatterRight && this->m_pEnemyBossScatterRight->IsActive())
-				{
-					if (this->m_pEnemyBossScatterRight->IsCannonDamage())
-					{
-						if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossScatterRight))
-						{
-							// only one hit per cannon fire
-							this->m_pEnemyBossScatterRight->SetCannonDamage(false);
-
-							if (this->m_pEnemyBossScatterRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
-							{
-								this->m_pEnemyBossScatterRight->SetActive(FALSE);
-								// enemy explosion
-								this->BossPartExplosion(this->m_pEnemyBossScatterRight);
-								// play sound effect
-								this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
-							}
-							else
-							{
-								// increase player score (score increase equals cannon damage)
-								this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
-							}
-						}
-					}
-				}
-#endif
 			}
 		}
+#ifdef GAME_BOSS_PARTS_DAMAGE
+		// laser left
+		if (this->m_pEnemyBossLaserLeft && this->m_pEnemyBossLaserLeft->IsActive())
+		{
+			if (this->m_pEnemyBossLaserLeft->IsCannonDamage())
+			{
+				if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossLaserLeft))
+				{
+					// only one hit per cannon fire
+					this->m_pEnemyBossLaserLeft->SetCannonDamage(false);
+
+					if (this->m_pEnemyBossLaserLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
+					{
+						this->m_pEnemyBossLaserLeft->SetActive(FALSE);
+						// enemy explosion
+						this->BossPartExplosion(this->m_pEnemyBossLaserLeft);
+						// play sound effect
+						this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
+					}
+					else
+					{
+						// increase player score (score increase equals cannon damage)
+						this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
+					}
+				}
+			}
+		}
+
+		// laser right
+		if (this->m_pEnemyBossLaserRight && this->m_pEnemyBossLaserRight->IsActive())
+		{
+			if (this->m_pEnemyBossLaserRight->IsCannonDamage())
+			{
+				if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossLaserRight))
+				{
+					// only one hit per cannon fire
+					this->m_pEnemyBossLaserRight->SetCannonDamage(false);
+
+					if (this->m_pEnemyBossLaserRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
+					{
+						this->m_pEnemyBossLaserRight->SetActive(FALSE);
+						// enemy explosion
+						this->BossPartExplosion(this->m_pEnemyBossLaserRight);
+						// play sound effect
+						this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
+					}
+					else
+					{
+						// increase player score (score increase equals cannon damage)
+						this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
+					}
+				}
+			}
+		}
+
+		// scatter left
+		if (this->m_pEnemyBossScatterLeft && this->m_pEnemyBossScatterLeft->IsActive())
+		{
+			if (this->m_pEnemyBossScatterLeft->IsCannonDamage())
+			{
+				if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossScatterLeft))
+				{
+					// only one hit per cannon fire
+					this->m_pEnemyBossScatterLeft->SetCannonDamage(false);
+
+					if (this->m_pEnemyBossScatterLeft->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
+					{
+						this->m_pEnemyBossScatterLeft->SetActive(FALSE);
+						// enemy explosion
+						this->BossPartExplosion(this->m_pEnemyBossScatterLeft);
+						// play sound effect
+						this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
+					}
+					else
+					{
+						// increase player score (score increase equals cannon damage)
+						this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
+					}
+				}
+			}
+		}
+
+		// scatter right
+		if (this->m_pEnemyBossScatterRight && this->m_pEnemyBossScatterRight->IsActive())
+		{
+			if (this->m_pEnemyBossScatterRight->IsCannonDamage())
+			{
+				if (this->PlayerCannonLineOfFireEnemies(this->m_pEnemyBossScatterRight))
+				{
+					// only one hit per cannon fire
+					this->m_pEnemyBossScatterRight->SetCannonDamage(false);
+
+					if (this->m_pEnemyBossScatterRight->Destroyed(CGameSettings::PLAYER_CANNON_DAMAGE))
+					{
+						this->m_pEnemyBossScatterRight->SetActive(FALSE);
+						// enemy explosion
+						this->BossPartExplosion(this->m_pEnemyBossScatterRight);
+						// play sound effect
+						this->m_pTheApp->GetWave(SOUND_EXPLOSION_BOSS_CHAIN_1).Play(FALSE, 0, this->m_iVolumeSoundEffect);
+					}
+					else
+					{
+						// increase player score (score increase equals cannon damage)
+						this->m_pPlayer->IncreaseScore(CGameSettings::PLAYER_CANNON_DAMAGE);
+					}
+				}
+			}
+		}
+#endif
 	}
 }
 
@@ -8475,7 +8002,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 					if( this->PlayerCannonLineOfFireEnemies(pEnemy) )
 					{
 						// shake enemy
-						this->UpdateEnemiesShake(pEnemy, false, fFrametime);
+						UpdateEnemiesShake(pEnemy, false, fFrametime);
 
 						if( pEnemy->IsCannonDamage() )
 						{
@@ -8517,8 +8044,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 				this->m_pActiveEnemies.SetNext();
 			}
 		}
-		else if((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) || 
-				(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
+		else if((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) || (this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
 		{
 			// obstacle enemies
 			this->m_pObstacleEnemies.SetFirst();
@@ -8531,7 +8057,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 					if( this->PlayerCannonLineOfFireEnemies(pEnemy) )
 					{
 						// shake enemy
-						this->UpdateEnemiesShake(pEnemy, false, fFrametime);
+						UpdateEnemiesShake(pEnemy, false, fFrametime);
 
 						if( pEnemy->IsCannonDamage() )
 						{
@@ -8565,33 +8091,40 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 
 void CTheGame::CollisionPlayerCannonVsBossBullet()
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_BOSS_ACTION) &&
+		(this->m_iGameState != GAME_STATE_BOSS_CHAIN_EXPLOSION) &&
+		(this->m_iGameState != GAME_STATE_BOSS_BIG_EXPLOSION))
+	{
+		return;
+	}
+
 	if (this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
-		if ((this->m_iGameState == GAME_STATE_BOSS_ACTION) ||
-			(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-			(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
+		this->m_pEnemyBossFrame->CollisionPlayerCannonVsBullets(this->m_pPlayer);
+
+		if (this->m_pEnemyBossLaserLeft)
 		{
-			this->m_pEnemyBossFrame->CollisionPlayerCannonVsBullets(this->m_pPlayer);
+			this->m_pEnemyBossLaserLeft->CollisionPlayerCannonVsBullets(this->m_pPlayer);
+		}
 
-			if (this->m_pEnemyBossLaserLeft)
-			{
-				this->m_pEnemyBossLaserLeft->CollisionPlayerCannonVsBullets(this->m_pPlayer);
-			}
+		if (this->m_pEnemyBossLaserRight)
+		{
+			this->m_pEnemyBossLaserRight->CollisionPlayerCannonVsBullets(this->m_pPlayer);
+		}
 
-			if (this->m_pEnemyBossLaserRight)
-			{
-				this->m_pEnemyBossLaserRight->CollisionPlayerCannonVsBullets(this->m_pPlayer);
-			}
+		if (this->m_pEnemyBossScatterLeft)
+		{
+			this->m_pEnemyBossScatterLeft->CollisionPlayerCannonVsBullets(this->m_pPlayer);
+		}
 
-			if (this->m_pEnemyBossScatterLeft)
-			{
-				this->m_pEnemyBossScatterLeft->CollisionPlayerCannonVsBullets(this->m_pPlayer);
-			}
-
-			if (this->m_pEnemyBossScatterRight)
-			{
-				this->m_pEnemyBossScatterRight->CollisionPlayerCannonVsBullets(this->m_pPlayer);
-			}
+		if (this->m_pEnemyBossScatterRight)
+		{
+			this->m_pEnemyBossScatterRight->CollisionPlayerCannonVsBullets(this->m_pPlayer);
 		}
 	}
 }
@@ -8650,6 +8183,17 @@ void CTheGame::CollisionPlayerCannonVsEnemyBullet()
 
 void CTheGame::CollisionPlayerVsObstacle()
 {
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
+		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	{
+		return;
+	}
+
 	if(	!this->m_pPlayer->IsDestroyed() && 
 		!this->m_pPlayer->IsUntouchable() )
 	{
@@ -8674,8 +8218,8 @@ void CTheGame::CollisionPlayerVsObstacle()
 					// mesh to mesh collision
 					//if(this->IsMeshCollision(this->m_pPlayer, pObstacle, bInverseMatrix, false))
 					//{
-						this->PlayerDestroyed();
 						this->PlayerExplosion();
+						this->PlayerDestroyed();
 						return;
 					//}
 				}
@@ -8692,6 +8236,17 @@ void CTheGame::CollisionPlayerVsObstacle()
 
 void CTheGame::CollisionEnemyVsObstacle()
 {
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
+		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	{
+		return;
+	}
+
 	bool bInverseMatrix = false;
 	float fCheckBorder = this->m_fScreenHeight + CGameSettings::BIG_ASTEROID_HEIGHT / 2.0f;
 
@@ -8899,6 +8454,11 @@ void CTheGame::CollisionEnemyVsEnemy()
 
 void CTheGame::CollisionBulletVsBoss()
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
 	if ((this->m_iGameState != GAME_STATE_BOSS_INTRO) && (this->m_iGameState != GAME_STATE_BOSS_ACTION) &&
 		(this->m_iGameState != GAME_STATE_BOSS_CHAIN_EXPLOSION) && (this->m_iGameState != GAME_STATE_QUIT))
 	{
@@ -9391,13 +8951,24 @@ void CTheGame::CollisionBulletVsPlayer()
 	// player is destroyed
 	if (!this->m_pPlayer->IsAlive())
 	{
-		this->PlayerDestroyed();
 		this->PlayerExplosion();
+		this->PlayerDestroyed();
 	}
 }
 
 void CTheGame::CollisionBulletVsObstacle()
 {
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
+		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	{
+		return;
+	}
+
 	D3DXVECTOR3* pPos = NULL;
 	CWeapon* pBullet = NULL;
 	CObstacle* pObstacle = NULL;
@@ -9548,26 +9119,8 @@ void CTheGame::CollisionBulletVsBorder()
 	CWeapon* pBullet;
 	D3DXVECTOR3* pPos;
 
-	bool isBossScenario = false;
-
-	if ((this->m_iGameState == GAME_STATE_BOSS_ACTION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
-	{
-		isBossScenario = true;
-	}
-	else if ((this->m_iGameState == GAME_STATE_END_FAILED) || (this->m_iGameState == GAME_STATE_QUIT))
-	{
-		if ((this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			isBossScenario = true;
-		}
-	}
-
 	// Boss bullets
-	if (isBossScenario)
+	if (IsGameStateBossPlay())
 	{
 		this->m_pEnemyBossFrame->CollisionBulletVsBorder();
 
@@ -9888,9 +9441,8 @@ void CTheGame::CheckCollisionBulletVsPlayer(
 					// instantly kills player
 					if( pBullet->GetDamageType() == CWeapon::TOTAL_DESTRUCTION )
 					{
-						this->PlayerDestroyed();
-						// player explosion
 						this->PlayerExplosion();
+						this->PlayerDestroyed();
 					}
 					else
 					{
@@ -9898,8 +9450,8 @@ void CTheGame::CheckCollisionBulletVsPlayer(
 
 						if( !this->m_pPlayer->IsAlive() )
 						{
-							this->PlayerDestroyed();
 							this->PlayerExplosion();
+							this->PlayerDestroyed();
 						}
 						else
 						{
@@ -9913,10 +9465,10 @@ void CTheGame::CheckCollisionBulletVsPlayer(
 	}
 }
 
-
 void CTheGame::ClearEnemies()
 {
-	if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
+	if((this->m_iGameState == GAME_STATE_PLAY_ENEMIES) || 
+		(this->m_iGameState == GAME_STATE_END_FAILED))
 	{
 		// active enemies
 		this->m_pActiveEnemies.SetFirst();
@@ -9959,7 +9511,8 @@ void CTheGame::ClearEnemies()
 		}
 	}
 	else if((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) || 
-			(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
+			(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES) || 
+			(this->m_iGameState == GAME_STATE_END_FAILED))
 	{
 		// obstacle enemies
 		this->m_pObstacleEnemies.SetFirst();
@@ -9990,8 +9543,13 @@ void CTheGame::ClearEnemies()
 
 void CTheGame::ClearObstacles()
 {
-	if (m_iGameState != GAME_STATE_PLAY_OBSTACLES &&
-		m_iGameState != GAME_STATE_WAIT_OBSTACLES)
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
+		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
 	{
 		return;
 	}
@@ -10072,29 +9630,22 @@ void CTheGame::ClearObstacles()
 	}
 }
 
-void CTheGame::ClearBullets(bool bForced)
+void CTheGame::ClearBullets()
 {
-	bool isBossScenario = false;
+	bool bForced = false;
 
-	// Boss bullets
-	if ((this->m_iGameState == GAME_STATE_BOSS_ACTION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
+	if (this->m_iGameState == GAME_STATE_LOAD_LEVEL)
 	{
-		isBossScenario = true;
+		bForced = true;
 	}
-	else if ((this->m_iGameState == GAME_STATE_END_FAILED) || (this->m_iGameState == GAME_STATE_QUIT))
+
+	if (this->m_iGameState == GAME_STATE_BLAST_DEACTIVATE)
 	{
-		if ((this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			isBossScenario = true;
-		}
+		bForced = true;
 	}
 
 	// boss bullets
-	if (isBossScenario)
+	if (IsGameStateBossPlay())
 	{
 		this->m_pEnemyBossFrame->ClearBullets(bForced);
 
@@ -10206,58 +9757,85 @@ void CTheGame::ClearParticles()
 
 void CTheGame::UpdatePlayer(float fFrametime)
 {
-	if (this->m_iGameState != GAME_STATE_BLAST_ACTIVE)
+	if (this->m_iGameState == GAME_STATE_LEVEL_INTRO)
 	{
-		if (this->m_bPlayerEnter)
+		if (this->m_bFadeIn || !this->m_bLevelIntro)
 		{
-			// player enter movement
-			PlayerMoveEnter(fFrametime);
-		}
-		else if (this->m_bPlayerExit)
-		{
-			// player away movement
-			PlayerMoveExit(fFrametime);
-		}
-
-		// ignore player movement inputs
-		if ((this->m_iGameState == GAME_STATE_LEVEL_INTRO) ||
-			(this->m_iGameState == GAME_STATE_LEVEL_OUTRO) ||
-			this->m_bPlayerEnter || this->m_bPlayerExit)
-		{
-			if (this->m_pPlayerController->GetExecuteInputs())
-			{
-				// don't execute player movement inputs
-				this->m_pPlayerController->SetExecuteInputs(false);
-			}
-		}
-		// notice player movement inputs
-		else
-		{
-			if (!this->m_pPlayerController->GetExecuteInputs())
-			{
-				// execute player movement inputs
-				this->m_pPlayerController->SetExecuteInputs(true);
-			}
-		}
-
-		this->m_pPlayerController->UpdatePlayer(fFrametime, this->m_pPlayer);
-
-		if (this->m_pPlayer->IsVelocityControl())
-		{
-			if (this->m_pPlayer->IsBoostIncreaseSound())
-			{
-				this->m_pPlayer->DisableBoostIncreaseSound();
-				this->PlaySoundPlayerAfterburn();
-			}
+			return;
 		}
 	}
 
-	bool bUpdateObject = this->m_iGameState != GAME_STATE_BLAST_ACTIVE;
-	this->m_pPlayer->Update(bUpdateObject, fFrametime);
+	if (this->m_iGameState == GAME_STATE_END_FAILED)
+	{
+		return;
+	}
+
+	if ((this->m_iGameState == GAME_STATE_BLAST_ACTIVE) || 
+		(this->m_iGameState == GAME_STATE_QUIT))
+	{
+		this->m_pPlayer->Update(false, fFrametime);
+		return;
+	}
+
+	if (this->m_bPlayerEnter)
+	{
+		// player enter movement
+		PlayerMoveEnter(fFrametime);
+	}
+	else if (this->m_bPlayerExit)
+	{
+		// player away movement
+		PlayerMoveExit(fFrametime);
+	}
+
+	// ignore player movement inputs
+	if ((this->m_iGameState == GAME_STATE_LEVEL_INTRO) ||
+		(this->m_iGameState == GAME_STATE_LEVEL_OUTRO) ||
+		this->m_bPlayerEnter || this->m_bPlayerExit)
+	{
+		if (this->m_pPlayerController->GetExecuteInputs())
+		{
+			// don't execute player movement inputs
+			this->m_pPlayerController->SetExecuteInputs(false);
+		}
+	}
+	// notice player movement inputs
+	else
+	{
+		if (!this->m_pPlayerController->GetExecuteInputs())
+		{
+			// execute player movement inputs
+			this->m_pPlayerController->SetExecuteInputs(true);
+		}
+	}
+
+	this->m_pPlayerController->UpdatePlayer(fFrametime, this->m_pPlayer);
+
+	if (this->m_pPlayer->IsVelocityControl())
+	{
+		if (this->m_pPlayer->IsBoostIncreaseSound())
+		{
+			this->m_pPlayer->DisableBoostIncreaseSound();
+			this->PlaySoundPlayerAfterburn();
+		}
+	}
+	
+	this->m_pPlayer->Update(true, fFrametime);
 }
 
-void CTheGame::UpdateBoss(float fFrametime)
+void CTheGame::UpdateBoss(float fFrametime, bool bForced)
 {
+	if (!bForced && !IsBossUpdateAllowed())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState == GAME_STATE_BLAST_ACTIVE) ||
+		(this->m_iGameState == GAME_STATE_BLAST_DEACTIVATE))
+	{
+		return;
+	}
+
 	bool bShootPossible = true;
 
 	if ((this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
@@ -10292,15 +9870,27 @@ void CTheGame::UpdateBoss(float fFrametime)
 		}
 	}
 
-	// update fron cannon
+	// update front cannon
 	if (this->m_pEnemyBossCannon)
 	{
 		this->m_pEnemyBossCannon->UpdateShip(this->m_pEnemyBossFrame, bShootPossible, fFrametime);
 	}
 }
 
-void CTheGame::UpdateBossShake(bool bBlast, float fFrametime)
+void CTheGame::UpdateBossShake(float fFrametime)
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
+	bool bBlast = false;
+
+	if (m_iGameState == GAME_STATE_BLAST_ACTIVE)
+	{
+		bBlast = true;
+	}
+
 	D3DXVECTOR3 posBefore = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posAfter = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 posObject = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -10466,8 +10056,15 @@ void CTheGame::UpdateEnemies()
 	}
 }
 
-void CTheGame::UpdateEnemiesShake(bool bBlast, float fFrametime)
+void CTheGame::UpdateEnemiesShake(float fFrametime)
 {
+	bool bBlast = false;
+
+	if (m_iGameState == GAME_STATE_BLAST_ACTIVE)
+	{
+		bBlast = true;
+	}
+
 	// active enemies
 	this->m_pActiveEnemies.SetFirst();
 	while( this->m_pActiveEnemies.GetCurrent() )
@@ -10784,6 +10381,13 @@ void CTheGame::UpdateReinforcements(float fFrametime)
 
 void CTheGame::UpdateBullets(float fFrametime)
 {
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
+		return;
+	}
+
 	int velocity = this->m_pPlayer->GetVelocity();
 
 	this->m_pBullets.SetFirst();
@@ -10799,21 +10403,29 @@ void CTheGame::UpdateBullets(float fFrametime)
 
 void CTheGame::UpdateExplosions(float fFrametime)
 {
-	this->m_pExplosions->Update(fFrametime, this->m_iGameState);
+	if ((this->m_iGameState == GAME_STATE_BLAST_ACTIVE) || (this->m_iGameState == GAME_STATE_BLAST_DEACTIVATE))
+	{
+		return;
+	}
+
+	this->m_pExplosions->Update(fFrametime);
 }
 
 void CTheGame::UpdateTime(float fFrametime)
 {
-	if(	(this->m_iGameState != GAME_STATE_LOAD_LEVEL) && 
-		(this->m_iGameState != GAME_STATE_LEVEL_INTRO) && 
-		(this->m_iGameState != GAME_STATE_BOSS_BIG_EXPLOSION) && 
-		(this->m_iGameState != GAME_STATE_LEVEL_OUTRO) &&  
-		(this->m_iGameState != GAME_STATE_END_SUCCESS) && 
-		(this->m_iGameState != GAME_STATE_END_FAILED) && 
-		(this->m_iGameState != GAME_STATE_QUIT))
+	switch (this->m_iGameState)
 	{
-		this->m_fGameTime += fFrametime;
+	case GAME_STATE_LOAD_LEVEL:
+	case GAME_STATE_LEVEL_INTRO:
+	case GAME_STATE_BOSS_BIG_EXPLOSION:
+	case GAME_STATE_LEVEL_OUTRO:
+	case GAME_STATE_END_SUCCESS:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+		return;
 	}
+
+	this->m_fGameTime += fFrametime;
 }
 
 void CTheGame::UpdateVelocityTimeMargin(float fFrametime)
@@ -10854,11 +10466,32 @@ void CTheGame::UpdateBackgroundVelocity()
 
 void CTheGame::UpdateExplosionVelocity()
 {
-	this->m_pExplosions->UpdateVelocity(this->m_iExplosionPixelVelocity, this->m_iGameState);
+	this->m_pExplosions->UpdateVelocity(this->m_iExplosionPixelVelocity);
 }
 
 void CTheGame::RenderPlayer(float fFrametime)
 {
+	if (this->m_iGameState == GAME_STATE_LEVEL_INTRO)
+	{
+		if (this->m_bFadeIn)
+		{
+			return;
+		}
+	}
+
+	if (this->m_iGameState == GAME_STATE_END_FAILED)
+	{
+		return;
+	}
+
+	if (this->m_iGameState == GAME_STATE_QUIT)
+	{
+		if ((this->m_iGameStateEnd == GAME_STATE_END_SUCCESS) || (this->m_iGameStateEnd == GAME_STATE_END_FAILED))
+		{
+			return;
+		}
+	}
+
 	// player is destroyed
 	if( this->m_pPlayer->IsDestroyed() )
 	{
@@ -10950,8 +10583,25 @@ void CTheGame::RenderPlayer(float fFrametime)
 	}
 }
 
-void CTheGame::RenderBoss(float fFrametime, bool bFreeze)
+void CTheGame::RenderBoss(float fFrametime)
 {
+	if (!IsBossUpdateAllowed())
+	{
+		return;
+	}
+
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	// render all active boss parts
 
 	if (this->m_pEnemyBossFrame->IsActive())
@@ -10986,15 +10636,27 @@ void CTheGame::RenderBoss(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
+void CTheGame::RenderActiveEnemies(float fFrametime)
 {
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	this->m_pActiveEnemies.SetFirst();
 	while( this->m_pActiveEnemies.GetCurrent() )
 	{
-		if( this->m_pActiveEnemies.GetCurrent()->IsActive() )
-		{
-			IEnemy* pEnemy = this->m_pActiveEnemies.GetCurrent();
+		IEnemy* pEnemy = this->m_pActiveEnemies.GetCurrent();
 
+		if (pEnemy->IsVisible() && pEnemy->IsActive())
+		{
 			if(!bFreeze)
 			{
 				// enemy is ready to flee
@@ -11066,14 +10728,27 @@ void CTheGame::RenderActiveEnemies(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderReinforcements(float fFrametime, bool bFreeze)
+void CTheGame::RenderReinforcements(float fFrametime)
 {
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	this->m_pReinforcements.SetFirst();
 	while( this->m_pReinforcements.GetCurrent() )
 	{
 		IEnemy* pEnemy = this->m_pReinforcements.GetCurrent();
 
-		if(pEnemy->GetReinforcementAction() == IEnemy::eREINFORCEMENT_ACTION_SENT)
+		if ((pEnemy->GetReinforcementAction() == IEnemy::eREINFORCEMENT_ACTION_SENT) && 
+			pEnemy->IsVisible() && pEnemy->IsActive())
 		{
 			if(!bFreeze)
 			{
@@ -11105,8 +10780,31 @@ void CTheGame::RenderReinforcements(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderObstacleEnemies(float fFrametime, bool bFreeze)
+void CTheGame::RenderObstacleEnemies(float fFrametime)
 {
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
+		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	{
+		return;
+	}
+
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	this->m_pObstacleEnemies.SetFirst();
 	while( this->m_pObstacleEnemies.GetCurrent() )
 	{
@@ -11150,45 +10848,66 @@ void CTheGame::RenderObstacleEnemies(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderObstacles(float fFrametime, bool bFreeze)
+void CTheGame::RenderObstacles(float fFrametime)
 {
+	if (!IsGameStateObstacles())
+	{
+		return;
+	}
+
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	float verticalBorderMargin = 60.0f;
 
 	/* depth 1 obstacles */
 
-	this->m_pObstaclesDepth1.SetFirst();
-	while (this->m_pObstaclesDepth1.GetCurrent())
+	if ((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) ||
+		(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
 	{
-		if (this->m_pObstaclesDepth1.GetCurrent()->IsActive())
+		this->m_pObstaclesDepth1.SetFirst();
+		while (this->m_pObstaclesDepth1.GetCurrent())
 		{
-			CObstacle* pObstacle = this->m_pObstaclesDepth1.GetCurrent();
-
-			// update
-			if (!bFreeze)
+			if (this->m_pObstaclesDepth1.GetCurrent()->IsActive())
 			{
-				pObstacle->Update(fFrametime, this->m_pPlayer->GetVelocity());
-			}
+				CObstacle* pObstacle = this->m_pObstaclesDepth1.GetCurrent();
 
-			// render
-			if (pObstacle->GetPosition().y <= (this->m_fScreenHeight + verticalBorderMargin))
-			{
-				this->m_pObstaclesDepth1.SetFirst();
-				while (pObstacle != this->m_pObstaclesDepth1.GetCurrent())
+				// update
+				if (!bFreeze)
 				{
-					this->m_pObstaclesDepth1.SetNext();
+					pObstacle->Update(fFrametime, this->m_pPlayer->GetVelocity());
 				}
 
-				this->m_pObstaclesDepth1.GetCurrent()->Render(this->m_pTheApp->GetDevice());
-
-				// obstacle reached bottom of the screen, remove it
-				if (!bFreeze && (pObstacle->GetPosition().y < -(this->m_fScreenHeight + verticalBorderMargin)))
+				// render
+				if (pObstacle->GetPosition().y <= (this->m_fScreenHeight + verticalBorderMargin))
 				{
-					this->m_pObstaclesDepth1.GetCurrent()->SetActive(FALSE);
-					this->m_iObstaclesPassed++;
+					this->m_pObstaclesDepth1.SetFirst();
+					while (pObstacle != this->m_pObstaclesDepth1.GetCurrent())
+					{
+						this->m_pObstaclesDepth1.SetNext();
+					}
+
+					this->m_pObstaclesDepth1.GetCurrent()->Render(this->m_pTheApp->GetDevice());
+
+					// obstacle reached bottom of the screen, remove it
+					if (!bFreeze && (pObstacle->GetPosition().y < -(this->m_fScreenHeight + verticalBorderMargin)))
+					{
+						this->m_pObstaclesDepth1.GetCurrent()->SetActive(FALSE);
+						this->m_iObstaclesPassed++;
+					}
 				}
 			}
+			this->m_pObstaclesDepth1.SetNext();
 		}
-		this->m_pObstaclesDepth1.SetNext();
 	}
 
 	/* depth 2 obstacles */
@@ -11336,31 +11055,24 @@ void CTheGame::RenderObstacles(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderBullets(float fFrametime, bool bFreeze)
+void CTheGame::RenderBullets(float fFrametime)
 {
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	int velocity = this->m_pPlayer->GetVelocity();
 
-	bool isBossScenario = false;
-
-	// Boss bullets
-	if ((this->m_iGameState == GAME_STATE_BOSS_ACTION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-		(this->m_iGameState == GAME_STATE_BOSS_BIG_EXPLOSION))
-	{
-		isBossScenario = true;
-	}
-	else if ((this->m_iGameState == GAME_STATE_BLAST_ACTIVE) || (this->m_iGameState == GAME_STATE_END_FAILED) || (this->m_iGameState == GAME_STATE_QUIT))
-	{
-		if ((this->m_iGameStatePrevious == GAME_STATE_BOSS_ACTION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_CHAIN_EXPLOSION) ||
-			(this->m_iGameStatePrevious == GAME_STATE_BOSS_BIG_EXPLOSION))
-		{
-			isBossScenario = true;
-		}
-	}
-
 	// boss bullets
-	if (isBossScenario)
+	if (IsGameStateBossPlay())
 	{
 		if (this->m_pEnemyBossLaserLeft)
 		{
@@ -11446,14 +11158,21 @@ void CTheGame::RenderBullets(float fFrametime, bool bFreeze)
 	}
 }
 
-void CTheGame::RenderExplosions()
-{
-	this->m_pExplosions->Render(this->m_iGameState);
-}
-
-void CTheGame::RenderParticles(float fFrametime, bool bFreeze)
+void CTheGame::RenderParticles(float fFrametime)
 {
 	/*
+	bool bFreeze = false;
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+		bFreeze = true;
+		break;
+	case GAME_STATE_QUIT:
+		bFreeze = this->m_bFreezeQuit;
+		break;
+	}
+
 	this->m_pParticles.SetFirst();
 	while( this->m_pParticles.GetCurrent() )
 	{
@@ -11479,8 +11198,27 @@ void CTheGame::RenderParticles(float fFrametime, bool bFreeze)
 	*/
 }
 
-void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)
+void CTheGame::RenderExplosions()
 {
+	this->m_pExplosions->Render();
+}
+
+void CTheGame::RenderPlayerCannon(float fFrametime)
+{
+	bool bFreeze = false;
+
+	if (this->m_iGameState == GAME_STATE_QUIT)
+	{
+		if ((this->m_iGameStateEnd == GAME_STATE_END_SUCCESS) || (this->m_iGameStateEnd == GAME_STATE_END_FAILED))
+		{
+			return;
+		}
+		else
+		{
+			bFreeze = this->m_bFreezeQuit;
+		}
+	}
+
 	static bool bPlayChargeSound = true;
 	static bool bPlayBeamSound = true;
 
@@ -11512,7 +11250,7 @@ void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)
 				bPlayChargeSound = false;
 			}
 			// render player cannon charge
-			this->RenderPlayerCannonCharge(fFrametime, bFreeze);
+			RenderPlayerCannonCharge(fFrametime, bFreeze);
 		}
 		break;
 
@@ -11530,7 +11268,7 @@ void CTheGame::RenderPlayerCannon(float fFrametime, bool bFreeze)
 			if( this->m_pPlayer->GetCannonEnergy() > 0 )
 			{
 				// render player cannon beam
-				this->RenderPlayerCannonBeam(fFrametime, bFreeze);
+				RenderPlayerCannonBeam(fFrametime, bFreeze);
 
 				// decrease player cannon energy
 				if(!bFreeze)
@@ -12030,20 +11768,25 @@ void CTheGame::RenderPlayerCannonBeam(float fFrametime, bool bFreeze)
 
 void CTheGame::RenderStatistics(float fFrametime)
 {
-	if (this->m_iGameState == GAME_STATE_LOAD_LEVEL)
+	switch (this->m_iGameState)
 	{
+	case GAME_STATE_LOAD_LEVEL:
 		return;
+	case GAME_STATE_END_SUCCESS:
+		return;
+	case GAME_STATE_QUIT:
+		if (!this->m_bFadeOut)
+		{
+			return;
+		}
 	}
 
-	if (this->m_iGameState != GAME_STATE_QUIT || (this->m_iGameState == GAME_STATE_QUIT && this->m_bFadeOut))
-	{
-		this->RenderPlayerLives();
-		this->RenderPlayerBlasts();
-		this->RenderPlayerHealthBar();
-		this->RenderPlayerCannonBar();
-		this->RenderScore(fFrametime);
-		this->RenderGameTime(fFrametime);
-	}
+	RenderPlayerLives();
+	RenderPlayerBlasts();
+	RenderPlayerHealthBar();
+	RenderPlayerCannonBar();
+	RenderScore(fFrametime);
+	RenderGameTime(fFrametime);
 }
 
 void CTheGame::RenderPlayerLives()
@@ -12429,113 +12172,125 @@ bool CTheGame::RenderLevelTitleDisappear(float fFrametime)
 	return true;
 }
 
-bool CTheGame::RenderMissionInfo()
+void CTheGame::RenderBossWarning(float fFrametime)
 {
-	return false;
-}
-
-bool CTheGame::RenderBossWarning(float fFrametime, bool bFreeze)
-{
-	int iPosX = 267;
-	int iPosY = 350;
-
-	if(this->m_fBossWarningTextTimer <= 0.0f)
+	if (!this->m_bBossWarning)
 	{
-		// increase or decrease text sprite array index
+		return;
+	}
 
-		if(this->m_bBossWarningFadeOut)
+	if (this->m_fBossWarningStartTimer > 0.0f)
+	{
+		return;
+	}
+
+	if (this->m_iGameState == GAME_STATE_BOSS_INTRO || (this->m_iGameState == GAME_STATE_QUIT &&
+		this->m_iGameStatePrevious == GAME_STATE_BOSS_INTRO))
+	{
+		bool bFreeze = false;
+
+		if (this->m_iGameState == GAME_STATE_QUIT)
 		{
-			// fade out finished
-			if(this->m_iBossWarningTextIndex == -1)
+			bFreeze = this->m_bFreezeQuit;
+		}
+
+		int iPosX = 267;
+		int iPosY = 350;
+
+		if (this->m_fBossWarningTextTimer <= 0.0f)
+		{
+			// increase or decrease text sprite array index
+
+			if (this->m_bBossWarningFadeOut)
 			{
-				// end boss warning
-				if(this->m_fBossWarningEndTimer <= 0.0f)
+				// fade out finished
+				if (this->m_iBossWarningTextIndex == -1)
 				{
-					this->m_bBossWarning = false;
-					return false;
+					this->m_fBossWarningEndTimer -= fFrametime;
+					this->m_fBossWarningEndTimer = max(this->m_fBossWarningEndTimer, 0.0f);
 				}
 				else
 				{
-					this->m_fBossWarningEndTimer -= fFrametime;
+					this->m_iBossWarningTextIndex--;
+					this->m_fBossWarningTextTimer = 0.06f;
 				}
 			}
 			else
 			{
-				this->m_iBossWarningTextIndex--;
-				this->m_fBossWarningTextTimer = 0.06f;
+				this->m_iBossWarningTextIndex++;
+				this->m_fBossWarningTextTimer = 0.015f;
+			}
+
+			// reached last sprite, start fade out
+			if (this->m_iBossWarningTextIndex == 9)
+			{
+				this->m_bBossWarningFadeOut = true;
+				this->m_fBossWarningTextTimer = 0.8f;
 			}
 		}
-		else
+		else if (!bFreeze)
 		{
-			this->m_iBossWarningTextIndex++;
-			this->m_fBossWarningTextTimer = 0.015f;
+			this->m_fBossWarningTextTimer -= fFrametime;
 		}
 
-		// reached last sprite, start fade out
-		if(this->m_iBossWarningTextIndex == 9)
+		// render sprites
+		if ((this->m_iBossWarningTextIndex >= 0) &&
+			(this->m_iBossWarningTextIndex <= 9))
 		{
-			this->m_bBossWarningFadeOut = true;
-			this->m_fBossWarningTextTimer = 0.8f;
+			// level type (1-3: space, 4-6: planet)
+			if ((this->m_pLevel->GetLevelNumber() == 1) ||
+				(this->m_pLevel->GetLevelNumber() == 2) ||
+				(this->m_pLevel->GetLevelNumber() == 3))
+			{
+				this->m_pSpriteBossWarningSpace[this->m_iBossWarningTextIndex].Draw(iPosX, iPosY);
+			}
 		}
 	}
-	else if(!bFreeze)
-	{
-		this->m_fBossWarningTextTimer -= fFrametime;
-	}
-
-	// render sprites
-	if(	(this->m_iBossWarningTextIndex >= 0) && 
-		(this->m_iBossWarningTextIndex <= 9))
-	{
-		// level type (1-3: space, 4-6: planet)
-		if(	(this->m_pLevel->GetLevelNumber() == 1) || 
-			(this->m_pLevel->GetLevelNumber() == 2) || 
-			(this->m_pLevel->GetLevelNumber() == 3))
-		{
-			this->m_pSpriteBossWarningSpace[this->m_iBossWarningTextIndex].Draw(iPosX,iPosY);
-		}
-	}
-
-	return true;
 }
 
 void CTheGame::RenderEndSuccess(float fFrametime)
 {
-	int iPosX = 206;
-	int iPosY = 320;
-
-	if(this->m_fEndSuccessStartTimer <= 0.0f)
+	if (this->m_iGameState == GAME_STATE_END_SUCCESS || (this->m_iGameState == GAME_STATE_QUIT &&
+		this->m_iGameStateEnd == GAME_STATE_END_SUCCESS))
 	{
-		if(this->m_iEndSuccessTextIndex < 19)
+		if (this->m_fEndSuccessStartTimer > 0.0f)
 		{
-			if(this->m_fEndSuccessTextTimer <= 0.0f)
+			this->m_fEndSuccessStartTimer -= fFrametime;
+		}
+		else
+		{
+			if (this->m_iEndSuccessTextIndex < 19)
 			{
-				this->m_fEndSuccessTextTimer = 0.1f;
-				// increase array index
-				this->m_iEndSuccessTextIndex++;
+				if (this->m_fEndSuccessTextTimer > 0.0f)
+				{
+					this->m_fEndSuccessTextTimer -= fFrametime;
+				}
+				else
+				{
+					this->m_fEndSuccessTextTimer = 0.1f;
+					this->m_iEndSuccessTextIndex++;
+				}
 			}
-			else
+
+			// render sprites
+			if ((this->m_iEndSuccessTextIndex >= 0) && (this->m_iEndSuccessTextIndex <= 19))
 			{
-				this->m_fEndSuccessTextTimer -= fFrametime;
+				int iPosX = 206;
+				int iPosY = 320;
+
+				this->m_pSpriteGameWonText[this->m_iEndSuccessTextIndex].Draw(iPosX, iPosY);
 			}
 		}
-
-		// render sprites
-		if(	(this->m_iEndSuccessTextIndex >= 0) && 
-			(this->m_iEndSuccessTextIndex <= 19))
-		{
-			this->m_pSpriteGameWonText[this->m_iEndSuccessTextIndex].Draw(iPosX,iPosY);
-		}
-	}
-	else
-	{
-		this->m_fEndSuccessStartTimer -= fFrametime;
 	}
 }
 
 void CTheGame::RenderEndFailed()
 {
-	this->m_pSpriteGameOverText->Draw(285,354);
+	if (this->m_iGameState == GAME_STATE_END_FAILED || (this->m_iGameState == GAME_STATE_QUIT &&
+		this->m_iGameStateEnd == GAME_STATE_END_FAILED))
+	{
+		this->m_pSpriteGameOverText->Draw(285, 354);
+	}
 }
 
 void CTheGame::RenderBackgrounds()
@@ -12632,21 +12387,6 @@ void CTheGame::EnablePlayerCannonDamage()
 		}
 	}
 }
-
-char* CTheGame::GetGameTimeString()
-{
-	if (this->m_pGameTimeString != NULL)
-	{
-		delete[]this->m_pGameTimeString;
-		this->m_pGameTimeString = NULL;
-	}
-
-	m_pGameTimeString = new char[128];
-	sprintf_s(m_pGameTimeString, 128, "%0.0f", this->m_fGameTime);
-
-	return m_pGameTimeString;
-}
-
 
 bool CTheGame::IsBoxCollision(const D3DXVECTOR3& pos1, float fWidth, float fHeight, const D3DXVECTOR3& pos2){
 	
@@ -13163,6 +12903,87 @@ void CTheGame::CreateCollisionMeshObstacles(CObstacle* pObstacle)
 		pObstacle->SetCollisionMesh(this->m_vTemplateAsteroidSmall[4]->GetCollisionMesh());
 		break;
 	}
+}
+
+bool CTheGame::IsGameStateObstacles()
+{
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_LEVEL_INTRO:
+		if (m_pLevel->IsObstaclesFirst())
+		{
+			return true;
+		}
+		break;
+
+	case GAME_STATE_PLAY_OBSTACLES:
+	case GAME_STATE_WAIT_OBSTACLES:
+		return true;
+
+	case GAME_STATE_END_FAILED:
+		if ((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || (this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
+		{
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool CTheGame::IsGameStateBossPlay()
+{
+	int firstGameState = GAME_STATE_BOSS_ACTION;
+	int lastGameState = GAME_STATE_BOSS_BIG_EXPLOSION;
+
+	if ((this->m_iGameState >= firstGameState) && (this->m_iGameState <= lastGameState))
+	{
+		return true;
+	}
+
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+		if ((this->m_iGameStatePrevious >= firstGameState) && (this->m_iGameStatePrevious <= lastGameState))
+		{
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool CTheGame::IsBossUpdateAllowed()
+{
+	if ((this->m_iGameState == GAME_STATE_BOSS_INTRO) && this->m_bBossWarning)
+	{
+		return false;
+	}
+
+	if ((this->m_pEnemyBossFrame != NULL) && this->m_pEnemyBossFrame->IsVisible())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+char* CTheGame::GetGameTimeString()
+{
+	if (this->m_pGameTimeString != NULL)
+	{
+		delete[]this->m_pGameTimeString;
+		this->m_pGameTimeString = NULL;
+	}
+
+	m_pGameTimeString = new char[128];
+	sprintf_s(m_pGameTimeString, 128, "%0.0f", this->m_fGameTime);
+
+	return m_pGameTimeString;
 }
 
 void CTheGame::ShowText(LPCTSTR text, int x, int y)

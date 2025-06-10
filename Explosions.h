@@ -1,10 +1,5 @@
 #pragma once
 
-#define STATE_BOSS_INTRO			6
-#define STATE_BOSS_BIG_EXPLOSION	9
-#define STATE_BLAST_ACTIVE			14
-#define STATE_QUIT					15
-
 #define EXPLOSION_COUNT_BOSS_CHAIN	8
 
 #include "TheApp.h"
@@ -49,10 +44,10 @@ public:
 
 	void Clear();
 
-	void Update(float fFrametime, int gameState);
-	void Render(int gameState);
+	void Update(float fFrametime);
+	void Render();
 
-	void UpdateVelocity(int iVelocityPixels, int gameState);
+	void UpdateVelocity(int iVelocityPixels);
 
 private:
 

@@ -177,7 +177,8 @@
 #define GAME_STATE_END_SUCCESS								13
 #define GAME_STATE_END_FAILED								14
 #define GAME_STATE_BLAST_ACTIVE								15
-#define GAME_STATE_QUIT										16
+#define GAME_STATE_BLAST_DEACTIVATE							16
+#define GAME_STATE_QUIT										17
 
 #include "IState.h"
 #include "InputJoystick.h"
@@ -287,6 +288,14 @@ private:
 
 	void ReleaseBoss();
 
+	void RunGameStateInitLevel();
+	void RunGameStateLoadLevel();
+
+	void RunGameCollisionLogic(float fFrametime);
+	void RunGameClearLogic();
+	void RunGameUpdateLogic(float fFrametime);
+	void RunGameRenderLogic(float fFrametime);
+
 	void SwitchGameState(int iNextGameState);
 
 	void ActivateObstacles(CQueue<CObstacle*>* pObstacles, BOOL bEnable);
@@ -347,7 +356,7 @@ private:
 
 	void PlayerDestroyed();
 	void PlayerBlastActive();
-	void PlayerBlastDeactive();
+	void PlayerBlastDeactivate();
 	void PlayerShooting(float fFrametime);
 	bool PlayerShootPossible();
 	bool PlayerCannonLineOfFireEnemies(IEnemy* pEnemy);
@@ -356,8 +365,7 @@ private:
 	void PlayerResetCannon();
 	void PlayerExplosion();
 
-	IEnemy* GenerateEnemies(CLevel::eFLEET_TYPE eFleetType,
-							CLevel::eSHIP_TYPE eShipType);
+	IEnemy* GenerateEnemies(CLevel::eFLEET_TYPE eFleetType, CLevel::eSHIP_TYPE eShipType);
 
 	void ClearLaunchEnemies();
 	void ClearStrikeEnemies();
@@ -420,19 +428,18 @@ private:
 	void CollisionBulletVsBorder();
 
 	void CheckCollisionBulletVsEnemy(CWeapon* pBullet, IEnemy* pEnemy, D3DXVECTOR3* pBPos);
-
 	void CheckCollisionBulletVsPlayer(CWeapon* pBullet, D3DXVECTOR3* pBPos);
 
 	void ClearEnemies();
 	void ClearObstacles();
-	void ClearBullets(bool bForced);
+	void ClearBullets();
 	void ClearParticles();
 
 	void UpdatePlayer(float fFrametime);
-	void UpdateBoss(float fFrametime);
-	void UpdateBossShake(bool bBlast, float fFrametime);
+	void UpdateBoss(float fFrametime, bool bForced);
+	void UpdateBossShake(float fFrametime);
 	void UpdateEnemies();
-	void UpdateEnemiesShake(bool bBlast, float fFrametime);
+	void UpdateEnemiesShake(float fFrametime);
 	void UpdateEnemiesShake(IEnemy* pEnemy, bool bBlast, float fFrametime);
 	void UpdateReinforcements(float fFrametime);
 	void UpdateBullets(float fFrametime);
@@ -447,17 +454,19 @@ private:
 	void UpdateExplosionVelocity();
 
 	void RenderPlayer(float fFrametime);
-	void RenderBoss(float fFrametime, bool bFreeze);
-	void RenderActiveEnemies(float fFrametime, bool bFreeze);
-	void RenderReinforcements(float fFrametime, bool bFreeze);
-	void RenderObstacleEnemies(float fFrametime, bool bFreeze);
-	void RenderObstacles(float fFrametime, bool bFreeze);
-	void RenderBullets(float fFrametime, bool bFreeze);
+	void RenderBoss(float fFrametime);
+	void RenderActiveEnemies(float fFrametime);
+	void RenderReinforcements(float fFrametime);
+	void RenderObstacleEnemies(float fFrametime);
+	void RenderObstacles(float fFrametime);
+	void RenderBullets(float fFrametime);
+	void RenderParticles(float fFrametime);
 	void RenderExplosions();
-	void RenderParticles(float fFrametime, bool bFreeze);
-	void RenderPlayerCannon(float fFrametime, bool bFreeze);
+
+	void RenderPlayerCannon(float fFrametime);
 	void RenderPlayerCannonCharge(float fFrametime, bool bFreeze);
 	void RenderPlayerCannonBeam(float fFrametime, bool bFreeze);
+
 	void RenderStatistics(float fFrametime);
 	void RenderPlayerLives();
 	void RenderPlayerBlasts();
@@ -472,15 +481,12 @@ private:
 	bool RenderLevelTitleStay(float fFrametime);
 	bool RenderLevelTitleDisappear(float fFrametime);
 
-	bool RenderMissionInfo();
-	bool RenderBossWarning(float fFrametime, bool bFreeze);
+	void RenderBossWarning(float fFrametime);
 	void RenderEndSuccess(float fFrametime);
 	void RenderEndFailed();
 	void RenderBackgrounds();
 
 	void EnablePlayerCannonDamage();
-
-	char* GetGameTimeString();
 
 	bool IsBoxCollision(const D3DXVECTOR3& pos1,
 						float fWidth,
@@ -507,6 +513,11 @@ private:
 	HRESULT CreateCollisionMeshObstacles();
 	void CreateCollisionMeshObstacles(CObstacle* pObstacle);
 
+	bool IsGameStateObstacles();
+	bool IsGameStateBossPlay();
+	bool IsBossUpdateAllowed();
+
+	char* GetGameTimeString();
 	void ShowText(LPCTSTR text, int x, int y);
 
 #ifdef SHADOWS

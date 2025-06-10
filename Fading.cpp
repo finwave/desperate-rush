@@ -8,6 +8,7 @@ CFading::CFading(void)
 
 	this->m_bFadeIn = false;
 	this->m_bFadeOut = false;
+	this->m_bRendering = false;
 
 	this->m_pVB = NULL;
 }
@@ -35,6 +36,7 @@ HRESULT CFading::SetFadeIn()
 {
 	this->m_bFadeIn = true;
 	this->m_bFadeOut = false;
+	this->m_bRendering = true;
 
 	m_vertexColor = 0xFF000000;
 
@@ -46,6 +48,7 @@ HRESULT CFading::SetFadeOut()
 {
 	this->m_bFadeIn = false;
 	this->m_bFadeOut = true;
+	this->m_bRendering = true;
 
 	m_vertexColor = 0x00000000;
 
@@ -55,12 +58,12 @@ HRESULT CFading::SetFadeOut()
 
 bool CFading::UpdateFading()
 {
-	if(m_bFadeIn)
+	if (this->m_bFadeIn)
 	{
 		if(	((m_vertexColor - this->m_fadeStep) == 0x00000000) || 
 			((m_vertexColor - this->m_fadeStep) > (0xff000000 - this->m_fadeStep)))
 		{
-			m_bFadeIn = false;
+			this->m_bFadeIn = false;
 			m_vertexColor = 0x00000000;
 		}
 		else
@@ -71,12 +74,12 @@ bool CFading::UpdateFading()
 		CreateVertices();
 		return true;
 	}
-	else if(m_bFadeOut)
+	else if (this->m_bFadeOut)
 	{
 		if(	((m_vertexColor + this->m_fadeStep) == 0xff000000) || 
 			((m_vertexColor + this->m_fadeStep) < this->m_fadeStep))
 		{
-			m_bFadeOut = false;
+			this->m_bFadeOut = false;
 			m_vertexColor = 0xff000000;
 		}
 		else
@@ -93,6 +96,16 @@ bool CFading::UpdateFading()
 
 void CFading::RenderFading()
 {
+	RenderFading(false);
+}
+
+void CFading::RenderFading(bool isForced)
+{
+	if (!isForced && !this->m_bRendering)
+	{
+		return;
+	}
+
 	LPDIRECT3DDEVICE9 device = this->m_pApp->GetDevice();
 
 	// select which vertex format we are using
@@ -103,6 +116,11 @@ void CFading::RenderFading()
 
     // copy the vertex buffer to the back buffer
    device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+
+   if (!this->m_bFadeIn && !this->m_bFadeOut)
+   {
+	   this->m_bRendering = false;
+   }
 }
 
 HRESULT CFading::CreateVertices()

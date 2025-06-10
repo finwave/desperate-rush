@@ -289,20 +289,17 @@ void CExplosions::Release()
 	}
 }
 
-void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
-								int iMoveSpeed,
-								D3DXVECTOR3 pos)
+void CExplosions::AddExplosion(CExplosion::eEXPLOSION_TYPE eExplosionType, int iMoveSpeed, D3DXVECTOR3 pos)
 {
 	switch (eExplosionType)
 	{
 	case CExplosion::eEXPLOSION_TYPE_PLAYER:
 
-		for( int i = 0; i < this->m_iMaxPlayer; i++ )
+		for (int i = 0; i < this->m_iMaxPlayer; i++)
 		{
-			if ( !(m_pExplosionPlayer + i)->IsActive() )
+			if (!(m_pExplosionPlayer + i)->IsActive())
 			{
 				(m_pExplosionPlayer + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -311,26 +308,24 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_DRONE:
 
-		for( int i = 0; i < this->m_iMaxDrone; i++ )
+		for (int i = 0; i < this->m_iMaxDrone; i++)
 		{
-			if ( !(m_pExplosionDrone + i)->IsActive() )
+			if (!(m_pExplosionDrone + i)->IsActive())
 			{
 				(m_pExplosionDrone + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
-		
+
 		break;
 
 	case CExplosion::eEXPLOSION_TYPE_SNIPER:
 
-		for( int i = 0; i < this->m_iMaxSniper; i++ )
+		for (int i = 0; i < this->m_iMaxSniper; i++)
 		{
-			if ( !(m_pExplosionSniper + i)->IsActive() )
+			if (!(m_pExplosionSniper + i)->IsActive())
 			{
 				(m_pExplosionSniper + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -339,12 +334,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_ROLLER:
 
-		for( int i = 0; i < this->m_iMaxRoller; i++ )
+		for (int i = 0; i < this->m_iMaxRoller; i++)
 		{
-			if ( !(m_pExplosionRoller + i)->IsActive() )
+			if (!(m_pExplosionRoller + i)->IsActive())
 			{
 				(m_pExplosionRoller + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -354,12 +348,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 	/*
 	case CExplosion::eEXPLOSION_TYPE_GUARD:
 
-		for( int i = 0; i < this->m_iMaxGuard; i++ )
+		for (int i = 0; i < this->m_iMaxGuard; i++)
 		{
-			if ( !(m_pExplosionGuard + i)->IsActive() )
+			if (!(m_pExplosionGuard + i)->IsActive())
 			{
 				(m_pExplosionGuard + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -369,12 +362,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG:
 
-		for( int i = 0; i < this->m_iMaxBoss1Big; i++ )
+		for (int i = 0; i < this->m_iMaxBoss1Big; i++)
 		{
-			if ( !(m_pExplosionBoss1Big + i)->IsActive() )
+			if (!(m_pExplosionBoss1Big + i)->IsActive())
 			{
 				(m_pExplosionBoss1Big + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -383,12 +375,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_PART:
 
-		for( int i = 0; i < this->m_iMaxBoss1Part; i++ )
+		for (int i = 0; i < this->m_iMaxBoss1Part; i++)
 		{
-			if ( !(m_pExplosionBoss1Part + i)->IsActive() )
+			if (!(m_pExplosionBoss1Part + i)->IsActive())
 			{
 				(m_pExplosionBoss1Part + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -397,12 +388,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_1:
 
-		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
+		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
-			if ( !(m_pExplosionBoss1Chain1 + i)->IsActive() )
+			if (!(m_pExplosionBoss1Chain1 + i)->IsActive())
 			{
 				(m_pExplosionBoss1Chain1 + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -411,12 +401,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_2:
 
-		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
+		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
-			if ( !(m_pExplosionBoss1Chain2 + i)->IsActive() )
+			if (!(m_pExplosionBoss1Chain2 + i)->IsActive())
 			{
 				(m_pExplosionBoss1Chain2 + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -425,12 +414,11 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 	case CExplosion::eEXPLOSION_TYPE_BOSS_1_CHAIN_3:
 
-		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++ )
+		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
 		{
-			if ( !(m_pExplosionBoss1Chain3 + i)->IsActive() )
+			if (!(m_pExplosionBoss1Chain3 + i)->IsActive())
 			{
 				(m_pExplosionBoss1Chain3 + i)->Init(iMoveSpeed, pos);
-
 				return;
 			}
 		}
@@ -441,33 +429,39 @@ void CExplosions::AddExplosion(	CExplosion::eEXPLOSION_TYPE eExplosionType,
 
 void CExplosions::Clear()
 {
-	for( int i = 0; i < this->m_iMaxPlayer; i++)
+	for (int i = 0; i < this->m_iMaxPlayer; i++)
 	{
 		(m_pExplosionPlayer + i)->Disable();
 	}
-	for( int i = 0; i < this->m_iMaxDrone; i++)
+
+	for (int i = 0; i < this->m_iMaxDrone; i++)
 	{
 		(m_pExplosionDrone + i)->Disable();
 	}
-	for( int i = 0; i < this->m_iMaxSniper; i++)
+
+	for (int i = 0; i < this->m_iMaxSniper; i++)
 	{
 		(m_pExplosionSniper + i)->Disable();
 	}
-	for( int i = 0; i < this->m_iMaxRoller; i++)
+
+	for (int i = 0; i < this->m_iMaxRoller; i++)
 	{
 		(m_pExplosionRoller + i)->Disable();
 	}
+
 	/*
 	for( int i = 0; i < this->m_iMaxGuard; i++)
 	{
 		(m_pExplosionGuard + i)->Disable();
 	}
 	*/
-	for( int i = 0; i < this->m_iMaxBoss1Big; i++)
+
+	for (int i = 0; i < this->m_iMaxBoss1Big; i++)
 	{
 		(m_pExplosionBoss1Big + i)->Disable();
 	}
-	for( int i = 0; i < this->m_iMaxBoss1Part; i++)
+
+	for (int i = 0; i < this->m_iMaxBoss1Part; i++)
 	{
 		(m_pExplosionBoss1Part + i)->Disable();
 	}
@@ -480,207 +474,205 @@ void CExplosions::Clear()
 	}
 }
 
-void CExplosions::Update(float fFrametime, int gameState)
+void CExplosions::Update(float fFrametime)
 {
-	for( int i = 0; i < this->m_iMaxPlayer; i++)
+	// player
+
+	for (int i = 0; i < this->m_iMaxPlayer; i++)
 	{
 		(m_pExplosionPlayer + i)->Update(fFrametime);
 	}
 
 	// small enemies
-	if (gameState <= STATE_BOSS_INTRO)
+
+	for (int i = 0; i < this->m_iMaxDrone; i++)
 	{
-		for( int i = 0; i < this->m_iMaxDrone; i++)
-		{
-			(m_pExplosionDrone + i)->Update(fFrametime);
-		}
-		for( int i = 0; i < this->m_iMaxSniper; i++)
-		{
-			(m_pExplosionSniper + i)->Update(fFrametime);
-		}
-		for( int i = 0; i < this->m_iMaxRoller; i++)
-		{
-			(m_pExplosionRoller + i)->Update(fFrametime);
-		}
-		/*
-		for( int i = 0; i < this->m_iMaxGuard; i++)
-		{
-			(m_pExplosionGuard + i)->Update(fFrametime);
-		}
-		*/
+		(m_pExplosionDrone + i)->Update(fFrametime);
 	}
-	// bosses
-	else if (gameState > STATE_BOSS_INTRO && 
-			gameState <= STATE_BOSS_BIG_EXPLOSION)
+
+	for (int i = 0; i < this->m_iMaxSniper; i++)
 	{
-		for( int i = 0; i < this->m_iMaxBoss1Big; i++)
-		{
-			(m_pExplosionBoss1Big + i)->Update(fFrametime);
-		}
+		(m_pExplosionSniper + i)->Update(fFrametime);
+	}
 
-		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
-		{
-			(m_pExplosionBoss1Part + i)->Update(fFrametime);
-		}
+	for (int i = 0; i < this->m_iMaxRoller; i++)
+	{
+		(m_pExplosionRoller + i)->Update(fFrametime);
+	}
 
-		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
-		{
-			(m_pExplosionBoss1Chain1 + i)->Update(fFrametime);
-			(m_pExplosionBoss1Chain2 + i)->Update(fFrametime);
-			(m_pExplosionBoss1Chain3 + i)->Update(fFrametime);
-		}
+	/*
+	for( int i = 0; i < this->m_iMaxGuard; i++)
+	{
+		(m_pExplosionGuard + i)->Update(fFrametime);
+	}
+	*/
+
+	// boss enemy
+
+	for (int i = 0; i < this->m_iMaxBoss1Big; i++)
+	{
+		(m_pExplosionBoss1Big + i)->Update(fFrametime);
+	}
+
+	for (int i = 0; i < this->m_iMaxBoss1Part; i++)
+	{
+		(m_pExplosionBoss1Part + i)->Update(fFrametime);
+	}
+
+	for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
+	{
+		(m_pExplosionBoss1Chain1 + i)->Update(fFrametime);
+		(m_pExplosionBoss1Chain2 + i)->Update(fFrametime);
+		(m_pExplosionBoss1Chain3 + i)->Update(fFrametime);
 	}
 }
 
-void CExplosions::Render(int gameState)
+void CExplosions::Render()
 {
+	// player
+
 	for( int i = 0; i < this->m_iMaxPlayer; i++)
 	{
 		(m_pExplosionPlayer + i)->Render();
 	}
 
 	// small enemies
-	if (gameState <= STATE_BOSS_INTRO || 
-		gameState == STATE_BLAST_ACTIVE || 
-		gameState == STATE_QUIT)
+
+	for( int i = 0; i < this->m_iMaxDrone; i++)
 	{
-		for( int i = 0; i < this->m_iMaxDrone; i++)
-		{
-			(m_pExplosionDrone + i)->Render();
-		}
-		for( int i = 0; i < this->m_iMaxSniper; i++)
-		{
-			(m_pExplosionSniper + i)->Render();
-		}
-		for( int i = 0; i < this->m_iMaxRoller; i++)
-		{
-			(m_pExplosionRoller + i)->Render();
-		}
-		/*
-		for( int i = 0; i < this->m_iMaxGuard; i++)
-		{
-			(m_pExplosionGuard + i)->Render();
-		}
-		*/
+		(m_pExplosionDrone + i)->Render();
 	}
 
-	// bosses
-	if ((gameState > STATE_BOSS_INTRO && 
-		gameState <= STATE_BOSS_BIG_EXPLOSION) || 
-		gameState == STATE_BLAST_ACTIVE || 
-		gameState == STATE_QUIT)
+	for( int i = 0; i < this->m_iMaxSniper; i++)
 	{
-		for( int i = 0; i < this->m_iMaxBoss1Big; i++)
-		{
-			(m_pExplosionBoss1Big + i)->Render();
-		}
+		(m_pExplosionSniper + i)->Render();
+	}
 
-		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
-		{
-			(m_pExplosionBoss1Part + i)->Render();
-		}
+	for( int i = 0; i < this->m_iMaxRoller; i++)
+	{
+		(m_pExplosionRoller + i)->Render();
+	}
 
-		for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
-		{
-			(m_pExplosionBoss1Chain1 + i)->Render();
-			(m_pExplosionBoss1Chain2 + i)->Render();
-			(m_pExplosionBoss1Chain3 + i)->Render();
-		}
+	/*
+	for( int i = 0; i < this->m_iMaxGuard; i++)
+	{
+		(m_pExplosionGuard + i)->Render();
+	}
+	*/
+
+	// boss enemy
+
+	for( int i = 0; i < this->m_iMaxBoss1Big; i++)
+	{
+		(m_pExplosionBoss1Big + i)->Render();
+	}
+
+	for( int i = 0; i < this->m_iMaxBoss1Part; i++)
+	{
+		(m_pExplosionBoss1Part + i)->Render();
+	}
+
+	for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
+	{
+		(m_pExplosionBoss1Chain1 + i)->Render();
+		(m_pExplosionBoss1Chain2 + i)->Render();
+		(m_pExplosionBoss1Chain3 + i)->Render();
 	}
 }
 
-void CExplosions::UpdateVelocity(int iVelocityPixels, int gameState)
+void CExplosions::UpdateVelocity(int iVelocityPixels)
 {
 	int speed = 0;
 
-	// small enemies
-	if (gameState <= STATE_BOSS_INTRO)
+	// player
+
+	for (int i = 0; i < this->m_iMaxPlayer; i++)
 	{
-		for( int i = 0; i < this->m_iMaxPlayer; i++)
+		if ((m_pExplosionPlayer + i)->IsActive())
 		{
-			if( (m_pExplosionPlayer + i)->IsActive() )
-			{
-				speed = (m_pExplosionPlayer + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionPlayer + i)->SetSpeed(speed);
-			}
+			speed = (m_pExplosionPlayer + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionPlayer + i)->SetSpeed(speed);
 		}
-		for( int i = 0; i < this->m_iMaxDrone; i++)
-		{
-			if( (m_pExplosionDrone + i)->IsActive() )
-			{
-				speed = (m_pExplosionDrone + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionDrone + i)->SetSpeed(speed);
-			}
-		}
-		for( int i = 0; i < this->m_iMaxSniper; i++)
-		{
-			if( (m_pExplosionSniper + i)->IsActive() )
-			{
-				speed = (m_pExplosionSniper + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionSniper + i)->SetSpeed(speed);
-			}
-		}
-		for( int i = 0; i < this->m_iMaxRoller; i++)
-		{
-			if( (m_pExplosionRoller + i)->IsActive() )
-			{
-				speed = (m_pExplosionRoller + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionRoller + i)->SetSpeed(speed);
-			}
-		}
-		/*
-		for( int i = 0; i < this->m_iMaxGuard; i++)
-		{
-			if( (m_pExplosionGuard + i)->IsActive() )
-			{
-				speed = (m_pExplosionGuard + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionGuard + i)->SetSpeed(speed);
-			}
-		}
-		*/
 	}
 
-	// bosses
-	if (gameState > STATE_BOSS_INTRO && 
-		gameState <= STATE_BOSS_BIG_EXPLOSION)
+	// small enemies
+
+	for (int i = 0; i < this->m_iMaxDrone; i++)
 	{
-		for( int i = 0; i < this->m_iMaxBoss1Big; i++)
+		if ((m_pExplosionDrone + i)->IsActive())
 		{
-			if( (m_pExplosionBoss1Big + i)->IsActive() )
-			{
-				speed = (m_pExplosionBoss1Big + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionBoss1Big + i)->SetSpeed(speed);
-			}
+			speed = (m_pExplosionDrone + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionDrone + i)->SetSpeed(speed);
+		}
+	}
+
+	for (int i = 0; i < this->m_iMaxSniper; i++)
+	{
+		if ((m_pExplosionSniper + i)->IsActive())
+		{
+			speed = (m_pExplosionSniper + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionSniper + i)->SetSpeed(speed);
+		}
+	}
+
+	for (int i = 0; i < this->m_iMaxRoller; i++)
+	{
+		if ((m_pExplosionRoller + i)->IsActive())
+		{
+			speed = (m_pExplosionRoller + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionRoller + i)->SetSpeed(speed);
+		}
+	}
+
+	/*
+	for (int i = 0; i < this->m_iMaxGuard; i++)
+	{
+		if ((m_pExplosionGuard + i)->IsActive())
+		{
+			speed = (m_pExplosionGuard + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionGuard + i)->SetSpeed(speed);
+		}
+	}
+	*/
+
+	// boss enemy
+
+	for (int i = 0; i < this->m_iMaxBoss1Big; i++)
+	{
+		if ((m_pExplosionBoss1Big + i)->IsActive())
+		{
+			speed = (m_pExplosionBoss1Big + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionBoss1Big + i)->SetSpeed(speed);
+		}
+	}
+
+	for (int i = 0; i < this->m_iMaxBoss1Part; i++)
+	{
+		if ((m_pExplosionBoss1Part + i)->IsActive())
+		{
+			speed = (m_pExplosionBoss1Part + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionBoss1Part + i)->SetSpeed(speed);
+		}
+	}
+
+	for (int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
+	{
+		if ((m_pExplosionBoss1Chain1 + i)->IsActive())
+		{
+			speed = (m_pExplosionBoss1Chain1 + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionBoss1Chain1 + i)->SetSpeed(speed);
 		}
 
-		for( int i = 0; i < this->m_iMaxBoss1Part; i++)
+		if ((m_pExplosionBoss1Chain2 + i)->IsActive())
 		{
-			if( (m_pExplosionBoss1Part + i)->IsActive() )
-			{
-				speed = (m_pExplosionBoss1Part + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionBoss1Part + i)->SetSpeed(speed);
-			}
+			speed = (m_pExplosionBoss1Chain2 + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionBoss1Chain2 + i)->SetSpeed(speed);
 		}
 
-		for( int i = 0; i < EXPLOSION_COUNT_BOSS_CHAIN; i++)
+		if ((m_pExplosionBoss1Chain3 + i)->IsActive())
 		{
-			if( (m_pExplosionBoss1Chain1 + i)->IsActive() )
-			{
-				speed = (m_pExplosionBoss1Chain1 + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionBoss1Chain1 + i)->SetSpeed(speed);
-			}
-
-			if ((m_pExplosionBoss1Chain2 + i)->IsActive())
-			{
-				speed = (m_pExplosionBoss1Chain2 + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionBoss1Chain2 + i)->SetSpeed(speed);
-			}
-
-			if ((m_pExplosionBoss1Chain3 + i)->IsActive())
-			{
-				speed = (m_pExplosionBoss1Chain3 + i)->GetDefaultSpeed() + iVelocityPixels;
-				(m_pExplosionBoss1Chain3 + i)->SetSpeed(speed);
-			}
+			speed = (m_pExplosionBoss1Chain3 + i)->GetDefaultSpeed() + iVelocityPixels;
+			(m_pExplosionBoss1Chain3 + i)->SetSpeed(speed);
 		}
 	}
 }

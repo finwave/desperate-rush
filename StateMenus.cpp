@@ -824,7 +824,7 @@ DWORD CStateMenus::Update(float fFrametime)
 	}
 
 	// next state to take
-	return m_dwNextState;
+	return this->m_dwNextState;
 }
 
 void CStateMenus::Render()
@@ -930,7 +930,7 @@ void CStateMenus::Render()
 	{
 	case New_Game:
 	case Exit:
-		this->GetFading()->RenderFading();
+		this->GetFading()->RenderFading(true);
 		break;
 	}
 
@@ -945,7 +945,7 @@ void CStateMenus::Render()
 
 void CStateMenus::RenderNewGame(float fFrametime)
 {
-	bool bScreenFading = this->GetFading()->UpdateFading();
+	this->GetFading()->UpdateFading();
 
 	// fade out music
 	if(this->m_bFadeOutMusic)
@@ -982,10 +982,10 @@ void CStateMenus::RenderNewGame(float fFrametime)
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 
-	if(!bScreenFading && !this->m_bFadeOutMusic)
+	if(!this->GetFading()->IsFadeOut() && !this->m_bFadeOutMusic)
 	{
 		// change state
-		m_dwNextState = STATE_GAME;
+		this->m_dwNextState = STATE_GAME;
 		// need to prepare new state
 		this->SetNewState(true);
 		// create state first, then initialize it
@@ -2027,7 +2027,7 @@ void CStateMenus::RenderCredits()
 
 void CStateMenus::RenderExit(float fFrametime)
 {
-	bool bScreenFading = this->GetFading()->UpdateFading();
+	this->GetFading()->UpdateFading();
 
 	// fade out music
 	if(this->m_bFadeOutMusic)
@@ -2054,10 +2054,10 @@ void CStateMenus::RenderExit(float fFrametime)
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 
-	if(!bScreenFading && !this->m_bFadeOutMusic)
+	if(!this->GetFading()->IsFadeOut() && !this->m_bFadeOutMusic)
 	{
 		// change state
-		m_dwNextState = STATE_EXIT_APP;
+		this->m_dwNextState = STATE_EXIT_APP;
 	}
 }
 
@@ -2518,6 +2518,10 @@ void CStateMenus::OnBackAction()
 	{
 	case Main:
 
+		// save config data (not necessarily changed)
+		this->GetApp()->GetConfig().CheckAll();
+		this->GetApp()->GetConfig().Save();
+
 		this->GetFading()->SetFadeOut();
 		this->GetFading()->SetDefaultFadeStep();
 		//this->GetFading()->SetFadeStep(0x05000000);
@@ -2542,7 +2546,7 @@ void CStateMenus::OnBackAction()
 	case Input:
 
 		// there are empty control buttons
-		if (this->GetApp()->GetConfig().ButtonEmpty())
+		if (this->GetApp()->GetConfig().IsInputButtonEmpty())
 		{
 			this->m_bMessageBoxEmpty = true;
 		}

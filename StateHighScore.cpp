@@ -659,7 +659,7 @@ void CStateHighScore::RenderExit(float fFrametime)
 	//this->RenderShips(fFrametime);
 
 	// draw fade-out
-	this->GetFading()->RenderFading();
+	this->GetFading()->RenderFading(true);
 
 	if(!bScreenFading && !this->m_bFadeOutMusic)
 	{

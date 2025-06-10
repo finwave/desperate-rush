@@ -16,10 +16,15 @@ public:
 
 	bool UpdateFading();
 	void RenderFading();
+	void RenderFading(bool isForced);
 
 	inline void SetDefaultFadeStep() { this->m_fadeStep = 0x0F000000; }
 	inline void SetFadeStep(DWORD fadeStep) { this->m_fadeStep = fadeStep; }
+
 	inline bool IsInitialized() { return this->m_bInitialized; }
+
+	inline bool IsFadeOut() { return this->m_bFadeOut; }
+	inline void EnableFadeOut(bool enable) { this->m_bFadeOut = enable; }
 
 private:
 	
@@ -37,6 +42,7 @@ private:
 
 	bool					m_bFadeIn;
 	bool					m_bFadeOut;
+	bool					m_bRendering;
 
 	DWORD					m_fadeStep;
 	DWORD					m_vertexColor;
