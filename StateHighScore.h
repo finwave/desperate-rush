@@ -127,7 +127,7 @@ private:
 	void UpdateBullets(float fFrametime);
 
 	void RenderInputAction(float fFrametime);
-	void RenderExit(float fFrametime);
+	void RenderExit();
 	void RenderSelectBox();
 	void RenderLetterWheel(float fFrametime);
 	void RenderPlayerScore(float fFrametime);
@@ -187,8 +187,6 @@ private:
 
 	float					m_fLetterWheelPositionFractionX;
 	float					m_fLetterWheelPositionFractionY;
-
-	bool					m_bFadeOutMusic;
 
 	float					m_fDepthFades;
 	float					m_fPauseFadeIn;

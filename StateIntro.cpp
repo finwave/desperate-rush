@@ -13,11 +13,9 @@ CStateIntro::CStateIntro(void)
 	this->m_fIntroTimer = 90.0f;
 }
 
-
 CStateIntro::~CStateIntro(void)
 {
 }
-
 
 HRESULT CStateIntro::Create(CTheApp* pApp,
 							DWORD dwState)
@@ -61,26 +59,19 @@ HRESULT CStateIntro::InitState(DWORD dwState)
 		return hres;
 	}
 
-	/** MUSIC **/
-
-	// music has volume
-	if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
-	{
-		// load main music
-		LPCTSTR resourceFilePath = resourceMenus->GetUnpackedResourceFilePath("music/intro.mp3");
-		this->GetApp()->GetMusicPlayerGeneral().Create(resourceFilePath);
-
-		// set music volume
-		this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
-		this->GetApp()->GetMusicPlayerGeneral().Play();
-	}
+	// load intro music
+	LPCTSTR resourceFilePath = resourceMenus->GetUnpackedResourceFilePath("music/intro.mp3");
+	CMusicController::MusicType musicType = CMusicController::MusicType::Intro;
+	this->GetApp()->GetMusicManager()->LoadMusic(musicType, resourceFilePath);
+	this->GetApp()->GetMusicManager()->SetSingleLoadOnly(musicType);
+	// play intro music
+	this->GetApp()->GetMusicManager()->PlayMusic(musicType);
 
 	this->SetStateLoaded(true);
 	this->GetApp()->SetLoadingScreen(false);
 
 	return S_OK;
 }
-
 
 void CStateIntro::Release()
 {
@@ -97,36 +88,27 @@ void CStateIntro::Release()
 	//IState::Release();
 }
 
-
 DWORD CStateIntro::Update(float fFrametime)
 {
 	m_fIntroTimer -= fFrametime;
 
 	if(m_fIntroTimer <= 0.0f)
 	{
+		this->GetApp()->GetMusicManager()->StopMusic();
+
 		// go to main menu
 		this->m_dwNextState = STATE_MENUS;
-
-		// music has volume
-		if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
-		{
-			// stop music playback
-			GetApp()->GetMusicPlayerGeneral().Stop();
-			// release music
-			GetApp()->GetMusicPlayerGeneral().Release();
-		}
 	}
 
 	return this->m_dwNextState;
 }
-
 
 void CStateIntro::Render()
 {
 	// render background
 	this->m_pSpriteBackground->Draw(0,0);
 
-	GetApp()->UpdateMouse();
+	this->GetApp()->UpdateMouse();
 
 	// left mouse button is pressed
 	if(this->GetApp()->GetMouse()->GetButton(0))
@@ -135,7 +117,6 @@ void CStateIntro::Render()
 		this->m_fIntroTimer = 0.0f;
 	}
 }
-
 
 void CStateIntro::OnKeyDown(DWORD dwKey)
 {

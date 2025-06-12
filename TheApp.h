@@ -26,6 +26,7 @@
 #include "InputMouse.h"
 
 // include sound engine
+#include "Managers/MusicManager.h"
 #include "SoundEngine.h"
 #include "SoundWave.h"
 #include "SoundMP3Player.h"
@@ -101,6 +102,11 @@ public:
 	 */
 	virtual void OnKeyUp(DWORD dwKey);
 
+	int GetVolumeMusic();
+	int GetVolumeSoundEffect();
+
+	inline CMusicManager* GetMusicManager() { return this->m_pMusicManager; }
+
 	/**
 	 * GetRandomSeed
 	 * get random seed value
@@ -115,30 +121,6 @@ public:
 	 * @return reference to wave object
 	 */
 	inline CSoundWave& GetWave(DWORD dwIndex) { return m_Waves[dwIndex]; }
-
-	/**
-	 * GetMusicPlayerGeneral
-	 * @return reference to mp3 player
-	 */
-	inline CSoundMP3Player& GetMusicPlayerGeneral() { return m_MusicPlayerGeneral; }
-
-	/**
-	 * GetMusicPlayerGameBoss
-	 * @return reference to mp3 player
-	 */
-	inline CSoundMP3Player& GetMusicPlayerGameBoss() { return m_MusicPlayerGameBoss; }
-
-	/**
-	 * GetMusicPlayerGameOver
-	 * @return reference to mp3 player
-	 */
-	inline CSoundMP3Player& GetMusicPlayerGameOver() { return m_MusicPlayerGameOver; }
-
-	/**
-	 * GetMusicPlayerGameOutro
-	 * @return reference to mp3 player
-	 */
-	inline CSoundMP3Player& GetMusicPlayerGameOutro() { return m_MusicPlayerGameOutro; }
 
 	/**
 	 * GetKeyboard
@@ -241,10 +223,6 @@ public:
 
 	void CheckKeyPushes();
 
-	int GetVolumeMusic();
-	int GetVolumeSoundEffect();
-	bool VolumeMusicFadeOut(float fFrametime);
-
 	/**
 	 * HideFile
 	 * sets a files hide attribute true
@@ -328,13 +306,9 @@ private:
 	LPDIRECT3DVERTEXBUFFER9			m_pVBBackground;
 
 	// sound playback objects
-	CSoundEngine					m_SoundEngine;
 	CSoundWave						m_Waves[NUM_WAVES];
-
-	CSoundMP3Player					m_MusicPlayerGeneral;
-	CSoundMP3Player					m_MusicPlayerGameBoss;
-	CSoundMP3Player					m_MusicPlayerGameOver;
-	CSoundMP3Player					m_MusicPlayerGameOutro;
+	CSoundEngine					m_SoundEngine;
+	CMusicManager*					m_pMusicManager;
 
 	CInputEngine					m_InputEngine;
 	std::vector<CInputEngine::DEVICE> m_arrInputDevices;

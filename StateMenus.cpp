@@ -46,7 +46,6 @@ CStateMenus::CStateMenus(void)
 	this->m_pLetters = NULL;
 	this->m_pNumbers = NULL;
 
-	this->m_bFadeOutMusic = true;
 	this->m_fPauseFadeOut = 0.025f;
 	this->m_fPauseFadeOutLast = 0.1f;
 
@@ -648,14 +647,15 @@ HRESULT CStateMenus::InitState(DWORD dwState)
 	{
 		// load menu music
 		LPCTSTR resourceFilePath = this->m_pResourceMenus->GetUnpackedResourceFilePath("music/title.mp3");
-		this->GetApp()->GetMusicPlayerGeneral().Create(resourceFilePath);
+		CMusicController::MusicType musicType = CMusicController::MusicType::MainMenu;
+		this->GetApp()->GetMusicManager()->LoadMusic(musicType, resourceFilePath);
+		this->GetApp()->GetMusicManager()->SetSingleLoadOnly(musicType);
 
 		// current music configuration has volume set up
 		if (this->GetApp()->GetConfig().GetVolumeMusic() > 0)
 		{
 			// play menu music
-			this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
-			this->GetApp()->GetMusicPlayerGeneral().Play();
+			this->GetApp()->GetMusicManager()->PlayMusic(musicType);
 		}
 
 		// updates mouse device clearing the movement
@@ -805,18 +805,6 @@ DWORD CStateMenus::Update(float fFrametime)
 		return S_OK;
 	}
 
-	// music has volume
-	if (this->GetApp()->GetConfig().GetVolumeMusic() > 0)
-	{
-		// music has reached it's end, reset position 
-		if (this->GetApp()->GetMusicPlayerGeneral().IsAtEnd())
-		{
-			this->GetApp()->GetMusicPlayerGeneral().Stop();
-			this->GetApp()->GetMusicPlayerGeneral().SetPosition(67.829);
-			this->GetApp()->GetMusicPlayerGeneral().Play();
-		}
-	}
-
 	// if we are in input menu then update boxkey timer
 	if (this->m_eMenus == Input)
 	{
@@ -839,7 +827,7 @@ void CStateMenus::Render()
 		bRenderShips = true;
 	}
 
-	float fFrametime = GetApp()->GetFrameTime();
+	const float fFrametime = GetApp()->GetFrameTime();
 
 	// build a left-handed orthographic projection matrix
 	BuildProjection();
@@ -884,7 +872,7 @@ void CStateMenus::Render()
 	switch(m_eMenus)
 	{
 	case New_Game:
-		RenderNewGame(fFrametime);
+		RenderNewGame();
 		break;
 
 	case Main:
@@ -918,7 +906,7 @@ void CStateMenus::Render()
 #endif
 
 	case Exit:
-		RenderExit(fFrametime);
+		RenderExit();
 		break;
 	}
 
@@ -943,46 +931,14 @@ void CStateMenus::Render()
 	ResetPlayerInput();
 }
 
-void CStateMenus::RenderNewGame(float fFrametime)
+void CStateMenus::RenderNewGame()
 {
 	this->GetFading()->UpdateFading();
-
-	// fade out music
-	if(this->m_bFadeOutMusic)
-	{
-		if(this->GetApp()->VolumeMusicFadeOut(fFrametime))
-		{
-			// set music volume
-			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
-		}
-		// music fade out finished
-		else
-		{
-			// set music volume, it's now back to original volume
-			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
-
-			// music has volume
-			if(this->GetApp()->GetConfig().GetVolumeMusic() > 0)
-			{
-				// music player is active
-				if(this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
-				{
-					// stop music play
-					this->GetApp()->GetMusicPlayerGeneral().Stop();
-				}
-
-				// release music
-				this->GetApp()->GetMusicPlayerGeneral().Release();
-			}
-
-			this->m_bFadeOutMusic = false;
-		}
-	}
 
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 
-	if(!this->GetFading()->IsFadeOut() && !this->m_bFadeOutMusic)
+	if(!this->GetFading()->IsFadeOut() && !this->GetApp()->GetMusicManager()->IsMusicFadeOut())
 	{
 		// change state
 		this->m_dwNextState = STATE_GAME;
@@ -1015,6 +971,7 @@ void CStateMenus::RenderMain()
 			//this->GetFading()->SetFadeStep(0x06000000);
 
 			// change menu
+			this->GetApp()->GetMusicManager()->SetMusicFadeOut();
 			this->m_eMenus = New_Game;
 		}
 	}
@@ -1480,28 +1437,30 @@ void CStateMenus::RenderAudio(float fFrametime)
 		// new music volume is different than the current one
 		if ((newValue != invalidBarValue) && (newValue != currentValue))
 		{
+			CSoundMP3Player::eSTATE musicPlayerState = this->GetApp()->GetMusicManager()->GetPlayerState();
+
 			this->GetApp()->GetConfig().SetVolumeMusic(newValue);
 
 			// set music volume
-			this->GetApp()->GetMusicPlayerGeneral().SetVolume(this->GetApp()->GetVolumeMusic());
+			int newPlayerVolume = this->GetApp()->GetVolumeMusic();
+			this->GetApp()->GetMusicManager()->SetMusicVolume(CMusicController::MusicType::MainMenu, newPlayerVolume);
 
 			// music is stopped or paused
-			if ((this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_STOPPED) ||
-				(this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PAUSE))
+			if ((musicPlayerState == CSoundMP3Player::eSTATE_STOPPED) || (musicPlayerState == CSoundMP3Player::eSTATE_PAUSE))
 			{
 				if (newValue > 0)
 				{
-					// play music
-					this->GetApp()->GetMusicPlayerGeneral().Play();
+					// play menu music
+					this->GetApp()->GetMusicManager()->PlayMusic(CMusicController::MusicType::MainMenu);
 				}
 			}
 			// music is playing
-			else if (this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
+			else if (musicPlayerState == CSoundMP3Player::eSTATE_PLAYING)
 			{
 				if (newValue == 0)
 				{
 					// pause music
-					this->GetApp()->GetMusicPlayerGeneral().Pause();
+					this->GetApp()->GetMusicManager()->PauseMusic();
 				}
 			}
 		}
@@ -2025,36 +1984,14 @@ void CStateMenus::RenderCredits()
 }
 #endif
 
-void CStateMenus::RenderExit(float fFrametime)
+void CStateMenus::RenderExit()
 {
 	this->GetFading()->UpdateFading();
-
-	// fade out music
-	if(this->m_bFadeOutMusic)
-	{
-		if(this->GetApp()->VolumeMusicFadeOut(fFrametime))
-		{
-			// set music volume
-			this->GetApp()->GetMusicPlayerGeneral().SetVolume( this->GetApp()->GetVolumeMusic() );
-		}
-		// music fade out finished
-		else
-		{
-			// music player is active
-			if (this->GetApp()->GetMusicPlayerGeneral().GetState() == CSoundMP3Player::eSTATE_PLAYING)
-			{
-				// stop music play
-				this->GetApp()->GetMusicPlayerGeneral().Stop();
-			}
-
-			this->m_bFadeOutMusic = false;
-		}
-	}
 
 	// draw menu text
 	this->m_pResourceMenus->m_pSpriteMenuMain->Draw(0,0);
 
-	if(!this->GetFading()->IsFadeOut() && !this->m_bFadeOutMusic)
+	if(!this->GetFading()->IsFadeOut() && !this->GetApp()->GetMusicManager()->IsMusicFadeOut())
 	{
 		// change state
 		this->m_dwNextState = STATE_EXIT_APP;
@@ -2529,6 +2466,7 @@ void CStateMenus::OnBackAction()
 		// play menu "back" sound
 		this->GetApp()->GetWave(SOUND_MENU_BACK).Play(FALSE, NEXT_FREE_DUPLICATE, this->GetApp()->GetVolumeSoundEffect());
 
+		this->GetApp()->GetMusicManager()->SetMusicFadeOut();
 		this->m_eMenus = Exit;
 
 		break;

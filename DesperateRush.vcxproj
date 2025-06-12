@@ -178,6 +178,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClCompile Include="C3DObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controllers\EnemyBossSideLasersController.cpp" />
+    <ClCompile Include="Controllers\MusicController.cpp" />
     <ClCompile Include="Controllers\PlayerBlastController.cpp" />
     <ClCompile Include="Controllers\ShipAfterburnController.cpp" />
     <ClCompile Include="HighscoreLetterWheel.cpp" />
@@ -217,6 +218,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IApplication.cpp" />
+    <ClCompile Include="Managers\MusicManager.cpp" />
     <ClCompile Include="MenuObjectRoller.cpp" />
     <ClCompile Include="MenuBoss1Scatter.cpp" />
     <ClCompile Include="MenuObject.cpp" />
@@ -263,6 +265,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="C3DObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Controllers\EnemyBossSideLasersController.h" />
+    <ClInclude Include="Controllers\MusicController.h" />
     <ClInclude Include="Controllers\PlayerBlastController.h" />
     <ClInclude Include="Controllers\ShipAfterburnController.h" />
     <ClInclude Include="HighscoreLetterWheel.h" />
@@ -301,6 +304,7 @@ xcopy "$(SolutionDir)..\external library projects\libzip-win-build\build-VS2022\
     <ClInclude Include="Letter.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Lights.h" />
+    <ClInclude Include="Managers\MusicManager.h" />
     <ClInclude Include="MenuObjectRoller.h" />
     <ClInclude Include="MenuBoss1Scatter.h" />
     <ClInclude Include="MenuObject.h" />

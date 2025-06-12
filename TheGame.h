@@ -105,10 +105,9 @@
 #define LOAD_LEVEL_BACKGROUND								17
 #define LOAD_LEVEL_SET_PLAYER_VALUES						18
 #define LOAD_LEVEL_MUSIC									19
-#define LOAD_LEVEL_MUSIC_BOSS								20
-#define LOAD_LEVEL_INTRO									21
+#define LOAD_LEVEL_INTRO									20
 
-#define LOAD_LEVEL_STEPS_MAX								22
+#define LOAD_LEVEL_STEPS_MAX								21
 
 // SPRITE COUNTS
 
@@ -319,17 +318,12 @@ private:
 	void LoadMusicBoss();
 	void LoadMusicGameOver();
 	void LoadMusicGameOutro();
-	void CheckMusicEnd();
-	void RestartMusic();
+
 	void PlayMusicLevel();
 	void PlayMusicBoss();
 	void PlayMusicGameOver();
 	void PlayMusicGameOutro();
-	bool FadeOutMusicLevel(float fFrametime);
-	bool FadeOutMusicBoss(float fFrametime);
-	void StopMusicLevel();
-	void StopMusicBoss();
-	void StopMusicAll();
+
 	void PlaySoundPlayerAfterburn();
 	void PlaySoundPlayerCannonCharge();
 	void PlaySoundPlayerCannonBeam();
@@ -538,13 +532,6 @@ private:
 	CPlayerMinigun*				m_pPlayerMinigunRight;
 	CPlayerController*			m_pPlayerController;
 
-	int							m_iVolumeMusicGameOver;
-	int							m_iVolumePlayerMinigunShoot;
-	int							m_iVolumePlayerMinigunTurn;
-	int							m_iVolumePlayerCannon;
-	int							m_iVolumePlayerBlast;
-	int							m_iVolumePlayerVelocityAfterburn;
-
 	CWeaponPlayerFront*			m_pWeaponPlayerFront;
 	CWeaponPlayerDiagonal*		m_pWeaponPlayerDiagonal;
 	CWeaponEnemyDrone*			m_pWeaponDrone;
@@ -649,6 +636,13 @@ private:
 
 	eEXPLOSION_ENEMY			m_eExplosionEnemy;
 
+	int							m_iVolumeMusicGameOver;
+	int							m_iVolumePlayerMinigunShoot;
+	int							m_iVolumePlayerMinigunTurn;
+	int							m_iVolumePlayerCannon;
+	int							m_iVolumePlayerBlast;
+	int							m_iVolumePlayerVelocityAfterburn;
+
 	float						m_fDepthFades;
 	float						m_fDepthBackgroundBottom;
 	float						m_fDepthBackgroundMiddle;
@@ -661,7 +655,6 @@ private:
 
 	bool						m_bFadeIn;
 	bool						m_bFadeOut;
-	bool						m_bFadeOutMusic;
 	bool						m_bLevelIntro;
 
 	const float					PLAYER_ENTER_AFTERBURN_END_DELTA = 0.65f;

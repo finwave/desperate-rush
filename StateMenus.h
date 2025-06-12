@@ -185,7 +185,7 @@ private:
 		Highscore_Last
 	};
 
-	void RenderNewGame(float fFrametime);
+	void RenderNewGame();
 	void RenderMain();
 	void RenderOptions();
 	void RenderInput();
@@ -195,7 +195,7 @@ private:
 #ifdef MENU_CREDITS
 	void RenderCredits();
 #endif
-	void RenderExit(float fFrametime);
+	void RenderExit();
 
 	void RenderAudioBars();
 	void RenderBackground();
@@ -282,7 +282,6 @@ private:
 	CLetter*				m_pLetters;
 	CNumber*				m_pNumbers;
 
-	bool					m_bFadeOutMusic;
 	float					m_fPauseFadeOut;
 	float					m_fPauseFadeOutLast;
 

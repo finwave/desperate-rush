@@ -52,8 +52,7 @@ CTheApp::CTheApp(void)
 
 CTheApp::~CTheApp(void)
 {
-	// MP3 player requires to manually uninitialise
-	// COM objects
+	// MP3 player requires to manually uninitialise COM objects
 	::CoUninitialize();
 }
 
@@ -62,7 +61,7 @@ HRESULT CTheApp::OnCreate(void)
 	HRESULT hres;
 
 	// initialise the input engine
-	hres = m_InputEngine.Create(GetWindow());
+	hres = this->m_InputEngine.Create(GetWindow());
 
 	if(FAILED(hres))
 	{
@@ -73,21 +72,21 @@ HRESULT CTheApp::OnCreate(void)
 		return hres;
 	}
 
-	m_ZipManager.Initialize();
-	m_ResourceMenus.Init(this, &m_ZipManager);
-	m_ResourceGame.Init(this, &m_ZipManager);
-	m_ResourceHighScore.Init(this, &m_ZipManager);
+	this->m_ZipManager.Initialize();
+	this->m_ResourceMenus.Init(this, &m_ZipManager);
+	this->m_ResourceGame.Init(this, &m_ZipManager);
+	this->m_ResourceHighScore.Init(this, &m_ZipManager);
 
 	// get installed input devices into the array
-	m_InputEngine.GetKeyboards(&m_arrInputDevices);
-	m_InputEngine.GetMice(&m_arrInputDevices);
-	m_InputEngine.GetJoysticks(&m_arrInputDevices);
+	this->m_InputEngine.GetKeyboards(&m_arrInputDevices);
+	this->m_InputEngine.GetMice(&m_arrInputDevices);
+	this->m_InputEngine.GetJoysticks(&m_arrInputDevices);
 
 	// create default keyboard
-	m_Keyboard.Create(&m_InputEngine, NULL, 0);
+	this->m_Keyboard.Create(&m_InputEngine, NULL, 0);
 
 	// create default mouse
-	m_Mouse.Create(&m_InputEngine, NULL, 0);
+	this->m_Mouse.Create(&m_InputEngine, NULL, 0);
 
 	// initialise mouse coordinates
 	if(IsWindowed())
@@ -95,8 +94,8 @@ HRESULT CTheApp::OnCreate(void)
 		POINT mousepos;
 		::GetCursorPos(&mousepos);
 		::ScreenToClient(GetWindow(), &mousepos);
-		m_iCurrentMouseX = mousepos.x;
-		m_iCurrentMouseY = mousepos.y;
+		this->m_iCurrentMouseX = mousepos.x;
+		this->m_iCurrentMouseY = mousepos.y;
 	}
 
 	hres = CreateJoystick();
@@ -109,8 +108,12 @@ HRESULT CTheApp::OnCreate(void)
 						MB_OK);
 	}
 
+	// initialise the music manager
+	this->m_pMusicManager = new CMusicManager();
+	this->m_pMusicManager->Init(this);
+
 	// initialise the sound engine
-	hres = m_SoundEngine.Create(GetWindow(), 44100, 16, 2, 0);
+	hres = this->m_SoundEngine.Create(GetWindow(), 44100, 16, 2, 0);
 
 	if(FAILED(hres))
 	{
@@ -131,14 +134,14 @@ HRESULT CTheApp::OnCreate(void)
 
 	if(FAILED(hres))
 	{
-		this->ErrorMessage(hres);
+		ErrorMessage(hres);
 		return hres;
 	}
 
-	this->SetBackgroundQuad();
+	SetBackgroundQuad();
 
 	// hide mouse cursor
-	this->GetDevice()->ShowCursor(FALSE);
+	GetDevice()->ShowCursor(FALSE);
 	
 	// generate random seed
 	this->m_fRandomSeed = static_cast<unsigned int>(time(NULL));
@@ -155,7 +158,7 @@ HRESULT CTheApp::LoadSoundFiles()
 	HRESULT hres;
 	std::string resourcePath;
 
-	int volumeSoundEffect = this->GetVolumeSoundEffect();
+	int volumeSoundEffect = GetVolumeSoundEffect();
 
 	// load the wave files
 
@@ -166,20 +169,20 @@ HRESULT CTheApp::LoadSoundFiles()
 		dwDuplicates = DUPLICATE_SOUND_BUFFER;
 	}
 
-	resourcePath = m_ZipManager.GetResourceFilePath(waveFilenames[this->m_iMenuSoundLoadIndex].c_str());
+	resourcePath = this->m_ZipManager.GetResourceFilePath(waveFilenames[this->m_iMenuSoundLoadIndex].c_str());
 	LPCTSTR strFilename = TextUtils::StringToLPCWSTR(resourcePath);
 
-	hres = m_Waves[this->m_iMenuSoundLoadIndex].Load(&m_SoundEngine, strFilename,
+	hres = this->m_Waves[this->m_iMenuSoundLoadIndex].Load(&m_SoundEngine, strFilename,
 		dwDuplicates, DSBCAPS_CTRLVOLUME);
 
 	if (FAILED(hres))
 	{
-		this->ErrorMessage(hres);
+		ErrorMessage(hres);
 		return hres;
 	}
 
 	// set volume of sound effect
-	m_Waves[this->m_iMenuSoundLoadIndex].SetVolume(volumeSoundEffect, dwDuplicates);
+	this->m_Waves[this->m_iMenuSoundLoadIndex].SetVolume(volumeSoundEffect, dwDuplicates);
 
 	this->m_iMenuSoundLoadIndex++;
 	this->m_iMenuSoundLoadStepCounter++;
@@ -223,12 +226,6 @@ void CTheApp::OnRelease(void)
 	}
 #endif
 
-	// release mp3 players
-	this->m_MusicPlayerGeneral.Release();
-	this->m_MusicPlayerGameBoss.Release();
-	this->m_MusicPlayerGameOver.Release();
-	this->m_MusicPlayerGameOutro.Release();
-
 	// release all wave files
 	for (int i = 0; i < NUM_WAVES; i++)
 	{
@@ -237,6 +234,14 @@ void CTheApp::OnRelease(void)
 
 	// release sound engine
 	this->m_SoundEngine.Release();
+
+	// release music manager
+	if (this->m_pMusicManager)
+	{
+		this->m_pMusicManager->Release();
+		delete this->m_pMusicManager;
+		this->m_pMusicManager = NULL;
+	}
 
 	// clear the device array
 	this->m_arrInputDevices.clear();
@@ -259,13 +264,13 @@ void CTheApp::OnFlip(void)
 		Close();
 	}
 
-	LPDIRECT3DDEVICE9 pDevice = this->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// clear buffers
-	this->ClearBuffers(pDevice);
+	ClearBuffers(pDevice);
 
 	// state is not yet created
-	if( !m_pState || m_pState->IsNewState() )
+	if( !this->m_pState || this->m_pState->IsNewState() )
 	{
 		if(dwState != STATE_RUNNING)
 		{
@@ -273,22 +278,22 @@ void CTheApp::OnFlip(void)
 			if(this->m_bCreateState)
 			{
 				// change to new state (create state)
-				HRESULT hres = this->ChangeState(dwState);
+				HRESULT hres = ChangeState(dwState);
 
 				if(FAILED(hres))
 				{
-					this->ErrorMessage(hres);
+					ErrorMessage(hres);
 					Close();
 				}
 
 				// change font
 				if(dwState == STATE_GAME)
 				{
-					hres = this->SetTextFontParam(-12, 450, 0);
+					hres = SetTextFontParam(-12, 450, 0);
 
 					if(FAILED(hres))
 					{
-						this->ErrorMessage(hres);
+						ErrorMessage(hres);
 						Close();
 					}
 				}
@@ -332,7 +337,7 @@ void CTheApp::OnFlip(void)
 
 						if(FAILED(hres))
 						{
-							this->ErrorMessage(hres);
+							ErrorMessage(hres);
 							Close();
 						}
 					}
@@ -341,7 +346,7 @@ void CTheApp::OnFlip(void)
 						// new state is created and initialized
 						m_pState->SetNewState(false);
 
-						this->CheckKeyPushes();
+						CheckKeyPushes();
 
 						if (dwState != STATE_GAME)
 						{
@@ -372,7 +377,9 @@ void CTheApp::OnFlip(void)
 			// render state
 			this->m_pState->Render();
 			// update state
-			dwState = this->m_pState->Update(GetFrameTime());
+			const float fFrametime = GetFrameTime();
+			this->m_pMusicManager->Update(fFrametime);
+			dwState = this->m_pState->Update(fFrametime);
 
 			// EndScene function call
 			pDevice->EndScene();
@@ -383,18 +390,18 @@ void CTheApp::OnFlip(void)
 void CTheApp::OnKeyDown(DWORD dwKey)
 {
 	// pass key events to current state
-	if(m_pState)
+	if(this->m_pState)
 	{
-		m_pState->OnKeyDown(dwKey);
+		this->m_pState->OnKeyDown(dwKey);
 	}
 }
 
 void CTheApp::OnKeyUp(DWORD dwKey)
 {
 	// pass key events to current state
-	if (m_pState)
+	if (this->m_pState)
 	{
-		m_pState->OnKeyUp(dwKey);
+		this->m_pState->OnKeyUp(dwKey);
 	}
 }
 
@@ -407,11 +414,11 @@ void CTheApp::OnSize(DWORD dwType, int iWidth, int iHeight)
 HRESULT CTheApp::ChangeState(DWORD dwState)
 {
 	// delete previous state
-	if(m_pState)
+	if(this->m_pState)
 	{
-		m_pState->Release();
-		delete m_pState;
-		m_pState = NULL;
+		this->m_pState->Release();
+		delete this->m_pState;
+		this->m_pState = NULL;
 	}
 
 	HRESULT hres = S_OK;
@@ -420,15 +427,15 @@ HRESULT CTheApp::ChangeState(DWORD dwState)
 	switch (dwState)
 	{
 	case STATE_MENUS:
-		m_pState = new CStateMenus;
+		this->m_pState = new CStateMenus;
 		break;
 
 	case STATE_GAME:
-		m_pState = new CStateGame;
+		this->m_pState = new CStateGame;
 		break;
 
 	case STATE_HIGHSCORE:
-		m_pState = new CStateHighScore;
+		this->m_pState = new CStateHighScore;
 		break;
 
 	default:
@@ -436,9 +443,9 @@ HRESULT CTheApp::ChangeState(DWORD dwState)
 		return E_NOTIMPL;
 	}
 
-	if (m_pState != NULL)
+	if (this->m_pState != NULL)
 	{
-		hres = m_pState->Create(this, dwState);
+		hres = this->m_pState->Create(this, dwState);
 	}
 
 	return hres;
@@ -454,7 +461,7 @@ HRESULT CTheApp::InitState(DWORD dwState)
 	case STATE_MENUS:
 	case STATE_GAME:
 	case STATE_HIGHSCORE:
-		hres = m_pState->InitState(dwState);
+		hres = this->m_pState->InitState(dwState);
 		break;
 
 	default:
@@ -796,52 +803,6 @@ int CTheApp::GetVolumeSoundEffect()
 	}
 
 	return iVolume;
-}
-
-bool CTheApp::VolumeMusicFadeOut(float fFrametime)
-{
-	static bool bStart = true;
-
-	static int iOriginalVolume;
-	static int iCurrentVolume;
-
-	static float fChangeVolumeTimer = 0.0255f;
-
-	bool bFadeOut = true;
-
-	if(bStart)
-	{
-		iOriginalVolume = this->GetConfig().GetVolumeMusic();
-		iCurrentVolume = iOriginalVolume;
-		bStart = false;
-	}
-
-	// decrease current volume
-	if(iCurrentVolume > 0)
-	{
-		if(fChangeVolumeTimer <= 0.0f)
-		{
-			fChangeVolumeTimer = 0.0255f;
-			iCurrentVolume -= 8;
-
-			this->GetConfig().SetVolumeMusic(iCurrentVolume);
-		}
-		else
-		{
-			fChangeVolumeTimer -= fFrametime;
-		}
-	}
-	// fade out finished
-	else
-	{
-		// get back to original volume
-		this->GetConfig().SetVolumeMusic(iOriginalVolume);
-
-		bStart = true;
-		bFadeOut = false;
-	}
-
-	return bFadeOut;
 }
 
 void CTheApp::CheckKeyPushes()
