@@ -12,11 +12,16 @@ CMenuObject::CMenuObject(void)
 	this->m_eRotation = eROTATION_NONE;
 
 	this->m_fSpeedCurrent = 0.0f;
+	this->m_fSpeedMin = 0.0f;
+	this->m_fSpeedMax = 0.0f;
+
 	this->m_fMovementPauseTimer = 0.0f;
 	this->m_fSelfRotation = 0.0f;
 
 	this->m_fScreenWidth = 0.0f;
 	this->m_fScreenHeight = 0.0f;
+
+	this->m_fMoveBorderX = 0.0f;
 }
 
 CMenuObject::~CMenuObject(void)
