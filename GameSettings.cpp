@@ -75,13 +75,13 @@ float CGameSettings::ENEMY_ROLLER_BULLET_WIDTH = 2.5f;
 float CGameSettings::ENEMY_ROLLER_BULLET_HEIGHT = 2.5f;
 float CGameSettings::ENEMY_ROLLER_BULLET_SPEED = 120.0f;
 int CGameSettings::ENEMY_ROLLER_BULLET_DAMAGE = 3;
-int CGameSettings::ENEMY_ROLLER_SHIP_DAMAGE = 70;
+int CGameSettings::ENEMY_ROLLER_SHIP_DAMAGE = 100;
 
 float CGameSettings::ENEMY_GUARD_BULLET_WIDTH = 3.5f;
 float CGameSettings::ENEMY_GUARD_BULLET_HEIGHT = 3.5f;
 float CGameSettings::ENEMY_GUARD_BULLET_SPEED = 250.0f;
 int CGameSettings::ENEMY_GUARD_BULLET_DAMAGE = 6;
-int CGameSettings::ENEMY_GUARD_SHIP_DAMAGE = 80;
+int CGameSettings::ENEMY_GUARD_SHIP_DAMAGE = 100;
 
 float CGameSettings::ENEMY_BOSS_LASER_BULLET_WIDTH = 5.0f;
 float CGameSettings::ENEMY_BOSS_LASER_BULLET_HEIGHT = 5.0f;
