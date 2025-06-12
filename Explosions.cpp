@@ -5,10 +5,10 @@ CExplosions::CExplosions()
 	this->m_pTheApp = NULL;
 
 	this->m_iMaxPlayer = 1;
-	this->m_iMaxDrone = 5;
-	this->m_iMaxSniper = 5;
-	this->m_iMaxRoller = 5;
-	//this->m_iMaxGuard = 5;
+	this->m_iMaxDrone = 12;
+	this->m_iMaxSniper = 12;
+	this->m_iMaxRoller = 12;
+	//this->m_iMaxGuard = 12;
 	this->m_iMaxBoss1Big = 1;
 	this->m_iMaxBoss1Part = 4;
 

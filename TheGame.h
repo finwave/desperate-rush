@@ -426,15 +426,14 @@ private:
 
 	void ClearEnemies();
 	void ClearObstacles();
-	void ClearBullets();
+	void ClearBullets(bool bForced);
 	void ClearParticles();
 
 	void UpdatePlayer(float fFrametime);
 	void UpdateBoss(float fFrametime, bool bForced);
 	void UpdateBossShake(float fFrametime);
 	void UpdateEnemies();
-	void UpdateEnemiesShake(float fFrametime);
-	void UpdateEnemiesShake(IEnemy* pEnemy, bool bBlast, float fFrametime);
+	void UpdateEnemiesBlastShake(float fFrametime);
 	void UpdateReinforcements(float fFrametime);
 	void UpdateBullets(float fFrametime);
 	void UpdateExplosions(float fFrametime);
@@ -508,6 +507,7 @@ private:
 	void CreateCollisionMeshObstacles(CObstacle* pObstacle);
 
 	bool IsGameStateObstacles();
+	bool IsFirstObstacleDepthRender();
 	bool IsGameStateBossPlay();
 	bool IsBossUpdateAllowed();
 

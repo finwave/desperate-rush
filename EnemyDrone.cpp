@@ -65,6 +65,11 @@ void CEnemyDrone::Init(	CTheApp* pTheApp,
 
 bool CEnemyDrone::Shoot()
 {
+	if (this->m_bTimedExplosion)
+	{
+		return false;
+	}
+
 	if(this->m_fShootCounter >= (this->m_fShootTime + this->m_fRandShootTime))
 	{
 		this->GenerateRandomShootTime();

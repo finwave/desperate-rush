@@ -122,6 +122,13 @@ void CEnemyRoller::Update(float fFrametime, float fPlayerVelocity)
 
 			case eROLLER_ACTION_ATTACK:
 
+				// about to explode
+				if (this->m_bTimedExplosion)
+				{
+					// stop the attack action
+					this->m_iShootMultiCount = m_iShootMulti;
+				}
+
 				// current multi-shoot session is not finished
 				if(this->m_iShootMultiCount < m_iShootMulti)
 				{
@@ -166,6 +173,11 @@ void CEnemyRoller::Update(float fFrametime, float fPlayerVelocity)
 
 bool CEnemyRoller::Shoot()
 {
+	if (this->m_bTimedExplosion)
+	{
+		return false;
+	}
+
 	if(this->m_fShootCounter >= (this->m_fShootTime + this->m_fRandShootTime))
 	{
 		this->GenerateRandomShootTime();

@@ -391,6 +391,7 @@ protected:
 
 	bool					m_bEnterSound;
 	bool					m_bFleeSound;
+	bool					m_bTimedExplosion;
 
 private:
 
@@ -431,8 +432,6 @@ private:
 	bool					m_bBlastShakeUpRight;
 	bool					m_bBlastShakeDownLeft;
 	bool					m_bBlastShakeDownRight;
-
-	bool					m_bTimedExplosion;
 
 	float					m_fTimedExplosionCounter;
 	float					m_fTimedExplosionTimer;

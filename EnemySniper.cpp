@@ -65,6 +65,11 @@ void CEnemySniper::Init(CTheApp* pTheApp,
 
 bool CEnemySniper::Shoot()
 {
+	if (this->m_bTimedExplosion)
+	{
+		return false;
+	}
+
 	if(this->m_fShootCounter >= (this->m_fShootTime + this->m_fRandShootTime))
 	{
 		this->GenerateRandomShootTime();

@@ -166,7 +166,7 @@ CTheGame::CTheGame(void)
 	this->m_iBossWarningTextIndex = 0;
 	this->m_bBossWarningFadeOut = false;
 
-	this->m_fEndSuccessStartTimer = 2.0f;
+	this->m_fEndSuccessStartTimer = 0.0f;
 	this->m_fEndSuccessTextTimer = 0.1f;
 	this->m_iEndSuccessTextIndex = 0;
 
@@ -1288,7 +1288,7 @@ void CTheGame::RunGameStateLoadLevel()
 
 	case LOAD_LEVEL_CLEAR_BULLETS:
 
-		ClearBullets();
+		ClearBullets(true);
 
 		break;
 
@@ -1475,7 +1475,7 @@ void CTheGame::RunGameClearLogic()
 {
 	ClearEnemies();
 	ClearObstacles();
-	ClearBullets();
+	ClearBullets(false);
 	ClearParticles();
 }
 
@@ -1501,7 +1501,7 @@ void CTheGame::RunGameUpdateLogic(float fFrametime)
 		}
 		else
 		{
-			UpdateEnemiesShake(fFrametime);
+			UpdateEnemiesBlastShake(fFrametime);
 		}
 	}
 
@@ -2184,6 +2184,11 @@ void CTheGame::Render(void)
 
 		PlayerBlastDeactivate();
 
+		// go back to previous game state
+		SwitchGameState(this->m_iGameStatePrevious);
+		// clear bullets
+		ClearBullets(true);
+
 		break;
 
 		// player quits the game
@@ -2415,9 +2420,19 @@ void CTheGame::SwitchGameState(int iNextGameState)
 
 	bool bSavePreviousState = true;
 
-	if (iNextGameState == GAME_STATE_BLAST_DEACTIVATE)
+	switch (iNextGameState)
 	{
+	case GAME_STATE_BLAST_DEACTIVATE:
 		bSavePreviousState = false;
+		break;
+	case GAME_STATE_QUIT:
+	{
+		if ((this->m_iGameState == GAME_STATE_END_SUCCESS) || (this->m_iGameState == GAME_STATE_END_FAILED))
+		{
+			bSavePreviousState = false;
+		}
+	}
+		break;
 	}
 
 	if (bSavePreviousState)
@@ -3656,13 +3671,11 @@ void CTheGame::LoadMusicGameOutro()
 
 void CTheGame::PlayMusicLevel()
 {
-	this->m_pTheApp->GetMusicManager()->StopMusic();
 	this->m_pTheApp->GetMusicManager()->PlayMusic(CMusicController::MusicType::GameLevel);
 }
 
 void CTheGame::PlayMusicBoss()
 {
-	this->m_pTheApp->GetMusicManager()->StopMusic();
 	this->m_pTheApp->GetMusicManager()->PlayMusic(CMusicController::MusicType::GameBoss);
 }
 
@@ -3674,7 +3687,6 @@ void CTheGame::PlayMusicGameOver()
 
 void CTheGame::PlayMusicGameOutro()
 {
-	this->m_pTheApp->GetMusicManager()->StopMusic();
 	this->m_pTheApp->GetMusicManager()->PlayMusic(CMusicController::MusicType::GameOutro);
 }
 
@@ -4605,9 +4617,6 @@ void CTheGame::PlayerBlastDeactivate()
 
 		this->m_pObstacleEnemies.SetNext();
 	}
-
-	// go back to previous game state
-	SwitchGameState(this->m_iGameStatePrevious);
 }
 
 void CTheGame::PlayerShooting(float fFrametime)
@@ -7132,6 +7141,7 @@ void CTheGame::EnemyShoots(IEnemy* pEnemy)
 
 		break;
 	}
+
 	if(weapon)
 	{
 		weapon->SetMatrix(pEnemy);
@@ -7423,9 +7433,12 @@ void CTheGame::CollisionPlayerVsEnemy()
 						//if(this->IsMeshCollision(pEnemy, this->m_pPlayer, bInverseMatrix, false))
 						//{
 
-						// Collision damage with enemy ship.
-						int damageValue = GetCollisionDamagePlayerVsEnemy(pEnemy);
-						this->m_pPlayer->DecreaseHealth(damageValue);
+						// player collision damage with enemy ship
+						if (!pEnemy->GetTimedExplosion())
+						{
+							int damageValue = GetCollisionDamagePlayerVsEnemy(pEnemy);
+							this->m_pPlayer->DecreaseHealth(damageValue);
+						}
 
 						if (!this->m_pPlayer->IsAlive())
 						{
@@ -7484,9 +7497,12 @@ void CTheGame::CollisionPlayerVsEnemy()
 						//if(this->IsMeshCollision(pEnemy, this->m_pPlayer, bInverseMatrix, false))
 						//{
 						
-						// Collision damage with enemy ship.
-						int damageValue = GetCollisionDamagePlayerVsEnemy(pEnemy);
-						this->m_pPlayer->DecreaseHealth(damageValue);
+						// player collision damage with enemy ship
+						if (!pEnemy->GetTimedExplosion())
+						{
+							int damageValue = GetCollisionDamagePlayerVsEnemy(pEnemy);
+							this->m_pPlayer->DecreaseHealth(damageValue);
+						}
 
 						if (!this->m_pPlayer->IsAlive())
 						{
@@ -7671,9 +7687,9 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 {
 	if(this->m_ePlayerCannonState == ePLAYER_CANNON_STATE_BEAM)
 	{
+		// active enemies
 		if(this->m_iGameState == GAME_STATE_PLAY_ENEMIES)
 		{
-			// active enemies
 			this->m_pActiveEnemies.SetFirst();
 			while( this->m_pActiveEnemies.GetCurrent() )
 			{
@@ -7684,7 +7700,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 					if( this->PlayerCannonLineOfFireEnemies(pEnemy) )
 					{
 						// shake enemy
-						UpdateEnemiesShake(pEnemy, false, fFrametime);
+						pEnemy->UpdateEnemyCannonShake(fFrametime);
 
 						if( pEnemy->IsCannonDamage() )
 						{
@@ -7726,9 +7742,10 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 				this->m_pActiveEnemies.SetNext();
 			}
 		}
-		else if((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) || (this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
+		// obstacle enemies
+		else if((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) || 
+			(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
 		{
-			// obstacle enemies
 			this->m_pObstacleEnemies.SetFirst();
 			while( this->m_pObstacleEnemies.GetCurrent() )
 			{
@@ -7739,7 +7756,7 @@ void CTheGame::CollisionPlayerCannonVsEnemy(float fFrametime)
 					if( this->PlayerCannonLineOfFireEnemies(pEnemy) )
 					{
 						// shake enemy
-						UpdateEnemiesShake(pEnemy, false, fFrametime);
+						pEnemy->UpdateEnemyCannonShake(fFrametime);
 
 						if( pEnemy->IsCannonDamage() )
 						{
@@ -7865,19 +7882,13 @@ void CTheGame::CollisionPlayerCannonVsEnemyBullet()
 
 void CTheGame::CollisionPlayerVsObstacle()
 {
-	if (!IsGameStateObstacles())
-	{
-		return;
-	}
-
 	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
 		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
 	{
 		return;
 	}
 
-	if(	!this->m_pPlayer->IsDestroyed() && 
-		!this->m_pPlayer->IsUntouchable() )
+	if(	!this->m_pPlayer->IsDestroyed() && !this->m_pPlayer->IsUntouchable() )
 	{
 		bool bInverseMatrix = false;
 
@@ -7918,13 +7929,7 @@ void CTheGame::CollisionPlayerVsObstacle()
 
 void CTheGame::CollisionEnemyVsObstacle()
 {
-	if (!IsGameStateObstacles())
-	{
-		return;
-	}
-
-	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
-		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	if (!IsFirstObstacleDepthRender())
 	{
 		return;
 	}
@@ -8640,13 +8645,7 @@ void CTheGame::CollisionBulletVsPlayer()
 
 void CTheGame::CollisionBulletVsObstacle()
 {
-	if (!IsGameStateObstacles())
-	{
-		return;
-	}
-
-	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
-		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	if (!IsFirstObstacleDepthRender())
 	{
 		return;
 	}
@@ -9230,24 +9229,20 @@ void CTheGame::ClearObstacles()
 		return;
 	}
 
-	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
-		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
-	{
-		return;
-	}
-
 	/* depth 1 obstacles */
-
-	this->m_pObstaclesDepth1.SetFirst();
-	while( this->m_pObstaclesDepth1.GetCurrent() )
+	if (IsFirstObstacleDepthRender())
 	{
-		if( !this->m_pObstaclesDepth1.GetCurrent()->IsActive() )
+		this->m_pObstaclesDepth1.SetFirst();
+		while (this->m_pObstaclesDepth1.GetCurrent())
 		{
-			this->m_pObstaclesDepth1.PopCurrent();
-		}
-		else
-		{
-			this->m_pObstaclesDepth1.SetNext();
+			if (!this->m_pObstaclesDepth1.GetCurrent()->IsActive())
+			{
+				this->m_pObstaclesDepth1.PopCurrent();
+			}
+			else
+			{
+				this->m_pObstaclesDepth1.SetNext();
+			}
 		}
 	}
 
@@ -9312,20 +9307,8 @@ void CTheGame::ClearObstacles()
 	}
 }
 
-void CTheGame::ClearBullets()
+void CTheGame::ClearBullets(bool bForced)
 {
-	bool bForced = false;
-
-	if (this->m_iGameState == GAME_STATE_LOAD_LEVEL)
-	{
-		bForced = true;
-	}
-
-	if (this->m_iGameState == GAME_STATE_BLAST_DEACTIVATE)
-	{
-		bForced = true;
-	}
-
 	// boss bullets
 	if (IsGameStateBossPlay())
 	{
@@ -9738,47 +9721,40 @@ void CTheGame::UpdateEnemies()
 	}
 }
 
-void CTheGame::UpdateEnemiesShake(float fFrametime)
+void CTheGame::UpdateEnemiesBlastShake(float fFrametime)
 {
-	bool bBlast = false;
-
-	if (m_iGameState == GAME_STATE_BLAST_ACTIVE)
-	{
-		bBlast = true;
-	}
-
 	// active enemies
-	this->m_pActiveEnemies.SetFirst();
-	while( this->m_pActiveEnemies.GetCurrent() )
+	if (this->m_iGameStatePrevious == GAME_STATE_PLAY_ENEMIES)
 	{
-		IEnemy* pEnemy = this->m_pActiveEnemies.GetCurrent();
-
-		if( pEnemy->IsActive() )
+		this->m_pActiveEnemies.SetFirst();
+		while (this->m_pActiveEnemies.GetCurrent())
 		{
-			if(bBlast)
+			IEnemy* pEnemy = this->m_pActiveEnemies.GetCurrent();
+
+			if (pEnemy->IsActive())
 			{
 				pEnemy->UpdateEnemyBlastShake(fFrametime);
 				pEnemy->UpdateShake(fFrametime);
 			}
-			else
-			{
-				pEnemy->UpdateEnemyCannonShake(fFrametime);
-			}
+			this->m_pActiveEnemies.SetNext();
 		}
-		this->m_pActiveEnemies.SetNext();
 	}
-}
+	// obstacle enemies
+	else if ((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || 
+		(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
+	{
+		this->m_pObstacleEnemies.SetFirst();
+		while (this->m_pObstacleEnemies.GetCurrent())
+		{
+			IEnemy* pEnemy = this->m_pObstacleEnemies.GetCurrent();
 
-void CTheGame::UpdateEnemiesShake(IEnemy* pEnemy, bool bBlast, float fFrametime)
-{
-	if(bBlast)
-	{
-		pEnemy->UpdateEnemyBlastShake(fFrametime);
-		pEnemy->UpdateShake(fFrametime);
-	}
-	else
-	{
-		pEnemy->UpdateEnemyCannonShake(fFrametime);
+			if (pEnemy->IsActive())
+			{
+				pEnemy->UpdateEnemyBlastShake(fFrametime);
+				pEnemy->UpdateShake(fFrametime);
+			}
+			this->m_pObstacleEnemies.SetNext();
+		}
 	}
 }
 
@@ -10469,8 +10445,7 @@ void CTheGame::RenderObstacleEnemies(float fFrametime)
 		return;
 	}
 
-	if ((this->m_iGameState != GAME_STATE_PLAY_OBSTACLES) &&
-		(this->m_iGameState != GAME_STATE_WAIT_OBSTACLES))
+	if (!IsFirstObstacleDepthRender())
 	{
 		return;
 	}
@@ -10480,8 +10455,10 @@ void CTheGame::RenderObstacleEnemies(float fFrametime)
 	switch (this->m_iGameState)
 	{
 	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
 		bFreeze = true;
 		break;
+
 	case GAME_STATE_QUIT:
 		bFreeze = this->m_bFreezeQuit;
 		break;
@@ -10542,8 +10519,10 @@ void CTheGame::RenderObstacles(float fFrametime)
 	switch (this->m_iGameState)
 	{
 	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
 		bFreeze = true;
 		break;
+
 	case GAME_STATE_QUIT:
 		bFreeze = this->m_bFreezeQuit;
 		break;
@@ -10553,8 +10532,7 @@ void CTheGame::RenderObstacles(float fFrametime)
 
 	/* depth 1 obstacles */
 
-	if ((this->m_iGameState == GAME_STATE_PLAY_OBSTACLES) ||
-		(this->m_iGameState == GAME_STATE_WAIT_OBSTACLES))
+	if (IsFirstObstacleDepthRender())
 	{
 		this->m_pObstaclesDepth1.SetFirst();
 		while (this->m_pObstaclesDepth1.GetCurrent())
@@ -11457,7 +11435,7 @@ void CTheGame::RenderStatistics(float fFrametime)
 	case GAME_STATE_END_SUCCESS:
 		return;
 	case GAME_STATE_QUIT:
-		if (!this->m_bFadeOut)
+		if (this->m_iGameStateEnd == GAME_STATE_END_SUCCESS)
 		{
 			return;
 		}
@@ -12592,6 +12570,7 @@ bool CTheGame::IsGameStateObstacles()
 	switch (this->m_iGameState)
 	{
 	case GAME_STATE_LEVEL_INTRO:
+
 		if (m_pLevel->IsObstaclesFirst())
 		{
 			return true;
@@ -12600,10 +12579,40 @@ bool CTheGame::IsGameStateObstacles()
 
 	case GAME_STATE_PLAY_OBSTACLES:
 	case GAME_STATE_WAIT_OBSTACLES:
+
 		return true;
 
+	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
 	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+
 		if ((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) || (this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
+		{
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool CTheGame::IsFirstObstacleDepthRender()
+{
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_PLAY_OBSTACLES:
+	case GAME_STATE_WAIT_OBSTACLES:
+
+		return true;
+
+	case GAME_STATE_BLAST_ACTIVE:
+	case GAME_STATE_BLAST_DEACTIVATE:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+
+		if ((this->m_iGameStatePrevious == GAME_STATE_PLAY_OBSTACLES) ||
+			(this->m_iGameStatePrevious == GAME_STATE_WAIT_OBSTACLES))
 		{
 			return true;
 		}
