@@ -262,11 +262,7 @@ public:
 	inline float GetAngleZ() { return this->m_fAngleZ; }
 
 	inline bool GetTimedExplosion() { return this->m_bTimedExplosion; }
-
 	inline CQueue<CWeapon*>* GetBullets() { return &this->m_pBullets; }
-
-	inline float GetShootTime() { return this->m_fShootTime; }
-
 	inline eENEMY_DEPTH GetDepth() const { return this->m_eDepth; }
 
 	void SetDepth(int depth);
