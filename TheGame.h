@@ -340,7 +340,9 @@ private:
 	void CheckQuitGame(float fFrametime);
 	void CheckGameOver();
 	bool CheckBossEnter();
-	void CheckExtraLife();
+
+	void CheckExtraPlayerLife();
+	void CheckExtraPlayerBlast();
 
 	void PlayerSetMoveEnter(int currentGameState);
 	void PlayerMoveEnter(float fFrametime);
@@ -729,7 +731,9 @@ private:
 	int							m_iGameStateNext;
 	int							m_iGameStateEnd;
 
-	int							m_iExtraLives;
+	int							m_iExtraPlayerLives;
+	int							m_iExtraPlayerBlasts;
+
 	bool						m_bCheckHighScore;
 	bool						m_bCannonDamageBoss;
 

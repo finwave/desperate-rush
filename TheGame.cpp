@@ -170,7 +170,9 @@ CTheGame::CTheGame(void)
 	this->m_fEndSuccessTextTimer = 0.1f;
 	this->m_iEndSuccessTextIndex = 0;
 
-	this->m_iExtraLives = 0;
+	this->m_iExtraPlayerLives = 0;
+	this->m_iExtraPlayerBlasts = 0;
+
 	this->m_bCheckHighScore = false;
 	this->m_bCannonDamageBoss = true;
 
@@ -1420,6 +1422,10 @@ void CTheGame::RunGameStateLoadLevel()
 		// reset player's velocity values
 		this->m_pPlayer->SetLevelStartVelocityControls();
 
+		// reset the amount of extra lives and blasts
+		this->m_iExtraPlayerLives = 0;
+		this->m_iExtraPlayerBlasts = 0;
+
 		break;
 
 	case LOAD_LEVEL_MUSIC:
@@ -1596,7 +1602,8 @@ void CTheGame::Render(void)
 	ResetSoundExplosionEnemy(fFrametime);
 	this->m_pPlayer->ResetHitSound(fFrametime);
 
-	CheckExtraLife();
+	CheckExtraPlayerLife();
+	CheckExtraPlayerBlast();
 	CheckQuitGame(fFrametime);
 
 	switch (this->m_iGameState)
@@ -4245,53 +4252,30 @@ bool CTheGame::CheckBossEnter()
 	return bEnter;
 }
 
-void CTheGame::CheckExtraLife()
+void CTheGame::CheckExtraPlayerLife()
 {
-	bool extraLife = false;
-
-	switch(this->m_iExtraLives)
+	switch (this->m_iGameState)
 	{
-	case 0:
-		if(this->m_pPlayer->GetScore() >= 10000)
-		{
-			extraLife = true;
-		}
-		break;
-	case 1:
-		if(this->m_pPlayer->GetScore() >= 25000)
-		{
-			extraLife = true;
-		}
-		break;
-	case 2:
-		if(this->m_pPlayer->GetScore() >= 50000)
-		{
-			extraLife = true;
-		}
-		break;
-	case 3:
-		if(this->m_pPlayer->GetScore() >= 100000)
-		{
-			extraLife = true;
-		}
-		break;
-	case 4:
-		if(this->m_pPlayer->GetScore() >= 150000)
-		{
-			extraLife = true;
-		}
-		break;
-	case 5:
-		if(this->m_pPlayer->GetScore() >= 200000)
-		{
-			extraLife = true;
-		}
-		break;
+	case GAME_STATE_LEVEL_INTRO:
+	case GAME_STATE_END_SUCCESS:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+		return;
 	}
 
-	if(extraLife)
+	float fScoreLimit = CGameSettings::EXTRA_LIFE_SCORE;
+
+	for (int i = 0; i < this->m_iExtraPlayerLives; i++)
 	{
-		this->m_iExtraLives++;
+		float multiplier = 1.0f;
+		multiplier += (i + 1) * CGameSettings::EXTRA_LIFE_MULTIPLIER;
+		fScoreLimit += multiplier * CGameSettings::EXTRA_LIFE_SCORE;
+	}
+
+	if (this->m_pPlayer->GetScore() >= fScoreLimit)
+	{
+		// increase player life count
+		this->m_iExtraPlayerLives++;
 		this->m_pPlayer->ExtraLife();
 
 		// play sound effect
@@ -4299,6 +4283,36 @@ void CTheGame::CheckExtraLife()
 	}
 }
 
+void CTheGame::CheckExtraPlayerBlast()
+{
+	switch (this->m_iGameState)
+	{
+	case GAME_STATE_LEVEL_INTRO:
+	case GAME_STATE_END_SUCCESS:
+	case GAME_STATE_END_FAILED:
+	case GAME_STATE_QUIT:
+		return;
+	}
+
+	float fScoreLimit = CGameSettings::EXTRA_BLAST_SCORE;
+
+	for (int i = 0; i < this->m_iExtraPlayerBlasts; i++)
+	{
+		float multiplier = 1.0f;
+		multiplier += (i + 1) * CGameSettings::EXTRA_BLAST_MULTIPLIER;
+		fScoreLimit += multiplier * CGameSettings::EXTRA_BLAST_SCORE;
+	}
+
+	if (this->m_pPlayer->GetScore() >= fScoreLimit)
+	{
+		// increase player blast count
+		this->m_iExtraPlayerBlasts++;
+		this->m_pPlayer->GetBlastController()->IncreaseBlastAmount();
+
+		// play sound effect
+		this->m_pTheApp->GetWave(SOUND_GAIN_BLAST).Play(FALSE, 0);
+	}
+}
 
 void CTheGame::PlayerSetMoveEnter(int currentGameState)
 {

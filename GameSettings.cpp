@@ -29,6 +29,16 @@ float CGameSettings::SCROLLING_BACKGROUND_TOP_MAX = 8.0f;
 float CGameSettings::SCROLLING_EXPLOSION_MIN = 1.0f;
 float CGameSettings::SCROLLING_EXPLOSION_MAX = 6.0f;
 
+// EXTRA LIFE
+
+float CGameSettings::EXTRA_LIFE_SCORE = 8500;
+float CGameSettings::EXTRA_LIFE_MULTIPLIER = 0.1f;
+
+// EXTRA BLAST
+
+float CGameSettings::EXTRA_BLAST_SCORE = 3000;
+float CGameSettings::EXTRA_BLAST_MULTIPLIER = 0.1f;
+
 // PLAYER
 
 int CGameSettings::PLAYER_LIVES = 3;

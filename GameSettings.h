@@ -35,6 +35,16 @@ public:
 	static float	SCROLLING_EXPLOSION_MIN;
 	static float	SCROLLING_EXPLOSION_MAX;
 
+	// EXTRA LIFE
+
+	static float	EXTRA_LIFE_SCORE;
+	static float	EXTRA_LIFE_MULTIPLIER;
+
+	// EXTRA BLAST
+
+	static float	EXTRA_BLAST_SCORE;
+	static float	EXTRA_BLAST_MULTIPLIER;
+
 	// PLAYER
 
 	static int		PLAYER_LIVES;
