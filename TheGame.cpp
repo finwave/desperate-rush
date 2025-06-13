@@ -1228,6 +1228,7 @@ void CTheGame::RunGameStateInitLevel()
 
 void CTheGame::RunGameStateLoadLevel()
 {
+	int iLevelNumber = this->m_pLevel->GetLevelNumber();
 	bool increaseStep = true;
 
 	switch (this->m_iLoadLevelStep)
@@ -1241,7 +1242,7 @@ void CTheGame::RunGameStateLoadLevel()
 
 	case LOAD_LEVEL_DYNAMIC_LIGHT:
 
-		this->m_pState->GetLights()->InitGameMain(this->m_pLevel->GetLevelNumber());
+		this->m_pState->GetLights()->InitGameMain(iLevelNumber);
 		this->m_pState->GetLights()->SetGameMain(true);
 
 		break;
@@ -1328,17 +1329,9 @@ void CTheGame::RunGameStateLoadLevel()
 
 		this->InitLevelObstacles();
 
-		switch (this->m_pLevel->GetLevelNumber())
+		if (this->m_iLoadLevelAsteroidStep < LOAD_LEVEL_ASTEROID_MAX)
 		{
-		case 2:
-		case 3:
-
-			if (this->m_iLoadLevelAsteroidStep < LOAD_LEVEL_ASTEROID_MAX)
-			{
-				increaseStep = false;
-			}
-
-			break;
+			increaseStep = false;
 		}
 
 		break;
@@ -1347,17 +1340,9 @@ void CTheGame::RunGameStateLoadLevel()
 
 		this->CreateCollisionMeshObstacles();
 
-		switch (this->m_pLevel->GetLevelNumber())
+		if (this->m_iLoadLevelAsteroidCollisionMeshStep < LOAD_LEVEL_ASTEROID_MAX)
 		{
-		case 2:
-		case 3:
-
-			if (this->m_iLoadLevelAsteroidCollisionMeshStep < LOAD_LEVEL_ASTEROID_MAX)
-			{
-				increaseStep = false;
-			}
-
-			break;
+			increaseStep = false;
 		}
 
 		break;
@@ -1421,10 +1406,6 @@ void CTheGame::RunGameStateLoadLevel()
 		this->m_pPlayer->ResetHitSoundTimer();
 		// reset player's velocity values
 		this->m_pPlayer->SetLevelStartVelocityControls();
-
-		// reset the amount of extra lives and blasts
-		this->m_iExtraPlayerLives = 0;
-		this->m_iExtraPlayerBlasts = 0;
 
 		break;
 
@@ -1960,7 +1941,9 @@ void CTheGame::Render(void)
 
 		if (this->m_bBossDestroyed)
 		{
-			switch (this->m_pLevel->GetLevelNumber())
+			int iLevelNumber = this->m_pLevel->GetLevelNumber();
+
+			switch (iLevelNumber)
 			{
 			case 1:
 				iCountBossChainExplosions = EXPLOSION_CHAIN_REPEATS_BOSS_1;
@@ -1989,6 +1972,7 @@ void CTheGame::Render(void)
 				break;
 
 			case 3:
+			case 4:
 				iCountBossChainExplosions = EXPLOSION_CHAIN_REPEATS_BOSS_3;
 
 				fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
@@ -2012,6 +1996,8 @@ void CTheGame::Render(void)
 		// boss chain and part explosions
 		if (fPauseBossChainExplosion <= 0.0f)
 		{
+			int iLevelNumber = this->m_pLevel->GetLevelNumber();
+
 			if (iCountBossChainExplosions > 0)
 			{
 				/* chain explosions */
@@ -2023,7 +2009,7 @@ void CTheGame::Render(void)
 				PlaySoundExplosionBossChain();
 
 				// new chain explosion timer value
-				switch (this->m_pLevel->GetLevelNumber())
+				switch (iLevelNumber)
 				{
 				case 1:
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
@@ -2038,6 +2024,7 @@ void CTheGame::Render(void)
 					break;
 
 				case 3:
+				case 4:
 					fPauseBossChainExplosion = this->m_pTheApp->RandFloat(
 						(float)EXPLOSION_CHAIN_TIMER_MIN_BOSS_3,
 						(float)EXPLOSION_CHAIN_TIMER_MAX_BOSS_3);
@@ -2064,7 +2051,7 @@ void CTheGame::Render(void)
 			// chain explosions finished
 			else
 			{
-				switch (this->m_pLevel->GetLevelNumber())
+				switch (iLevelNumber)
 				{
 				case 1:
 					fPauseBossBigExplosion = (float)EXPLOSION_BIG_TIMER_BOSS_1;
@@ -2075,6 +2062,7 @@ void CTheGame::Render(void)
 					this->m_pPlayer->IncreaseScore(this->m_pEnemyBossFrame->GetScoreDestroyed());
 					break;
 				case 3:
+				case 4:
 					fPauseBossBigExplosion = (float)EXPLOSION_BIG_TIMER_BOSS_3;
 					this->m_pPlayer->IncreaseScore(this->m_pEnemyBossFrame->GetScoreDestroyed());
 					break;
@@ -2125,8 +2113,10 @@ void CTheGame::Render(void)
 		{
 			if (!this->m_bPlayerExit)
 			{
+				int iLevelNumber = this->m_pLevel->GetLevelNumber();
+
 				// player has finished the game
-				if (this->m_pLevel->GetLevelNumber() == LEVELS_MAX)
+				if (iLevelNumber == LEVELS_MAX)
 				{
 					SwitchGameState(GAME_STATE_END_SUCCESS);
 				}
@@ -3057,13 +3047,7 @@ HRESULT CTheGame::LoadMeshes()
 HRESULT CTheGame::InitLevelBoss()
 {
 	HRESULT hres = S_OK;
-
-	// RELEASE BOSS PARTS
-
-	if (this->m_pLevel->GetLevelNumber() > 1)
-	{
-		ReleaseBoss();
-	}
+	ReleaseBoss();
 
 	// CREATE BOSS FRAME
 
@@ -3411,131 +3395,133 @@ HRESULT CTheGame::InitLevelObstacles()
 
 	/** ASTEROIDS **/
 
-	if(	this->m_pLevel->GetLevelNumber() == 2 || 
-		this->m_pLevel->GetLevelNumber() == 3)
+	if (m_pLevel->GetObstacles() == 0)
 	{
-		switch (this->m_iLoadLevelAsteroidStep)
-		{
-		case LOAD_LEVEL_ASTEROID_BIG:
-		{
-			if (m_vTemplateAsteroidBig.size() == 0)
-			{
-				for (int depth = 1; depth <= 5; depth++)
-				{
-					int mapKey = CResources::MODEL_GAME_ASTEROID_BIG_1;
-					float objectWidth = CGameSettings::BIG_ASTEROID_WIDTH;
-					float objectHeight = CGameSettings::BIG_ASTEROID_HEIGHT;
-
-					switch (depth)
-					{
-					case 2:
-						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_2;
-						break;
-					case 3:
-						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_3;
-						break;
-					case 4:
-						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_4;
-						break;
-					case 5:
-						mapKey = CResources::MODEL_GAME_ASTEROID_BIG_5;
-						break;
-					}
-
-					CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
-
-					if (templateObject == NULL)
-					{
-						return E_OUTOFMEMORY;
-					}
-
-					m_vTemplateAsteroidBig.push_back(templateObject);
-				}
-			}
-		}
-		break;
-
-		case LOAD_LEVEL_ASTEROID_MEDIUM:
-		{
-			if (m_vTemplateAsteroidMedium.size() == 0)
-			{
-				for (int depth = 1; depth <= 5; depth++)
-				{
-					int mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_1;
-					float objectWidth = CGameSettings::MEDIUM_ASTEROID_WIDTH;
-					float objectHeight = CGameSettings::MEDIUM_ASTEROID_HEIGHT;
-
-					switch (depth)
-					{
-					case 2:
-						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_2;
-						break;
-					case 3:
-						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_3;
-						break;
-					case 4:
-						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_4;
-						break;
-					case 5:
-						mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_5;
-						break;
-					}
-
-					CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
-
-					if (templateObject == NULL)
-					{
-						return E_OUTOFMEMORY;
-					}
-
-					m_vTemplateAsteroidMedium.push_back(templateObject);
-				}
-			}
-		}
-		break;
-
-		case LOAD_LEVEL_ASTEROID_SMALL:
-		{
-			if (m_vTemplateAsteroidSmall.size() == 0)
-			{
-				for (int depth = 1; depth <= 5; depth++)
-				{
-					int mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_1;
-					float objectWidth = CGameSettings::SMALL_ASTEROID_WIDTH;
-					float objectHeight = CGameSettings::SMALL_ASTEROID_HEIGHT;
-
-					switch (depth)
-					{
-					case 2:
-						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_2;
-						break;
-					case 3:
-						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_3;
-						break;
-					case 4:
-						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_4;
-						break;
-					case 5:
-						mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_5;
-						break;
-					}
-
-					CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
-
-					if (templateObject == NULL)
-					{
-						return E_OUTOFMEMORY;
-					}
-
-					m_vTemplateAsteroidSmall.push_back(templateObject);
-				}
-			}
-		}
-		break;
-		}
-
-		this->m_iLoadLevelAsteroidStep++;
+		this->m_iLoadLevelAsteroidStep = LOAD_LEVEL_ASTEROID_MAX;
+		return hres;
 	}
+
+	switch (this->m_iLoadLevelAsteroidStep)
+	{
+	case LOAD_LEVEL_ASTEROID_BIG:
+	{
+		if (m_vTemplateAsteroidBig.size() == 0)
+		{
+			for (int depth = 1; depth <= 5; depth++)
+			{
+				int mapKey = CResources::MODEL_GAME_ASTEROID_BIG_1;
+				float objectWidth = CGameSettings::BIG_ASTEROID_WIDTH;
+				float objectHeight = CGameSettings::BIG_ASTEROID_HEIGHT;
+
+				switch (depth)
+				{
+				case 2:
+					mapKey = CResources::MODEL_GAME_ASTEROID_BIG_2;
+					break;
+				case 3:
+					mapKey = CResources::MODEL_GAME_ASTEROID_BIG_3;
+					break;
+				case 4:
+					mapKey = CResources::MODEL_GAME_ASTEROID_BIG_4;
+					break;
+				case 5:
+					mapKey = CResources::MODEL_GAME_ASTEROID_BIG_5;
+					break;
+				}
+
+				CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
+
+				if (templateObject == NULL)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				m_vTemplateAsteroidBig.push_back(templateObject);
+			}
+		}
+	}
+	break;
+
+	case LOAD_LEVEL_ASTEROID_MEDIUM:
+	{
+		if (m_vTemplateAsteroidMedium.size() == 0)
+		{
+			for (int depth = 1; depth <= 5; depth++)
+			{
+				int mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_1;
+				float objectWidth = CGameSettings::MEDIUM_ASTEROID_WIDTH;
+				float objectHeight = CGameSettings::MEDIUM_ASTEROID_HEIGHT;
+
+				switch (depth)
+				{
+				case 2:
+					mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_2;
+					break;
+				case 3:
+					mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_3;
+					break;
+				case 4:
+					mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_4;
+					break;
+				case 5:
+					mapKey = CResources::MODEL_GAME_ASTEROID_MEDIUM_5;
+					break;
+				}
+
+				CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
+
+				if (templateObject == NULL)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				m_vTemplateAsteroidMedium.push_back(templateObject);
+			}
+		}
+	}
+	break;
+
+	case LOAD_LEVEL_ASTEROID_SMALL:
+	{
+		if (m_vTemplateAsteroidSmall.size() == 0)
+		{
+			for (int depth = 1; depth <= 5; depth++)
+			{
+				int mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_1;
+				float objectWidth = CGameSettings::SMALL_ASTEROID_WIDTH;
+				float objectHeight = CGameSettings::SMALL_ASTEROID_HEIGHT;
+
+				switch (depth)
+				{
+				case 2:
+					mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_2;
+					break;
+				case 3:
+					mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_3;
+					break;
+				case 4:
+					mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_4;
+					break;
+				case 5:
+					mapKey = CResources::MODEL_GAME_ASTEROID_SMALL_5;
+					break;
+				}
+
+				CObstacle* templateObject = CreateTemplateObstacle(mapKey, objectWidth, objectHeight);
+
+				if (templateObject == NULL)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				m_vTemplateAsteroidSmall.push_back(templateObject);
+			}
+		}
+	}
+	break;
+	}
+
+	this->m_iLoadLevelAsteroidStep++;
 
 	return hres;
 }
@@ -3612,8 +3598,9 @@ void CTheGame::InitVolumeSoundEffect()
 void CTheGame::LoadMusicLevel()
 {
 	LPCTSTR filePath = NULL;
+	int iLevelNumber = this->m_pLevel->GetLevelNumber();
 
-	switch (this->m_pLevel->GetLevelNumber())
+	switch (iLevelNumber)
 	{
 	case 1:
 		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/level_1.mp3");
@@ -3623,6 +3610,9 @@ void CTheGame::LoadMusicLevel()
 		break;
 	case 3:
 		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/level_3.mp3");
+		break;
+	case 4:
+		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/level_4.mp3");
 		break;
 	}
 
@@ -3636,8 +3626,9 @@ void CTheGame::LoadMusicLevel()
 void CTheGame::LoadMusicBoss()
 {
 	LPCTSTR filePath = NULL;
+	int iLevelNumber = this->m_pLevel->GetLevelNumber();
 
-	switch (this->m_pLevel->GetLevelNumber())
+	switch (iLevelNumber)
 	{
 	case 1:
 		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/boss_1.mp3");
@@ -3647,6 +3638,9 @@ void CTheGame::LoadMusicBoss()
 		break;
 	case 3:
 		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/boss_3.mp3");
+		break;
+	case 4:
+		filePath = this->m_pResourceGame->GetUnpackedResourceFilePath("music/boss_4.mp3");
 		break;
 	}
 
@@ -4276,10 +4270,12 @@ void CTheGame::CheckExtraPlayerLife()
 	{
 		// increase player life count
 		this->m_iExtraPlayerLives++;
-		this->m_pPlayer->ExtraLife();
 
-		// play sound effect
-		this->m_pTheApp->GetWave(SOUND_GAIN_LIFE).Play(FALSE, 0);
+		if (this->m_pPlayer->GetLives() < 9)
+		{
+			this->m_pPlayer->ExtraLife();
+			this->m_pTheApp->GetWave(SOUND_GAIN_LIFE).Play(FALSE, 0);
+		}
 	}
 }
 
@@ -4307,10 +4303,12 @@ void CTheGame::CheckExtraPlayerBlast()
 	{
 		// increase player blast count
 		this->m_iExtraPlayerBlasts++;
-		this->m_pPlayer->GetBlastController()->IncreaseBlastAmount();
 
-		// play sound effect
-		this->m_pTheApp->GetWave(SOUND_GAIN_BLAST).Play(FALSE, 0);
+		if (this->m_pPlayer->GetBlastController()->GetBlastAmount() < 9)
+		{
+			this->m_pPlayer->GetBlastController()->IncreaseBlastAmount();
+			this->m_pTheApp->GetWave(SOUND_GAIN_BLAST).Play(FALSE, 0);
+		}
 	}
 }
 
@@ -5461,7 +5459,9 @@ void CTheGame::PrepareStrikeEnemies()
 
 void CTheGame::PrepareReinforcements()
 {
-	switch( this->m_pLevel->GetLevelNumber() )
+	int iLevelNumber = this->m_pLevel->GetLevelNumber();
+
+	switch(iLevelNumber)
 	{
 	case 1:
 		this->m_iReinforcementsMax = GAME_REINFORCEMENTS_LEVEL_1;
@@ -5471,6 +5471,9 @@ void CTheGame::PrepareReinforcements()
 		break;
 	case 3:
 		this->m_iReinforcementsMax = GAME_REINFORCEMENTS_LEVEL_3;
+		break;
+	case 4:
+		this->m_iReinforcementsMax = GAME_REINFORCEMENTS_LEVEL_4;
 		break;
 	}
 
@@ -5800,8 +5803,9 @@ bool CTheGame::IsGenerateObstacleEnemy()
 	if (this->m_pLevel->IsObstacleEnemies())
 	{
 		int random = this->m_pTheApp->RandInt(1, 8);
+		int iLevelNumber = this->m_pLevel->GetLevelNumber();
 
-		switch (this->m_pLevel->GetLevelNumber())
+		switch (iLevelNumber)
 		{
 		case 2:
 		{
@@ -7099,13 +7103,13 @@ void CTheGame::EnemyShooting()
 				if(	pEnemy->IsActive() && 
 					(pEnemy->GetPosition().y <= this->m_fScreenHeight + pEnemy->GetHeight()))
 				{
-					if( this->ObstacleEnemyLineOfFire(pEnemy, false) )
-					{
+					//if( this->ObstacleEnemyLineOfFire(pEnemy, false) )
+					//{
 						if( pEnemy->Shoot() )
 						{
 							EnemyShoots(pEnemy);
 						}
-					}
+					//}
 				}
 			}
 			this->m_pObstacleEnemies.SetNext();
@@ -11716,7 +11720,14 @@ void CTheGame::RenderGameTime(float fFrametime)
 
 void CTheGame::RenderLevelTitleText(int posX, int posY)
 {
-	switch (this->m_pLevel->GetLevelNumber())
+	int spriteIndex = this->m_pLevel->GetLevelNumber() - 1;
+	this->m_pSpriteLevelTitleSpace[spriteIndex].Draw(posX, posY);
+	//(this->m_pSpriteLevelTitleSpace + spriteIndex)->Draw(posX, posY);
+
+	/*
+	int iLevelNumber = this->m_pLevel->GetLevelNumber();
+
+	switch (iLevelNumber)
 	{
 	case 1:
 		(this->m_pSpriteLevelTitleSpace + 0)->Draw(posX, posY);
@@ -11727,12 +11738,17 @@ void CTheGame::RenderLevelTitleText(int posX, int posY)
 	case 3:
 		(this->m_pSpriteLevelTitleSpace + 2)->Draw(posX, posY);
 		break;
+	case 4:
+		(this->m_pSpriteLevelTitleSpace + 3)->Draw(posX, posY);
+		break;
 	}
+	*/
 }
 
 void CTheGame::RenderLevelTitleBox(int posX, int posY)
 {
-	(this->m_pSpriteLevelTitleSpace + 6)->Draw(posX, posY);
+	this->m_pSpriteLevelTitleSpace[6].Draw(posX, posY);
+	//(this->m_pSpriteLevelTitleSpace + 6)->Draw(posX, posY);
 }
 
 bool CTheGame::RenderLevelTitleAppear(float fFrametime)
@@ -11908,16 +11924,9 @@ void CTheGame::RenderBossWarning(float fFrametime)
 		}
 
 		// render sprites
-		if ((this->m_iBossWarningTextIndex >= 0) &&
-			(this->m_iBossWarningTextIndex <= 9))
+		if ((this->m_iBossWarningTextIndex >= 0) && (this->m_iBossWarningTextIndex <= 9))
 		{
-			// level type (1-3: space, 4-6: planet)
-			if ((this->m_pLevel->GetLevelNumber() == 1) ||
-				(this->m_pLevel->GetLevelNumber() == 2) ||
-				(this->m_pLevel->GetLevelNumber() == 3))
-			{
-				this->m_pSpriteBossWarningSpace[this->m_iBossWarningTextIndex].Draw(iPosX, iPosY);
-			}
+			this->m_pSpriteBossWarningSpace[this->m_iBossWarningTextIndex].Draw(iPosX, iPosY);
 		}
 	}
 }
@@ -12465,51 +12474,45 @@ HRESULT CTheGame::CreateCollisionMeshObstacles()
 {
 	HRESULT hres = S_OK;
 
-	switch(this->m_pLevel->GetLevelNumber())
+	if (m_pLevel->GetObstacles() == 0)
 	{
-	case 1:
+		this->m_iLoadLevelAsteroidCollisionMeshStep = LOAD_LEVEL_ASTEROID_MAX;
+		return hres;
+	}
+
+	switch(this->m_iLoadLevelAsteroidCollisionMeshStep)
+	{
+	case LOAD_LEVEL_ASTEROID_BIG:
+		
+		for (DWORD i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
+		{
+			hres = this->m_vTemplateAsteroidBig[i]->CreateCollisionMesh();
+		}
 		break;
 
-	case 2:
-	case 3:
+	case LOAD_LEVEL_ASTEROID_MEDIUM:
 
-		switch(this->m_iLoadLevelAsteroidCollisionMeshStep)
+		for (DWORD i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
 		{
-		case LOAD_LEVEL_ASTEROID_BIG:
-		
-			for (DWORD i = 0; i < this->m_vTemplateAsteroidBig.size(); i++)
-			{
-				hres = this->m_vTemplateAsteroidBig[i]->CreateCollisionMesh();
-			}
-			break;
-
-		case LOAD_LEVEL_ASTEROID_MEDIUM:
-
-			for (DWORD i = 0; i < this->m_vTemplateAsteroidMedium.size(); i++)
-			{
-				hres = this->m_vTemplateAsteroidMedium[i]->CreateCollisionMesh();
-			}
-			break;
-
-		case LOAD_LEVEL_ASTEROID_SMALL:
-
-			for (DWORD i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
-			{
-				hres = this->m_vTemplateAsteroidSmall[i]->CreateCollisionMesh();
-			}
-			break;
+			hres = this->m_vTemplateAsteroidMedium[i]->CreateCollisionMesh();
 		}
+		break;
 
-		if( FAILED(hres) )
+	case LOAD_LEVEL_ASTEROID_SMALL:
+
+		for (DWORD i = 0; i < this->m_vTemplateAsteroidSmall.size(); i++)
 		{
-			return hres;
+			hres = this->m_vTemplateAsteroidSmall[i]->CreateCollisionMesh();
 		}
-
-		this->m_iLoadLevelAsteroidCollisionMeshStep++;
-
 		break;
 	}
 
+	if( FAILED(hres) )
+	{
+		return hres;
+	}
+
+	this->m_iLoadLevelAsteroidCollisionMeshStep++;
 	return hres;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#define LEVELS_MAX		3
+#define LEVELS_MAX 4
 
 #include <windows.h>
 #include <vector>
@@ -108,46 +108,46 @@ private:
 	int GetLaunchSize();
 	int GetStrikeSize();
 
-	CTheApp*		m_pTheApp;
+	CTheApp*	m_pTheApp;
 
-	bool			m_bActive;
-	int				m_iLevelNumber;
+	bool		m_bActive;
+	int			m_iLevelNumber;
 
 	// PLAYER
 
-	float			m_fPlayerVelocityEnemy;
-	float			m_fPlayerVelocityObstacle;
+	float		m_fPlayerVelocityEnemy;
+	float		m_fPlayerVelocityObstacle;
 
-	float			m_fPlayerBoostMaxEnemy;
-	float			m_fPlayerBoostMaxObstacle;
+	float		m_fPlayerBoostMaxEnemy;
+	float		m_fPlayerBoostMaxObstacle;
 
 	// TIMES
 
-	float			m_fFirstEnemyLaunch;
-	float			m_fFirstEnemyStrike;
+	float		m_fFirstEnemyLaunch;
+	float		m_fFirstEnemyStrike;
 
-	float			m_fTimeEnemyLaunch;
-	float			m_fTimeEnemyStrike;
+	float		m_fTimeEnemyLaunch;
+	float		m_fTimeEnemyStrike;
 
-	float			m_fTimeObstacleStart;
+	float		m_fTimeObstacleStart;
 
 	// ENEMIES
 
-	int				m_iFleetsLaunch;
-	int				m_iFleetsStrike;
-	int				m_iMaxEnemiesScreen;
-	int				m_iMaxLaunchEnemies;
-	int				m_iMaxStrikeEnemies;
-	int				m_iLaunchSizeMin;
-	int				m_iLaunchSizeMax;
-	int				m_iStrikeSizeMin;
-	int				m_iStrikeSizeMax;
+	int			m_iFleetsLaunch;
+	int			m_iFleetsStrike;
+	int			m_iMaxEnemiesScreen;
+	int			m_iMaxLaunchEnemies;
+	int			m_iMaxStrikeEnemies;
+	int			m_iLaunchSizeMin;
+	int			m_iLaunchSizeMax;
+	int			m_iStrikeSizeMin;
+	int			m_iStrikeSizeMax;
 
-	bool			m_bLaunchFirst;
-	bool			m_bStrikeFirst;
+	bool		m_bLaunchFirst;
+	bool		m_bStrikeFirst;
 
-	int*			m_pLaunchFleetSize;
-	int*			m_pStrikeFleetSize;
+	int*		m_pLaunchFleetSize;
+	int*		m_pStrikeFleetSize;
 
 	// BOSS
 
@@ -155,23 +155,23 @@ private:
 
 	// OBSTACLES
 
-	int				m_iObstacles;
+	int			m_iObstacles;
 
-	float			m_fObstacleMinMarginY;
-	float			m_fObstacleMaxMarginY;
+	float		m_fObstacleMinMarginY;
+	float		m_fObstacleMaxMarginY;
 
-	bool			m_bObstaclesFirst;
-	bool			m_bObstacleEnemies;
+	bool		m_bObstaclesFirst;
+	bool		m_bObstacleEnemies;
 
 	// BACKGROUNDS
 
-	int				m_iBackgroundMiddleSpeed;
-	int				m_iBackgroundMiddlePause;
+	int			m_iBackgroundMiddleSpeed;
+	int			m_iBackgroundMiddlePause;
 
-	int				m_iBackgroundTopSpeedEnemies;
-	int				m_iBackgroundTopPauseEnemies;
-	int				m_iBackgroundTopSpeedObstacles;
-	int				m_iBackgroundTopPauseObstacles;
-	int				m_iBackgroundTopSpeedBoss;
-	int				m_iBackgroundTopPauseBoss;
+	int			m_iBackgroundTopSpeedEnemies;
+	int			m_iBackgroundTopPauseEnemies;
+	int			m_iBackgroundTopSpeedObstacles;
+	int			m_iBackgroundTopPauseObstacles;
+	int			m_iBackgroundTopSpeedBoss;
+	int			m_iBackgroundTopPauseBoss;
 };

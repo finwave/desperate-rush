@@ -57,21 +57,21 @@ CLevel::~CLevel(void)
 {
 }
 
-void CLevel::Create(CTheApp *pTheApp)
+void CLevel::Create(CTheApp* pTheApp)
 {
 	this->m_pTheApp = pTheApp;
 }
 
 void CLevel::Release()
 {
-	if(this->m_pLaunchFleetSize)
+	if (this->m_pLaunchFleetSize)
 	{
-		delete [] this->m_pLaunchFleetSize;
+		delete[] this->m_pLaunchFleetSize;
 		this->m_pLaunchFleetSize = NULL;
 	}
-	if(this->m_pStrikeFleetSize)
+	if (this->m_pStrikeFleetSize)
 	{
-		delete [] this->m_pStrikeFleetSize;
+		delete[] this->m_pStrikeFleetSize;
 		this->m_pStrikeFleetSize = NULL;
 	}
 
@@ -98,9 +98,9 @@ void CLevel::ReadLevel(void)
 	this->m_iBackgroundTopSpeedBoss = 1;
 	this->m_iBackgroundTopPauseBoss = 2;
 
-	if(this->m_iLevelNumber <= 3)
+	if (this->m_iLevelNumber <= LEVELS_MAX)
 	{
-		switch( this->m_iLevelNumber )
+		switch (this->m_iLevelNumber)
 		{
 		case 1:
 
@@ -187,6 +187,35 @@ void CLevel::ReadLevel(void)
 			this->m_vBossBattleParts.push_back(BossBattlePart::FRONT_CANNON);
 
 			break;
+
+		case 4:
+
+			this->m_fPlayerVelocityEnemy = 120.0f;
+			this->m_fPlayerVelocityObstacle = 70.0f;
+			this->m_fFirstEnemyLaunch = 0.0f;
+			this->m_fFirstEnemyStrike = 0.0f;
+			this->m_fTimeEnemyLaunch = 0.0f;
+			this->m_fTimeEnemyStrike = 0.08f;
+			this->m_fTimeObstacleStart = 0.5f;
+			this->m_iMaxEnemiesScreen = 8;
+			this->m_iMaxLaunchEnemies = 80;
+			this->m_iMaxStrikeEnemies = 80;
+			this->m_iLaunchSizeMin = 5;
+			this->m_iLaunchSizeMax = 8;
+			this->m_iStrikeSizeMin = 7;
+			this->m_iStrikeSizeMax = 8;
+			this->m_bLaunchFirst = false;
+			this->m_bStrikeFirst = true;
+			this->m_iObstacles = 60;
+			this->m_bObstaclesFirst = true;
+			this->m_bObstacleEnemies = true;
+
+			// boss battle parts
+			this->m_vBossBattleParts.push_back(BossBattlePart::LASER_ROTATING);
+			this->m_vBossBattleParts.push_back(BossBattlePart::SCATTER_MOVING);
+			this->m_vBossBattleParts.push_back(BossBattlePart::FRONT_CANNON);
+
+			break;
 		}
 
 		this->CalculateLaunchFleets();
@@ -202,32 +231,23 @@ void CLevel::ReadLevel(void)
 
 int CLevel::GetLaunchSize()
 {
-	int iLaunchSize = 0;
-
-	iLaunchSize = this->m_pTheApp->RandInt(	this->m_iLaunchSizeMin, 
-											this->m_iLaunchSizeMax);
-	return iLaunchSize;
+	return this->m_pTheApp->RandInt(this->m_iLaunchSizeMin, this->m_iLaunchSizeMax);
 }
 
 int CLevel::GetStrikeSize()
 {
-	int iStrikeSize = 0;
-
-	iStrikeSize = this->m_pTheApp->RandInt(	this->m_iStrikeSizeMin, 
-											this->m_iStrikeSizeMax);
-	return iStrikeSize;
+	return this->m_pTheApp->RandInt(this->m_iStrikeSizeMin, this->m_iStrikeSizeMax);
 }
 
 CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 {
 	eSHIP_TYPE eShipType = eSHIP_TYPE_DRONE;
 
-	switch( this->m_iLevelNumber )
+	switch (this->m_iLevelNumber)
 	{
 	case 1:
 
-		eShipType = eSHIP_TYPE_SNIPER;
-		switch(this->m_pTheApp->RandInt(1,3))
+		switch (this->m_pTheApp->RandInt(1, 3))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -244,7 +264,7 @@ CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 
 	case 2:
 
-		switch(this->m_pTheApp->RandInt(1,5))
+		switch (this->m_pTheApp->RandInt(1, 5))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -267,13 +287,13 @@ CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 
 	case 3:
 
-		switch(this->m_pTheApp->RandInt(1,5))
+		switch (this->m_pTheApp->RandInt(1, 5))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
+			eShipType = eSHIP_TYPE_ROLLER;
 			break;
 		case 3:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -282,6 +302,26 @@ CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 			eShipType = eSHIP_TYPE_SNIPER;
 			break;
 		case 5:
+			eShipType = eSHIP_TYPE_ROLLER;
+			break;
+		}
+
+		break;
+
+	case 4:
+
+		switch (this->m_pTheApp->RandInt(1, 4))
+		{
+		case 1:
+			eShipType = eSHIP_TYPE_ROLLER;
+			break;
+		case 2:
+			eShipType = eSHIP_TYPE_DRONE;
+			break;
+		case 3:
+			eShipType = eSHIP_TYPE_SNIPER;
+			break;
+		case 4:
 			eShipType = eSHIP_TYPE_ROLLER;
 			break;
 		}
@@ -296,11 +336,11 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 {
 	eSHIP_TYPE eShipType = eSHIP_TYPE_DRONE;
 
-	switch( this->m_iLevelNumber )
+	switch (this->m_iLevelNumber)
 	{
 	case 1:
 
-		switch(this->m_pTheApp->RandInt(1,3))
+		switch (this->m_pTheApp->RandInt(1, 3))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -317,7 +357,7 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 
 	case 2:
 
-		switch(this->m_pTheApp->RandInt(1,2))
+		switch (this->m_pTheApp->RandInt(1, 2))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -331,13 +371,30 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 
 	case 3:
 
-		switch(this->m_pTheApp->RandInt(1,2))
+		switch (this->m_pTheApp->RandInt(1, 2))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		case 2:
 			eShipType = eSHIP_TYPE_SNIPER;
+			break;
+		}
+
+		break;
+
+	case 4:
+
+		switch (this->m_pTheApp->RandInt(1, 3))
+		{
+		case 1:
+			eShipType = eSHIP_TYPE_DRONE;
+			break;
+		case 2:
+			eShipType = eSHIP_TYPE_SNIPER;
+			break;
+		case 3:
+			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		}
 
@@ -351,11 +408,11 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 {
 	eSHIP_TYPE eShipType = eSHIP_TYPE_DRONE;
 
-	switch( this->m_iLevelNumber )
+	switch (this->m_iLevelNumber)
 	{
 	case 1:
 
-		switch(this->m_pTheApp->RandInt(1,3))
+		switch (this->m_pTheApp->RandInt(1, 3))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -372,7 +429,7 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 
 	case 2:
 
-		switch(this->m_pTheApp->RandInt(1,3))
+		switch (this->m_pTheApp->RandInt(1, 3))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -389,7 +446,21 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 
 	case 3:
 
-		switch(this->m_pTheApp->RandInt(1,2))
+		switch (this->m_pTheApp->RandInt(1, 2))
+		{
+		case 1:
+			eShipType = eSHIP_TYPE_DRONE;
+			break;
+		case 2:
+			eShipType = eSHIP_TYPE_SNIPER;
+			break;
+		}
+
+		break;
+
+	case 4:
+
+		switch (this->m_pTheApp->RandInt(1, 2))
 		{
 		case 1:
 			eShipType = eSHIP_TYPE_DRONE;
@@ -407,108 +478,19 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 
 CLevel::eSHIP_TYPE CLevel::GetReinforcementShip()
 {
-	eSHIP_TYPE eShipType = eSHIP_TYPE_DRONE;
-
-	switch(this->m_iLevelNumber)
-	{
-	case 1:
-
-		switch(this->m_pTheApp->RandInt(1,5))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 3:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 4:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 5:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		}
-
-		break;
-
-	case 2:
-
-		switch(this->m_pTheApp->RandInt(1,5))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 3:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 4:
-			eShipType = eSHIP_TYPE_ROLLER;
-			break;
-		case 5:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		}
-
-		break;
-
-	case 3:
-
-		switch(this->m_pTheApp->RandInt(1,5))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 3:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 4:
-			eShipType = eSHIP_TYPE_ROLLER;
-			break;
-		case 5:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		}
-
-		break;
-	}
-
-	return eShipType;
+	return GetLaunchShip();
 }
 
 float CLevel::GetRandReinforcementAppearTime()
 {
-	float fRandTime = 0.0f;
-
-	switch(this->m_iLevelNumber)
-	{
-	case 1:
-		fRandTime = this->m_pTheApp->RandFloat(0.0f, 2.0f);
-		break;
-	case 2:
-		fRandTime = this->m_pTheApp->RandFloat(0.0f, 2.0f);
-		break;
-	case 3:
-		fRandTime = this->m_pTheApp->RandFloat(0.0f, 2.0f);
-		break;
-	}
-
-	return fRandTime;
+	return this->m_pTheApp->RandFloat(0.0f, 2.0f);
 }
 
 float CLevel::GetRandReinforcementSendTime()
 {
 	float fRandTime = 0.0f;
 
-	switch(this->m_iLevelNumber)
+	switch (this->m_iLevelNumber)
 	{
 	case 1:
 		fRandTime = this->m_pTheApp->RandFloat(4.0f, 12.0f);
@@ -519,6 +501,9 @@ float CLevel::GetRandReinforcementSendTime()
 	case 3:
 		fRandTime = this->m_pTheApp->RandFloat(3.0f, 10.0f);
 		break;
+	case 4:
+		fRandTime = this->m_pTheApp->RandFloat(3.0f, 8.0f);
+		break;
 	}
 
 	return fRandTime;
@@ -528,11 +513,11 @@ float CLevel::GetRandObstacleTime(int iObstacleDepth)
 {
 	float fRandTime = 0.0f;
 
-	switch(this->m_iLevelNumber)
+	switch (this->m_iLevelNumber)
 	{
 	case 1:
 
-		switch(iObstacleDepth)
+		switch (iObstacleDepth)
 		{
 		case 1:
 			fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.3f);
@@ -559,7 +544,7 @@ float CLevel::GetRandObstacleTime(int iObstacleDepth)
 
 	case 2:
 
-		switch(iObstacleDepth)
+		switch (iObstacleDepth)
 		{
 		case 1:
 			fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.3f);
@@ -586,7 +571,7 @@ float CLevel::GetRandObstacleTime(int iObstacleDepth)
 
 	case 3:
 
-		switch(iObstacleDepth)
+		switch (iObstacleDepth)
 		{
 		case 1:
 			fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.4f);
@@ -610,6 +595,33 @@ float CLevel::GetRandObstacleTime(int iObstacleDepth)
 		}
 
 		break;
+
+	case 4:
+
+		switch (iObstacleDepth)
+		{
+		case 1:
+			fRandTime = this->m_pTheApp->RandFloat(0.0f, 0.3f);
+			break;
+
+		case 2:
+			fRandTime = this->m_pTheApp->RandFloat(1.5f, 7.0f);
+			break;
+
+		case 3:
+			fRandTime = this->m_pTheApp->RandFloat(1.5f, 6.0f);
+			break;
+
+		case 4:
+			fRandTime = this->m_pTheApp->RandFloat(1.5f, 5.0f);
+			break;
+
+		case 5:
+			fRandTime = this->m_pTheApp->RandFloat(1.5f, 4.0f);
+			break;
+		}
+
+		break;
 	}
 
 	return fRandTime;
@@ -617,9 +629,9 @@ float CLevel::GetRandObstacleTime(int iObstacleDepth)
 
 void CLevel::CalculateLaunchFleets()
 {
-	if(this->m_pLaunchFleetSize)
+	if (this->m_pLaunchFleetSize)
 	{
-		delete [] this->m_pLaunchFleetSize;
+		delete[] this->m_pLaunchFleetSize;
 		this->m_pLaunchFleetSize = NULL;
 	}
 
@@ -628,11 +640,11 @@ void CLevel::CalculateLaunchFleets()
 	int iIndex = 0;
 	int iEnemiesLeft = this->m_iMaxLaunchEnemies;
 
-	while(iEnemiesLeft > 0)
+	while (iEnemiesLeft > 0)
 	{
 		int randFleetSize = this->GetLaunchSize();
 
-		if( (iEnemiesLeft - randFleetSize) < 0 )
+		if ((iEnemiesLeft - randFleetSize) < 0)
 		{
 			randFleetSize = iEnemiesLeft;
 		}
@@ -648,9 +660,9 @@ void CLevel::CalculateLaunchFleets()
 
 void CLevel::CalculateStrikeFleets()
 {
-	if(this->m_pStrikeFleetSize)
+	if (this->m_pStrikeFleetSize)
 	{
-		delete [] this->m_pStrikeFleetSize;
+		delete[] this->m_pStrikeFleetSize;
 		this->m_pStrikeFleetSize = NULL;
 	}
 
@@ -659,11 +671,11 @@ void CLevel::CalculateStrikeFleets()
 	int iIndex = 0;
 	int iEnemiesLeft = this->m_iMaxStrikeEnemies;
 
-	while(iEnemiesLeft > 0)
+	while (iEnemiesLeft > 0)
 	{
 		int randFleetSize = this->GetStrikeSize();
 
-		if( (iEnemiesLeft - randFleetSize) < 0 )
+		if ((iEnemiesLeft - randFleetSize) < 0)
 		{
 			randFleetSize = iEnemiesLeft;
 		}

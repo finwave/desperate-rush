@@ -91,35 +91,9 @@ void CLights::InitGameMain(int iLevelNumber)
 
 	float posZ = -1200.0f;
 
-	switch(iLevelNumber)
-	{
-	case 1:
-
-		light.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		light.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		light.Position = D3DXVECTOR3(80.0f, -100.0f, posZ);
-
-		break;
-
-	case 2:
-
-		light.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		light.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		light.Position = D3DXVECTOR3(80.0f, -100.0f, posZ);
-
-		break;
-
-	case 3:
-
-		light.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		light.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		light.Position = D3DXVECTOR3(80.0f, -100.0f, posZ);
-
-		break;
-	}
+	light.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	light.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	light.Position = D3DXVECTOR3(80.0f, -100.0f, posZ);
 
 	this->m_LightGameMain = light;
 }
