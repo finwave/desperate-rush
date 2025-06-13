@@ -444,32 +444,32 @@ D3DMATERIAL9* CResources::InitMaterial(D3DMATERIAL9* material, int mapKey, int m
 	{
 		// enemy depth 1
 		float diffuseMultiplier = 1.0f;
-		float specularValue = 0.35f;
+		float specularValue = 0.5f;
 		float specularPower = 20.0f;
 
 		// enemy depth 2
 		if (mapKey == MODEL_GAME_ENEMY_DRONE_2 || mapKey == MODEL_GAME_ENEMY_SNIPER_2 || 
 			mapKey == MODEL_GAME_ENEMY_ROLLER_2 || mapKey == MODEL_GAME_ENEMY_VANGUARD_2)
 		{
-			diffuseMultiplier = 0.5f;
+			diffuseMultiplier = 0.6f;
 		}
 		// enemy depth 3
 		else if (mapKey == MODEL_GAME_ENEMY_DRONE_3 || mapKey == MODEL_GAME_ENEMY_SNIPER_3 ||
 			mapKey == MODEL_GAME_ENEMY_ROLLER_3 || mapKey == MODEL_GAME_ENEMY_VANGUARD_3)
 		{
-			diffuseMultiplier = 0.41f;
+			diffuseMultiplier = 0.51f;
 		}
 		// enemy depth 4
 		else if (mapKey == MODEL_GAME_ENEMY_DRONE_4 || mapKey == MODEL_GAME_ENEMY_SNIPER_4 ||
 			mapKey == MODEL_GAME_ENEMY_ROLLER_4 || mapKey == MODEL_GAME_ENEMY_VANGUARD_4)
 		{
-			diffuseMultiplier = 0.33f;
+			diffuseMultiplier = 0.43f;
 		}
 		// enemy depth 5
 		else if (mapKey == MODEL_GAME_ENEMY_DRONE_5 || mapKey == MODEL_GAME_ENEMY_SNIPER_5 ||
 			mapKey == MODEL_GAME_ENEMY_ROLLER_5 || mapKey == MODEL_GAME_ENEMY_VANGUARD_5)
 		{
-			diffuseMultiplier = 0.25f;
+			diffuseMultiplier = 0.35f;
 		}
 
 		// enemy depth 2-5
