@@ -2197,7 +2197,7 @@ void IEnemy::GenerateRandomShootTime()
 			break;
 
 		case eBEHAVIOUR_OBSTACLE:
-			this->m_fRandShootTime = this->m_pTheApp->RandFloat(0.0f, 1.5f);
+			this->m_fRandShootTime = this->m_pTheApp->RandFloat(0.5f, 2.0f);
 			break;
 		}
 

@@ -36,7 +36,7 @@ float CGameSettings::EXTRA_LIFE_MULTIPLIER = 0.1f;
 
 // EXTRA BLAST
 
-float CGameSettings::EXTRA_BLAST_SCORE = 3000;
+float CGameSettings::EXTRA_BLAST_SCORE = 3500;
 float CGameSettings::EXTRA_BLAST_MULTIPLIER = 0.1f;
 
 // PLAYER
@@ -158,7 +158,7 @@ float CGameSettings::BOSS_WARNING_END_TIME = 0.05f;
 
 float CGameSettings::ENEMY_BOSS_FRAME_WIDTH = 85.0f;
 float CGameSettings::ENEMY_BOSS_FRAME_HEIGHT = 123.0f;
-int CGameSettings::ENEMY_BOSS_FRAME_HEALTH = 2000;
+int CGameSettings::ENEMY_BOSS_FRAME_HEALTH = 2100;
 float CGameSettings::ENEMY_BOSS_FRAME_SPEED = 70.0f;
 float CGameSettings::ENEMY_BOSS_FRAME_SHOOT_TIME = 1.0f;
 
