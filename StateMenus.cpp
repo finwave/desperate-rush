@@ -647,9 +647,8 @@ HRESULT CStateMenus::InitState(DWORD dwState)
 	{
 		// load menu music
 		LPCTSTR resourceFilePath = this->m_pResourceMenus->GetUnpackedResourceFilePath("music/title.mp3");
-		CMusicController::MusicType musicType = CMusicController::MusicType::MainMenu;
+		CMusicController::MusicType musicType = CMusicController::MusicType::Generic;
 		this->GetApp()->GetMusicManager()->LoadMusic(musicType, resourceFilePath);
-		this->GetApp()->GetMusicManager()->SetSingleLoadOnly(musicType);
 
 		// current music configuration has volume set up
 		if (this->GetApp()->GetConfig().GetVolumeMusic() > 0)
@@ -1443,7 +1442,7 @@ void CStateMenus::RenderAudio(float fFrametime)
 
 			// set music volume
 			int newPlayerVolume = this->GetApp()->GetVolumeMusic();
-			this->GetApp()->GetMusicManager()->SetMusicVolume(CMusicController::MusicType::MainMenu, newPlayerVolume);
+			this->GetApp()->GetMusicManager()->SetMusicVolume(CMusicController::MusicType::Generic, newPlayerVolume);
 
 			// music is stopped or paused
 			if ((musicPlayerState == CSoundMP3Player::eSTATE_STOPPED) || (musicPlayerState == CSoundMP3Player::eSTATE_PAUSE))
@@ -1451,7 +1450,7 @@ void CStateMenus::RenderAudio(float fFrametime)
 				if (newValue > 0)
 				{
 					// play menu music
-					this->GetApp()->GetMusicManager()->PlayMusic(CMusicController::MusicType::MainMenu);
+					this->GetApp()->GetMusicManager()->PlayMusic(CMusicController::MusicType::Generic);
 				}
 			}
 			// music is playing

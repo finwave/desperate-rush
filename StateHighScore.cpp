@@ -343,9 +343,8 @@ HRESULT CStateHighScore::InitState(DWORD dwState)
 	{
 		// load highscore music
 		LPCTSTR resourceFilePath = this->m_pResourceHighScores->GetUnpackedResourceFilePath("music/highscore.mp3");
-		CMusicController::MusicType musicType = CMusicController::MusicType::Highscore;
+		CMusicController::MusicType musicType = CMusicController::MusicType::Generic;
 		this->GetApp()->GetMusicManager()->LoadMusic(musicType, resourceFilePath);
-		this->GetApp()->GetMusicManager()->SetSingleLoadOnly(musicType);
 		// play highscore music
 		this->GetApp()->GetMusicManager()->PlayMusic(musicType);
 

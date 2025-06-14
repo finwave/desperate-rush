@@ -4,7 +4,7 @@
 CMusicController::CMusicController()
 {
 	this->m_pApp = NULL;
-	this->m_eMusicType = MainMenu;
+	this->m_eMusicType = Generic;
 
 	this->m_iOriginalPlayerVolume = 0;
 	this->m_bSingleLoadOnly = false;

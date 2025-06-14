@@ -3618,7 +3618,7 @@ void CTheGame::LoadMusicLevel()
 
 	if (filePath != NULL)
 	{
-		CMusicController::MusicType musicType = CMusicController::MusicType::GameLevel;
+		CMusicController::MusicType musicType = CMusicController::MusicType::Generic;
 		this->m_pTheApp->GetMusicManager()->LoadMusic(musicType, filePath);
 	}
 }
@@ -3672,7 +3672,7 @@ void CTheGame::LoadMusicGameOutro()
 
 void CTheGame::PlayMusicLevel()
 {
-	this->m_pTheApp->GetMusicManager()->PlayMusic(CMusicController::MusicType::GameLevel);
+	this->m_pTheApp->GetMusicManager()->PlayMusic(CMusicController::MusicType::Generic);
 }
 
 void CTheGame::PlayMusicBoss()

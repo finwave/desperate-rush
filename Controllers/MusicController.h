@@ -15,13 +15,10 @@ public:
 
 	enum MusicType
 	{
-		Intro,
-		MainMenu,
-		GameLevel,
+		Generic,
 		GameBoss,
 		GameOver,
 		GameOutro,
-		Highscore,
 		MaxCount
 	};
 

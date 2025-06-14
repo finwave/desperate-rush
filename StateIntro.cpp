@@ -61,9 +61,8 @@ HRESULT CStateIntro::InitState(DWORD dwState)
 
 	// load intro music
 	LPCTSTR resourceFilePath = resourceMenus->GetUnpackedResourceFilePath("music/intro.mp3");
-	CMusicController::MusicType musicType = CMusicController::MusicType::Intro;
+	CMusicController::MusicType musicType = CMusicController::MusicType::Generic;
 	this->GetApp()->GetMusicManager()->LoadMusic(musicType, resourceFilePath);
-	this->GetApp()->GetMusicManager()->SetSingleLoadOnly(musicType);
 	// play intro music
 	this->GetApp()->GetMusicManager()->PlayMusic(musicType);
 
