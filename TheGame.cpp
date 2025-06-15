@@ -4159,14 +4159,12 @@ void CTheGame::CheckExtraPlayerLife()
 		return;
 	}
 
-	float fScoreLimit = CGameSettings::EXTRA_LIFE_SCORE;
+	float fScoreLimit = (this->m_iExtraPlayerLives + 1) * CGameSettings::EXTRA_LIFE_SCORE;
+	
+	float multiplier = 1.0f;
+	multiplier += this->m_iExtraPlayerLives * CGameSettings::EXTRA_LIFE_MULTIPLIER;
 
-	for (int i = 0; i < this->m_iExtraPlayerLives; i++)
-	{
-		float multiplier = 1.0f;
-		multiplier += (i + 1) * CGameSettings::EXTRA_LIFE_MULTIPLIER;
-		fScoreLimit += multiplier * CGameSettings::EXTRA_LIFE_SCORE;
-	}
+	fScoreLimit *= multiplier;
 
 	if (this->m_pPlayer->GetScore() >= fScoreLimit)
 	{
@@ -4192,14 +4190,12 @@ void CTheGame::CheckExtraPlayerBlast()
 		return;
 	}
 
-	float fScoreLimit = CGameSettings::EXTRA_BLAST_SCORE;
+	float fScoreLimit = (this->m_iExtraPlayerBlasts + 1) * CGameSettings::EXTRA_BLAST_SCORE;
 
-	for (int i = 0; i < this->m_iExtraPlayerBlasts; i++)
-	{
-		float multiplier = 1.0f;
-		multiplier += (i + 1) * CGameSettings::EXTRA_BLAST_MULTIPLIER;
-		fScoreLimit += multiplier * CGameSettings::EXTRA_BLAST_SCORE;
-	}
+	float multiplier = 1.0f;
+	multiplier += this->m_iExtraPlayerBlasts * CGameSettings::EXTRA_BLAST_MULTIPLIER;
+
+	fScoreLimit *= multiplier;
 
 	if (this->m_pPlayer->GetScore() >= fScoreLimit)
 	{
@@ -4567,14 +4563,14 @@ void CTheGame::PlayerShooting(float fFrametime)
 		if (buttons > 1)
 		{
 			// read fire mode button
-			if (this->m_pJoystick->GetButton(1))
+			if (this->m_pJoystick->GetButton(2))
 			{
 				bInputFireMode = true;
 			}
 			if (buttons > 2)
 			{
 				// read cannon button
-				if (this->m_pJoystick->GetButton(2))
+				if (this->m_pJoystick->GetButton(1))
 				{
 					bInputCannon = true;
 				}

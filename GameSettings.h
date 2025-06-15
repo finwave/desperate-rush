@@ -65,8 +65,8 @@ public:
 	static float	PLAYER_BLAST_BEAM_DURATION;
 	static int		PLAYER_BLAST_BEAM_COUNT;
 
-	static int		PLAYER_BLAST_DAMAGE;
 	static int		PLAYER_BLAST_AMOUNT;
+	static int		PLAYER_BLAST_DAMAGE;
 
 	static float	PLAYER_SHIP_ENTER_POS_X;
 	static float	PLAYER_SHIP_ENTER_POS_Y;

@@ -33,13 +33,13 @@ float CGameSettings::SCROLLING_EXPLOSION_MAX = 6.0f;
 
 // EXTRA LIFE
 
-float CGameSettings::EXTRA_LIFE_SCORE = 8500;
-float CGameSettings::EXTRA_LIFE_MULTIPLIER = 0.1f;
+float CGameSettings::EXTRA_LIFE_SCORE = 12000;
+float CGameSettings::EXTRA_LIFE_MULTIPLIER = 0.125f;
 
 // EXTRA BLAST
 
-float CGameSettings::EXTRA_BLAST_SCORE = 3500;
-float CGameSettings::EXTRA_BLAST_MULTIPLIER = 0.1f;
+float CGameSettings::EXTRA_BLAST_SCORE = 8000;
+float CGameSettings::EXTRA_BLAST_MULTIPLIER = 0.125f;
 
 // PLAYER
 
@@ -59,8 +59,8 @@ float CGameSettings::PLAYER_BLAST_ACTIVE_DURATION = 0.8f;
 float CGameSettings::PLAYER_BLAST_BEAM_DURATION = 0.05f;
 int CGameSettings::PLAYER_BLAST_BEAM_COUNT = 4;
 
-int CGameSettings::PLAYER_BLAST_DAMAGE = 100;
 int CGameSettings::PLAYER_BLAST_AMOUNT = 3;
+int CGameSettings::PLAYER_BLAST_DAMAGE = 100;
 
 float CGameSettings::PLAYER_SHIP_ENTER_POS_X = 0.0f;
 float CGameSettings::PLAYER_SHIP_ENTER_POS_Y = -250.0f;
