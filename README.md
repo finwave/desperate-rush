@@ -1,6 +1,6 @@
 # Desperate Rush
 A school project turned into a fully fledged hobby project.  
-This is an old-school shoot 'em up game. It was developed by using C++ and DirectX API.
+This is an old-school shoot 'em up game. It was developed with C++ and DirectX API.
 
 Compilation has been tested with:
 - MS Visual Studio 2022 (Windows 10)
