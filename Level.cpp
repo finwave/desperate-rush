@@ -262,10 +262,10 @@ CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		case 4:
-			eShipType = eSHIP_TYPE_SNIPER;
+			eShipType = eSHIP_TYPE_ROLLER;
 			break;
 		case 5:
-			eShipType = eSHIP_TYPE_ROLLER;
+			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		}
 
@@ -325,6 +325,7 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 	switch (this->m_iLevelNumber)
 	{
 	case 1:
+	case 2:
 
 		switch (this->m_pTheApp->RandInt(1, 3))
 		{
@@ -336,26 +337,13 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 			break;
 		case 3:
 			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		}
-
-		break;
-
-	case 2:
-
-		switch (this->m_pTheApp->RandInt(1, 2))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
 			break;
 		}
 
 		break;
 
 	case 3:
+	case 4:
 
 		switch (this->m_pTheApp->RandInt(1, 2))
 		{
@@ -364,23 +352,6 @@ CLevel::eSHIP_TYPE CLevel::GetStrikeShip()
 			break;
 		case 2:
 			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		}
-
-		break;
-
-	case 4:
-
-		switch (this->m_pTheApp->RandInt(1, 3))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 3:
-			eShipType = eSHIP_TYPE_DRONE;
 			break;
 		}
 
@@ -397,22 +368,6 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 	switch (this->m_iLevelNumber)
 	{
 	case 1:
-
-		switch (this->m_pTheApp->RandInt(1, 3))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		case 3:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		}
-
-		break;
-
 	case 2:
 
 		switch (this->m_pTheApp->RandInt(1, 3))
@@ -431,19 +386,6 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 		break;
 
 	case 3:
-
-		switch (this->m_pTheApp->RandInt(1, 2))
-		{
-		case 1:
-			eShipType = eSHIP_TYPE_DRONE;
-			break;
-		case 2:
-			eShipType = eSHIP_TYPE_SNIPER;
-			break;
-		}
-
-		break;
-
 	case 4:
 
 		switch (this->m_pTheApp->RandInt(1, 2))
@@ -464,7 +406,7 @@ CLevel::eSHIP_TYPE CLevel::GetObstacleShip()
 
 CLevel::eSHIP_TYPE CLevel::GetReinforcementShip()
 {
-	return GetLaunchShip();
+	return GetStrikeShip();
 }
 
 float CLevel::GetRandReinforcementAppearTime()
