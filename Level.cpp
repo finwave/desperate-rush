@@ -265,7 +265,7 @@ CLevel::eSHIP_TYPE CLevel::GetLaunchShip()
 			eShipType = eSHIP_TYPE_ROLLER;
 			break;
 		case 5:
-			eShipType = eSHIP_TYPE_DRONE;
+			eShipType = eSHIP_TYPE_SNIPER;
 			break;
 		}
 
