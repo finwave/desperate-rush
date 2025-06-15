@@ -90,15 +90,6 @@ public:
 
 	inline int GetBackgroundMiddleSpeed() { return this->m_iBackgroundMiddleSpeed; }
 	inline int GetBackgroundMiddlePause() { return this->m_iBackgroundMiddlePause; }
-	
-	inline int GetBackgroundTopSpeedEnemies() { return this->m_iBackgroundTopSpeedEnemies; }
-	inline int GetBackgroundTopPauseEnemies() { return this->m_iBackgroundTopPauseEnemies; }
-
-	inline int GetBackgroundTopSpeedObstacles() { return this->m_iBackgroundTopSpeedObstacles; }
-	inline int GetBackgroundTopPauseObstacles() { return this->m_iBackgroundTopPauseObstacles; }
-
-	inline int GetBackgroundTopSpeedBoss() { return this->m_iBackgroundTopSpeedBoss; }
-	inline int GetBackgroundTopPauseBoss() { return this->m_iBackgroundTopPauseBoss; }
 
 private:
 
@@ -121,7 +112,7 @@ private:
 	float		m_fPlayerBoostMaxEnemy;
 	float		m_fPlayerBoostMaxObstacle;
 
-	// TIMES
+	// TIMERS
 
 	float		m_fFirstEnemyLaunch;
 	float		m_fFirstEnemyStrike;
@@ -167,11 +158,4 @@ private:
 
 	int			m_iBackgroundMiddleSpeed;
 	int			m_iBackgroundMiddlePause;
-
-	int			m_iBackgroundTopSpeedEnemies;
-	int			m_iBackgroundTopPauseEnemies;
-	int			m_iBackgroundTopSpeedObstacles;
-	int			m_iBackgroundTopPauseObstacles;
-	int			m_iBackgroundTopSpeedBoss;
-	int			m_iBackgroundTopPauseBoss;
 };

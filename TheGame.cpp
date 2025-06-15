@@ -155,7 +155,6 @@ CTheGame::CTheGame(void)
 
 	this->m_iMaxEnemies = 0;
 
-	this->m_iExplosionMoveSpeed = 0;
 	this->m_iExplosionPixelVelocity = 0;
 	this->m_iBackgroundPixelVelocity = 0;
 	this->m_fVelocityTimeMargin = 0.0f;
@@ -1492,15 +1491,11 @@ void CTheGame::RunGameUpdateLogic(float fFrametime)
 		}
 	}
 
-	if (this->m_iGameState != GAME_STATE_SPEED_CHANGE)
-	{
-		UpdateVelocityTimeMargin(fFrametime);
-		UpdateVelocityPixels();
-		UpdateBackgroundVelocity();
-		UpdateExplosionVelocity();
-	}
-
+	UpdateVelocityPixelsBackground();
+	UpdateVelocityPixelsExplosion();
 	UpdateTime(fFrametime);
+
+	this->m_fVelocityTimeMargin = this->m_pPlayer->GetVelocity() * (fFrametime / 8);
 }
 
 void CTheGame::RunGameRenderLogic(float fFrametime)
@@ -1545,13 +1540,10 @@ void CTheGame::Render(void)
 	static float fPauseBossPartExplosion = 0.0f;
 	static float fPauseBossBigExplosion = 0.0f;
 
-	static float fBackgroundSpeedChangePause = 0.0f;
-	static bool bBackgroundSpeedChangeReinforcements = true;
-	static bool bBackgroundSpeedChangeObstacles = true;
-	static bool bBackgroundSpeedChangeAfterburn;
-	static bool bBackgroundSpeedChange;
+	static float fSpeedChangeTimer = 0.0f;
+	static float fSpeedChangeStartVelocity = 0.0f;
+	static float fSpeedChangeEndVelocity = 0.0f;
 
-	// these local static variables are used in game outro state
 	static float fPauseOutroMinigunsRotation = 1.0f;
 
 	/* INIT AND LOAD LEVEL */
@@ -1562,10 +1554,6 @@ void CTheGame::Render(void)
 		fPauseBossChainExplosion = 0.0f;
 		fPauseBossPartExplosion = 0.0f;
 		fPauseBossBigExplosion = 0.0f;
-
-		fBackgroundSpeedChangePause = 0.0f;
-		bBackgroundSpeedChangeReinforcements = true;
-		bBackgroundSpeedChangeObstacles = true;
 
 		fPauseOutroMinigunsRotation = 1.0f;
 
@@ -1765,8 +1753,25 @@ void CTheGame::Render(void)
 				break;
 			}
 
-			bBackgroundSpeedChange = true;
-			fBackgroundSpeedChangePause = 0.0f;
+			fSpeedChangeTimer = 0.0f;
+			fSpeedChangeStartVelocity = m_pPlayer->GetVelocity();
+			fSpeedChangeEndVelocity = 0.0f;
+
+			if (this->m_iGameStateNext == GAME_STATE_PLAY_ENEMIES)
+			{
+				fSpeedChangeEndVelocity = m_pLevel->GetPlayerVelocityEnemy();
+			}
+			else if (this->m_iGameStateNext == GAME_STATE_PLAY_OBSTACLES)
+			{
+				fSpeedChangeEndVelocity = m_pLevel->GetPlayerVelocityObstacle();
+			}
+
+			// player velocity will be increased
+			if (fSpeedChangeStartVelocity < fSpeedChangeEndVelocity)
+			{
+				// play the afterburn sound effect
+				this->PlaySoundPlayerAfterburn();
+			}
 
 			SwitchGameState(GAME_STATE_SPEED_CHANGE);
 		}
@@ -1775,98 +1780,26 @@ void CTheGame::Render(void)
 
 		// background speed changes
 	case GAME_STATE_SPEED_CHANGE:
-
-		// change background speed step by step
-		if (bBackgroundSpeedChange && this->m_pPlayer->IsAlive() && !this->m_bPlayerEnter)
+	{
+		// show player afterburn visual
+		if (fSpeedChangeStartVelocity < fSpeedChangeEndVelocity)
 		{
-			int iBackgroundTopSpeed = 0;
-			int iBackgroundTopPause = 0;
-
-			switch (this->m_iGameStateNext)
-			{
-			case GAME_STATE_PLAY_ENEMIES:
-
-				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
-				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
-
-				break;
-
-			case GAME_STATE_PLAY_OBSTACLES:
-
-				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
-				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
-
-				break;
-
-			case GAME_STATE_BOSS_INTRO:
-
-				iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedBoss();
-				iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseBoss();
-
-				break;
-			}
-
-			if (fBackgroundSpeedChangePause > 0.0f)
-			{
-				fBackgroundSpeedChangePause -= fFrametime;
-
-				if (fBackgroundSpeedChangePause <= 0.0f)
-				{
-					// background speed change is finished
-					if ((this->m_pSpriteBackgroundTop->GetSpeed() == iBackgroundTopSpeed) &&
-						(this->m_pSpriteBackgroundTop->GetMaxPause() == iBackgroundTopPause))
-					{
-						this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
-						bBackgroundSpeedChange = false;
-					}
-				}
-			}
-			else
-			{
-				fBackgroundSpeedChangePause = 0.30f;
-
-				// increase "top" speed
-				if (this->m_pSpriteBackgroundTop->GetSpeed() < iBackgroundTopSpeed)
-				{
-					bBackgroundSpeedChangeAfterburn = true;
-					this->m_pSpriteBackgroundTop->IncreaseSpeed();
-				}
-				// decrease "top" speed
-				else if (this->m_pSpriteBackgroundTop->GetSpeed() > iBackgroundTopSpeed)
-				{
-					bBackgroundSpeedChangeAfterburn = false;
-					this->m_pSpriteBackgroundTop->DecreaseSpeed();
-				}
-
-				// increase "top" pause
-				if (this->m_pSpriteBackgroundTop->GetMaxPause() < iBackgroundTopPause)
-				{
-					this->m_pSpriteBackgroundTop->IncreaseMaxPause();
-				}
-				// decrease "top" pause
-				else if (this->m_pSpriteBackgroundTop->GetMaxPause() > iBackgroundTopPause)
-				{
-					this->m_pSpriteBackgroundTop->DecreaseMaxPause();
-				}
-			}
-
-			if (bBackgroundSpeedChangeAfterburn)
-			{
-				this->m_pPlayer->RenderAfterburn(fFrametime);
-
-				if (this->m_bPlayAfterburnSound)
-				{
-					this->PlaySoundPlayerAfterburn();
-					this->m_bPlayAfterburnSound = false;
-				}
-			}
+			this->m_pPlayer->RenderAfterburn(fFrametime);
 		}
-		// go to next game state
-		else
-		{
-			bBackgroundSpeedChangeReinforcements = true;
-			bBackgroundSpeedChangeObstacles = true;
 
+		fSpeedChangeTimer += fFrametime;
+		fSpeedChangeTimer = min(fSpeedChangeTimer, CGameSettings::GAME_STATE_SPEED_CHANGE_DURATION);
+
+		float currentPlayerVelocity = m_pPlayer->GetVelocity();
+
+		float nextPlayerVelocity = LerpUtils::CalculateEasingPosition(
+			LerpUtils::EaseDirect, fSpeedChangeStartVelocity, fSpeedChangeEndVelocity, 
+			fSpeedChangeTimer, CGameSettings::GAME_STATE_SPEED_CHANGE_DURATION);
+
+		m_pPlayer->SetVelocity(nextPlayerVelocity);
+
+		if (fSpeedChangeTimer == CGameSettings::GAME_STATE_SPEED_CHANGE_DURATION)
+		{
 			this->m_bPlayAfterburnSound = true;
 
 			NormalSpeedReinforcement();
@@ -1874,31 +1807,7 @@ void CTheGame::Render(void)
 
 			SwitchGameState(this->m_iGameStateNext);
 		}
-
-		// change sent reinforcements / obstacles speed
-		switch (this->m_iGameStatePrevious)
-		{
-		case GAME_STATE_PLAY_ENEMIES:
-
-			if (bBackgroundSpeedChangeReinforcements)
-			{
-				bBackgroundSpeedChangeReinforcements = false;
-				//this->IncreaseSpeedReinforcement();
-			}
-
-			break;
-
-		case GAME_STATE_WAIT_OBSTACLES:
-
-			if (bBackgroundSpeedChangeObstacles)
-			{
-				bBackgroundSpeedChangeObstacles = false;
-				IncreaseSpeedObstacle();
-			}
-
-			break;
-		}
-
+	}
 		break;
 
 	case GAME_STATE_BOSS_INTRO:
@@ -2265,16 +2174,16 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pState->GetFading()->SetDefaultFadeStep();
 		//this->m_pState->GetFading()->SetFadeStep(this->m_FadeInLevelTime);
 
-		int iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
-		int iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
+		//int iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies();
+		//int iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseEnemies();
 
 		if (this->m_pLevel->IsObstaclesFirst())
 		{
 			this->m_pPlayer->SetVelocity(this->m_pLevel->GetPlayerVelocityObstacle());
 			this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxObstacle());
 
-			iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
-			iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
+			//iBackgroundTopSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles();
+			//iBackgroundTopPause = this->m_pLevel->GetBackgroundTopPauseObstacles();
 
 			ActivateBackgroundObstacles(TRUE);
 		}
@@ -2284,8 +2193,8 @@ void CTheGame::SwitchGameState(int iNextGameState)
 			this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxEnemy());
 		}
 
-		this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
-		this->m_pSpriteBackgroundTop->SetMaxPause(iBackgroundTopPause);
+		//this->m_pSpriteBackgroundTop->SetDefaultSpeed(iBackgroundTopSpeed);
+		//this->m_pSpriteBackgroundTop->SetMaxPause(iBackgroundTopPause);
 
 		this->m_bLevelIntro = true;
 	}
@@ -2299,8 +2208,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		}
 
 		ActivateObstacles(&this->m_pObstaclesDepth1, TRUE);
-
-		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedObstacles() / 2;
 
 		this->m_pPlayer->SetVelocityControl(true);
 		this->m_pPlayer->SetVerticalControl(false);
@@ -2324,8 +2231,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 		this->m_pPlayer->SetVelocity(this->m_pLevel->GetPlayerVelocityEnemy());
 		this->m_pPlayer->SetBoostMax(this->m_pLevel->GetPlayerBoostMaxEnemy());
 
-		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedEnemies() / 2;
-
 		this->m_iMaxEnemies = 0;
 
 		break;
@@ -2340,8 +2245,6 @@ void CTheGame::SwitchGameState(int iNextGameState)
 
 		this->m_pPlayer->SetVelocity(0.0f);
 		this->m_pPlayer->SetBoost(0.0f);
-
-		this->m_iExplosionMoveSpeed = this->m_pLevel->GetBackgroundTopSpeedBoss() / 2;
 
 		this->m_pEnemyBossFrame->SetVisible(TRUE);
 
@@ -2984,8 +2887,7 @@ HRESULT CTheGame::LoadSpritesBackground()
 		CSpriteScrolling::eDIRECTION_DOWN,
 		true, this->m_fDepthBackgroundTop,
 		1024, 2304, 0,0,
-		this->m_pLevel->GetBackgroundTopSpeedEnemies(),
-		this->m_pLevel->GetBackgroundTopPauseEnemies());
+		CGameSettings::SCROLLING_BACKGROUND_TOP_MIN, 0);
 
 	return hres;
 }
@@ -5118,9 +5020,7 @@ void CTheGame::PlayerResetCannon()
 
 void CTheGame::PlayerExplosion()
 {
-	this->m_pExplosions->AddExplosion(	CExplosion::eEXPLOSION_TYPE_PLAYER,
-										this->m_iExplosionMoveSpeed,
-										this->m_pPlayer->GetPosition());
+	this->m_pExplosions->AddExplosion(CExplosion::eEXPLOSION_TYPE_PLAYER, 0, this->m_pPlayer->GetPosition());
 }
 
 IEnemy* CTheGame::GenerateEnemies(CLevel::eFLEET_TYPE eFleetType, CLevel::eSHIP_TYPE eShipType)
@@ -6661,9 +6561,7 @@ void CTheGame::EnemyExplosion(IEnemy* pEnemy)
 
 	if (explosionType != CExplosion::eEXPLOSION_TYPE_NONE)
 	{
-		m_pExplosions->AddExplosion(explosionType,
-									this->m_iExplosionMoveSpeed,
-									pEnemy->GetPosition());
+		m_pExplosions->AddExplosion(explosionType, 0, pEnemy->GetPosition());
 	}
 }
 
@@ -6745,21 +6643,6 @@ void CTheGame::NormalSpeedReinforcement()
 	}
 }
 
-void CTheGame::IncreaseSpeedReinforcement()
-{
-	this->m_pReinforcements.SetFirst();
-	while( this->m_pReinforcements.GetCurrent() )
-	{
-		IEnemy* pEnemy = this->m_pReinforcements.GetCurrent();
-
-		if(pEnemy->GetReinforcementAction() == IEnemy::eREINFORCEMENT_ACTION_SENT)
-		{
-			pEnemy->SetSpeedChange(true);
-		}
-		this->m_pReinforcements.SetNext();
-	}
-}
-
 void CTheGame::NormalSpeedObstacle()
 {
 	this->m_pObstaclesDepth2.SetFirst();
@@ -6803,49 +6686,6 @@ void CTheGame::NormalSpeedObstacle()
 	}
 }
 
-void CTheGame::IncreaseSpeedObstacle()
-{
-	this->m_pObstaclesDepth2.SetFirst();
-	while(this->m_pObstaclesDepth2.GetCurrent())
-	{
-		if(this->m_pObstaclesDepth2.GetCurrent()->IsActive())
-		{
-			this->m_pObstaclesDepth2.GetCurrent()->SetSpeedChange(true);
-		}
-		this->m_pObstaclesDepth2.SetNext();
-	}
-
-	this->m_pObstaclesDepth3.SetFirst();
-	while(this->m_pObstaclesDepth3.GetCurrent())
-	{
-		if(this->m_pObstaclesDepth3.GetCurrent()->IsActive())
-		{
-			this->m_pObstaclesDepth3.GetCurrent()->SetSpeedChange(true);
-		}
-		this->m_pObstaclesDepth3.SetNext();
-	}
-
-	this->m_pObstaclesDepth4.SetFirst();
-	while(this->m_pObstaclesDepth4.GetCurrent())
-	{
-		if(this->m_pObstaclesDepth4.GetCurrent()->IsActive())
-		{
-			this->m_pObstaclesDepth4.GetCurrent()->SetSpeedChange(true);
-		}
-		this->m_pObstaclesDepth4.SetNext();
-	}
-
-	this->m_pObstaclesDepth5.SetFirst();
-	while(this->m_pObstaclesDepth5.GetCurrent())
-	{
-		if(this->m_pObstaclesDepth5.GetCurrent()->IsActive())
-		{
-			this->m_pObstaclesDepth5.GetCurrent()->SetSpeedChange(true);
-		}
-		this->m_pObstaclesDepth5.SetNext();
-	}
-}
-
 void CTheGame::BossFrameChainExplosion()
 {
 	CExplosion::eEXPLOSION_TYPE explosionType = CExplosion::eEXPLOSION_TYPE_NONE;
@@ -6870,9 +6710,7 @@ void CTheGame::BossFrameChainExplosion()
 
 	if (explosionType != CExplosion::eEXPLOSION_TYPE_NONE)
 	{
-		m_pExplosions->AddExplosion(explosionType,
-									this->m_iExplosionMoveSpeed,
-									pos);
+		m_pExplosions->AddExplosion(explosionType, 0, pos);
 	}
 }
 
@@ -6882,10 +6720,7 @@ void CTheGame::BossFrameBigExplosion()
 
 	D3DXVECTOR3 posBossFrame = this->m_pEnemyBossFrame->GetPosition();
 
-	this->m_pExplosions->AddExplosion(
-		CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG,
-		this->m_iExplosionMoveSpeed,
-		posBossFrame);
+	this->m_pExplosions->AddExplosion(CExplosion::eEXPLOSION_TYPE_BOSS_1_BIG, 0, posBossFrame);
 
 	// create boss scatter explosions
 
@@ -6933,9 +6768,7 @@ void CTheGame::BossPartExplosion(IEnemy* pEnemy)
 
 	if (explosionType != CExplosion::eEXPLOSION_TYPE_NONE)
 	{
-		m_pExplosions->AddExplosion(explosionType,
-			this->m_iExplosionMoveSpeed,
-			pos);
+		m_pExplosions->AddExplosion(explosionType, 0, pos);
 	}
 
 	if (pEnemy->IsActive())
@@ -10104,25 +9937,22 @@ void CTheGame::UpdateTime(float fFrametime)
 	this->m_fGameTime += fFrametime;
 }
 
-void CTheGame::UpdateVelocityTimeMargin(float fFrametime)
-{
-	float velocity = this->m_pPlayer->GetVelocity();
-	this->m_fVelocityTimeMargin = velocity * (fFrametime / 8);
-}
-
-void CTheGame::UpdateVelocityPixels()
-{
-	UpdateVelocityPixelsBackground();
-	UpdateVelocityPixelsExplosion();
-}
-
 void CTheGame::UpdateVelocityPixelsBackground()
 {
+	float fPixelScrollMin = CGameSettings::SCROLLING_BACKGROUND_TOP_MIN;
+
+	// boss game state
+	if (IsGameStateBossPlay() || (this->m_iGameState == GAME_STATE_SPEED_CHANGE && this->m_iGameStateNext == GAME_STATE_BOSS_INTRO))
+	{
+		fPixelScrollMin = CGameSettings::SCROLLING_BACKGROUND_TOP_MIN_BOSS;
+	}
+
 	float multiplier = this->m_pPlayer->GetVelocity() / CGameSettings::SCROLLING_PLAYER_VELOCITY_MAX;
-	float exactPixelVelocity = CGameSettings::SCROLLING_BACKGROUND_TOP_MIN;
-	exactPixelVelocity += multiplier * (CGameSettings::SCROLLING_BACKGROUND_TOP_MAX - CGameSettings::SCROLLING_BACKGROUND_TOP_MIN);
+	float exactPixelVelocity = fPixelScrollMin;
+	exactPixelVelocity += multiplier * (CGameSettings::SCROLLING_BACKGROUND_TOP_MAX - fPixelScrollMin);
 
 	this->m_iBackgroundPixelVelocity = std::round(exactPixelVelocity);
+	this->m_pSpriteBackgroundTop->SetSpeed(this->m_iBackgroundPixelVelocity);
 }
 
 void CTheGame::UpdateVelocityPixelsExplosion()
@@ -10132,16 +9962,6 @@ void CTheGame::UpdateVelocityPixelsExplosion()
 	exactPixelVelocity += multiplier * (CGameSettings::SCROLLING_EXPLOSION_MAX - CGameSettings::SCROLLING_EXPLOSION_MIN);
 
 	this->m_iExplosionPixelVelocity = std::round(exactPixelVelocity);
-}
-
-void CTheGame::UpdateBackgroundVelocity()
-{
-	int speed = this->m_pSpriteBackgroundTop->GetDefaultSpeed() + this->m_iBackgroundPixelVelocity;
-	this->m_pSpriteBackgroundTop->SetSpeed(speed);
-}
-
-void CTheGame::UpdateExplosionVelocity()
-{
 	this->m_pExplosions->UpdateVelocity(this->m_iExplosionPixelVelocity);
 }
 
@@ -10752,22 +10572,22 @@ void CTheGame::RenderBullets(float fFrametime)
 	// boss bullets
 	if (IsGameStateBossPlay())
 	{
-		if (this->m_pEnemyBossLaserLeft)
+		if (this->m_pEnemyBossLaserLeft && this->m_pEnemyBossLaserLeft->IsActive())
 		{
 			this->m_pEnemyBossLaserLeft->RenderBullets(bFreeze, fFrametime, velocity);
 		}
 
-		if (this->m_pEnemyBossLaserRight)
+		if (this->m_pEnemyBossLaserRight && this->m_pEnemyBossLaserRight->IsActive())
 		{
 			this->m_pEnemyBossLaserRight->RenderBullets(bFreeze, fFrametime, velocity);
 		}
 
-		if (this->m_pEnemyBossScatterLeft)
+		if (this->m_pEnemyBossScatterLeft && this->m_pEnemyBossScatterLeft->IsActive())
 		{
 			this->m_pEnemyBossScatterLeft->RenderBullets(bFreeze, fFrametime, velocity);
 		}
 
-		if (this->m_pEnemyBossScatterRight)
+		if (this->m_pEnemyBossScatterRight && this->m_pEnemyBossScatterRight->IsActive())
 		{
 			this->m_pEnemyBossScatterRight->RenderBullets(bFreeze, fFrametime, velocity);
 		}
@@ -12641,8 +12461,8 @@ bool CTheGame::IsFirstObstacleDepthRender()
 
 bool CTheGame::IsGameStateBossPlay()
 {
-	int firstGameState = GAME_STATE_BOSS_ACTION;
-	int lastGameState = GAME_STATE_BOSS_BIG_EXPLOSION;
+	int firstGameState = GAME_STATE_BOSS_INTRO;
+	int lastGameState = GAME_STATE_LEVEL_OUTRO;
 
 	if ((this->m_iGameState >= firstGameState) && (this->m_iGameState <= lastGameState))
 	{
@@ -12653,6 +12473,7 @@ bool CTheGame::IsGameStateBossPlay()
 	{
 	case GAME_STATE_BLAST_ACTIVE:
 	case GAME_STATE_BLAST_DEACTIVATE:
+	case GAME_STATE_END_SUCCESS:
 	case GAME_STATE_END_FAILED:
 	case GAME_STATE_QUIT:
 		if ((this->m_iGameStatePrevious >= firstGameState) && (this->m_iGameStatePrevious <= lastGameState))

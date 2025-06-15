@@ -383,9 +383,7 @@ private:
 	HRESULT GenerateParticlesBullet(CWeapon* pWeapon, D3DXVECTOR3 vPosition);
 
 	void NormalSpeedReinforcement();
-	void IncreaseSpeedReinforcement();
 	void NormalSpeedObstacle();
-	void IncreaseSpeedObstacle();
 
 	void BossFrameChainExplosion();
 	void BossFrameBigExplosion();
@@ -435,12 +433,8 @@ private:
 	void UpdateExplosions(float fFrametime);
 	void UpdateTime(float fFrametime);
 
-	void UpdateVelocityTimeMargin(float fFrametime);
-	void UpdateVelocityPixels();
 	void UpdateVelocityPixelsBackground();
 	void UpdateVelocityPixelsExplosion();
-	void UpdateBackgroundVelocity();
-	void UpdateExplosionVelocity();
 
 	void RenderPlayer(float fFrametime);
 	void RenderBoss(float fFrametime);
@@ -705,7 +699,6 @@ private:
 
 	int							m_iMaxEnemies;
 
-	int							m_iExplosionMoveSpeed;
 	int							m_iExplosionPixelVelocity;
 	int							m_iBackgroundPixelVelocity;
 	float						m_fVelocityTimeMargin;

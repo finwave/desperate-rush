@@ -1,3 +1,4 @@
+#include "GameSettings.h"
 #include "Level.h"
 
 CLevel::CLevel(void)
@@ -42,13 +43,6 @@ CLevel::CLevel(void)
 	this->m_iBackgroundMiddleSpeed = 0;
 	this->m_iBackgroundMiddlePause = 0;
 
-	this->m_iBackgroundTopSpeedEnemies = 0;
-	this->m_iBackgroundTopPauseEnemies = 0;
-	this->m_iBackgroundTopSpeedObstacles = 0;
-	this->m_iBackgroundTopPauseObstacles = 0;
-	this->m_iBackgroundTopSpeedBoss = 0;
-	this->m_iBackgroundTopPauseBoss = 0;
-
 	this->m_pLaunchFleetSize = NULL;
 	this->m_pStrikeFleetSize = NULL;
 }
@@ -83,6 +77,8 @@ void CLevel::ReadLevel(void)
 	this->m_vBossBattleParts.clear();
 	this->m_iLevelNumber++;
 
+	this->m_fPlayerVelocityEnemy = CGameSettings::SCROLLING_PLAYER_VELOCITY_MAX;
+
 	this->m_fPlayerBoostMaxEnemy = 100.0f;
 	this->m_fPlayerBoostMaxObstacle = 100.0f;
 
@@ -91,12 +87,6 @@ void CLevel::ReadLevel(void)
 
 	this->m_iBackgroundMiddleSpeed = 1;
 	this->m_iBackgroundMiddlePause = 5;
-	this->m_iBackgroundTopSpeedEnemies = 5;
-	this->m_iBackgroundTopPauseEnemies = 0;
-	this->m_iBackgroundTopSpeedObstacles = 4;
-	this->m_iBackgroundTopPauseObstacles = 0;
-	this->m_iBackgroundTopSpeedBoss = 1;
-	this->m_iBackgroundTopPauseBoss = 2;
 
 	if (this->m_iLevelNumber <= LEVELS_MAX)
 	{
@@ -104,7 +94,6 @@ void CLevel::ReadLevel(void)
 		{
 		case 1:
 
-			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 0.0f;
 			this->m_fFirstEnemyLaunch = -0.2f;
 			this->m_fFirstEnemyStrike = 0.0f;
@@ -132,7 +121,6 @@ void CLevel::ReadLevel(void)
 
 		case 2:
 
-			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 0.0f;
 			this->m_fFirstEnemyLaunch = 0.0f;
 			this->m_fFirstEnemyStrike = 0.0f;
@@ -161,7 +149,6 @@ void CLevel::ReadLevel(void)
 
 		case 3:
 
-			this->m_fPlayerVelocityEnemy = 50.0f;
 			this->m_fPlayerVelocityObstacle = 30.0f;
 			this->m_fFirstEnemyLaunch = -0.2f;
 			this->m_fFirstEnemyStrike = 0.0f;
@@ -190,7 +177,6 @@ void CLevel::ReadLevel(void)
 
 		case 4:
 
-			this->m_fPlayerVelocityEnemy = 120.0f;
 			this->m_fPlayerVelocityObstacle = 70.0f;
 			this->m_fFirstEnemyLaunch = 0.0f;
 			this->m_fFirstEnemyStrike = 0.0f;
