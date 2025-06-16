@@ -1,4 +1,6 @@
 # Desperate Rush
+![Image](https://github.com/user-attachments/assets/ccdca3b2-b0b8-406f-b1b1-87911e99687b)![Image](https://github.com/user-attachments/assets/9cea5dea-d348-46a8-ad15-67773bb9c455)
+
 A school project turned into a fully fledged hobby project.  
 This is an old-school shoot 'em up game. It was developed with C++ and DirectX API.
 
